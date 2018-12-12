@@ -41,3 +41,7 @@ rsconnect/
 *.DS_Store
 **/*.DS_Store
 **/*.DS_Store*
+
+# REMOVE .DS_STORE
+#find . -name '.DS_Store' -type f -delete
+#find . -name .DS_Store -print0 | xargs -0 git rm -f --ignore-unmatch

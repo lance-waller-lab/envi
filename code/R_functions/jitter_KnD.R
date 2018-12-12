@@ -181,7 +181,9 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
 
     jitter_out[[j]] <- merge_df # Output
   }
-    else {jitter_out[[j]] <- df_extract} #If no NA values (much faster)
+    else {
+      df_extract$zone <- NULL
+      jitter_out[[j]] <- df_extract} #If no NA values (much faster)
   }
 
   # Original Dataset (Observed)

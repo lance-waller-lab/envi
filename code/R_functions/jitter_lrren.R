@@ -93,8 +93,8 @@ jitter_llren <- function(sim_locs, predict_locs,
     ## Calculate Bandwidth or user specified value
       ## Input Preparation
       # case and control point pattern datasets
-      ppp_case <- spatstat::ppp(case_locs[,7], case_locs[,8], window = owin(poly = list(x=rev(outer_poly[,1]),y=rev(outer_poly[,2]))))
-      ppp_control <- spatstat::ppp(control_locs[,7], control_locs[,8], window = owin(poly = list(x=rev(outer_poly[,1]),y=rev(outer_poly[,2]))))
+      ppp_case <- spatstat::ppp(case_locs[,6], case_locs[,7], window = owin(poly = list(x=rev(outer_poly[,1]),y=rev(outer_poly[,2]))))
+      ppp_control <- spatstat::ppp(control_locs[,6], control_locs[,7], window = owin(poly = list(x=rev(outer_poly[,1]),y=rev(outer_poly[,2]))))
 
 
   ## Calculate observed kernel density ratio
