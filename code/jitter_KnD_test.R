@@ -48,7 +48,6 @@ tmean_rast_scaled <- (tmean_rast - abs(tmean_rast@data@min))/(tmean_rast@data@ma
 
 # Mask rasters
 # Removes NA values outside of mask (if any)
-mask_poly = Polygon(cbind(c(min(data_df$lon)-1,max(data_df$lon)+1,max(data_df$lon)+1,min(data_df$lon)-1), c(min(data_df$lat)-1,min(data_df$lat)-1,max(data_df$lat)+1,max(data_df$lat)+1)))
 mask_poly = SpatialPolygons(list(Polygons(list(mask_poly), "s1")))
 ppt_rast_mask <- mask(ppt_rast_scaled, mask_poly)
 tmean_rast_mask <- mask(tmean_rast_scaled, mask_poly)

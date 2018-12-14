@@ -157,6 +157,7 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
   if(any(is.na(extract_raster))){
 
       extract_coords_na_df <- df_extract[!complete.cases(df_extract),2:3]
+      rownames(extract_coords_na_df) <- df_extract[!complete.cases(df_extract),1]
       #xy <- extract_coords_na_df[,2:3]
       sampled_raster_list <- purrr::map(.x = rasters@layers, .f = sample_raster_NA, xy=extract_coords_na_df)
 
@@ -203,5 +204,3 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
   )
 
 }
-
-
