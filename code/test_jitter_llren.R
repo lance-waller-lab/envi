@@ -9,6 +9,9 @@ library(sp)
 library(rgdal) #projectRaster()
 library(rgeos)
 
+source("code/R_functions/jitter_KnD.R")
+source("code/R_functions/jitter_lrren.R")
+
 # Environmental Data
 us <- raster::getData("GADM", country="USA", level=1)
 wstates <- c("California", "Oregon", "Washington", "Idaho", "Nevada", "Arizona", "Utah", "Montana", "Wyoming", "Colorado", "New Mexico", "Texas", "Oklahoma", "Kansas", "Nebraska", "South Dakota", "North Dakota")
@@ -175,6 +178,8 @@ sim_num <- 3
 ## Function Run
 test_jitterKnD <- jitterKnD(data = sim_dat, rasters = raster_dat, sim = sim_num, distances = distances_mat, crs = crs_wgs84)
 str(test_jitterKnD)
+sim_dat_lrren <- test_jitterKnD[[2]]
+str(sim_dat_lrren)
 
 plot(sim_dat$lon, sim_dat$lat, col = "black", pch = 16)
 points(test_jitterKnD[[1]]$lon, test_jitterKnD[[1]]$lat, col = "red", pch = 1)
@@ -182,10 +187,6 @@ points(test_jitterKnD[[2]]$lon, test_jitterKnD[[2]]$lat, col = "blue", pch = 1)
 points(predict_locs[,1], predict_locs[,2], col = "black", pch = 15, cex = 0.2)
 
 ## Function Run
-test_jitter_llren <- jitter_llren(sim_locs = test_jitterKnD, predict_locs = predict_locs, predict = T, plot = T, tolerate = T, adapt = F, resolution = 200)
-
-
-
-
-
+source("code/R_functions/jitter_lrren.R")
+test_jitter_llren <- jitter_llren(sim_locs = sim_dat_lrren, predict_locs = predict_locs, predict = T, plot = T, tolerate = T, adapt = F, resolution = 200)
 

@@ -128,11 +128,11 @@ jitter_llren <- function(sim_locs, predict_locs,
                       "rx" = rx,
                       "ry" = ry
   )
-  par_results <- list(sim_risk,
-                      sim_pval,
-                      rx,
-                      ry
-  )
+  # par_results <- list(sim_risk,
+  #                     sim_pval,
+  #                     rx,
+  #                     ry
+  # )
   return(par_results)
 }
   #cat("Calculating summary statistics in predictor space\n")
@@ -148,7 +148,16 @@ jitter_llren <- function(sim_locs, predict_locs,
   rr_mean <- rowMeans(do.call(cbind, jitter_rr), na.rm = TRUE)
   pval_mean <-  rowMeans(do.call(cbind, jitter_pval), na.rm = TRUE)
   rr_sd <- apply(do.call(cbind,jitter_rr),1,sd, na.rm = TRUE)
-  pval_sd <- apply(do.call(cbind,jitter_pval),1,sd, na.rm = TRUE)
+  #pval_sd <- apply(do.call(cbind,jitter_pval),1,sd, na.rm = TRUE)
+
+  pval_sig <- rapply(jitter_pval,function(x) ifelse(x < 0.025 | x > 0.975 ,TRUE,FALSE), how = "replace")
+  pval_count <- rowSums(do.call(cbind,pval_sig), na.rm = TRUE)
+  #pval_count <- rowSums(replace(do.call(cbind, jitter_pval), do.call(cbind, jitter_pval) >= 0.025 & do.call(cbind, jitter_pval) <= 0.975, 0), na.rm = TRUE)
+  proportionSignificant <- function(x) {
+    x / length(sim_locs)
+  }
+
+  pval_prop <- sapply(pval_count, FUN = proportionSignificant)
 
   # Convert to mean relative risk raster
   rr <- as.data.frame(dplyr::data_frame(
@@ -184,20 +193,25 @@ jitter_llren <- function(sim_locs, predict_locs,
   rrsd_raster <- raster(lrr_narm)
 
   # Convert to standard deviation relative risk raster
-  pvalsd <- as.data.frame(dplyr::data_frame(
+  #pvalsd <- as.data.frame(dplyr::data_frame(
+  pvalprop <- as.data.frame(dplyr::data_frame(
     x = rx,
     y = ry,
-    sd = pval_sd
+    #sd = pval_sd
+    prop = pval_prop
   ))
-  lrr_narm <- na.omit(pvalsd) # remove NAs
+  #lrr_narm <- na.omit(pvalsd) # remove NAs
+  lrr_narm <- na.omit(pvalprop) # remove NAs
   coordinates(lrr_narm) <- ~ x + y # coordinates
   gridded(lrr_narm) <- TRUE # gridded
-  pvalsd_raster <- raster(lrr_narm)
+  #pvalsd_raster <- raster(lrr_narm)
+  pvalprop_raster <- raster(lrr_narm)
 
   out_sim <- list("rr_mean"=rr_mean,
                   "pval_mean" = pval_mean,
                   "rr_sd" = rr_sd,
-                  "pval_sd" = pval_sd,
+                  #"pval_sd" = pval_sd,
+                  "pval_prop" = pval_prop,
                   "rx" = rx,
                   "ry" = ry,
                   "outer_poly" = outer_poly
@@ -220,8 +234,10 @@ jitter_llren <- function(sim_locs, predict_locs,
                                                    0.995,Inf,1
     ))
 
-    reclass_pval_sd <- pvalsd_raster
-    reclass_pval_sd@data@values <- ifelse(reclass_pval_sd@data@values < 0.01, NA, reclass_pval_sd@data@values)
+    #reclass_pval_sd <- pvalsd_raster
+    reclass_pval_prop <- pvalprop_raster
+    #reclass_pval_sd@data@values <- ifelse(reclass_pval_sd@data@values < 0.01, NA, reclass_pval_sd@data@values)
+    reclass_pval_prop@data@values <- ifelse(reclass_pval_prop@data@values == 0, NA, reclass_pval_prop@data@values)
 
     # Mean relative risk
     upperhalf = length(rr_raster@data@values[rr_raster@data@values>0 & !is.na(rr_raster@data@values)])
@@ -270,8 +286,9 @@ jitter_llren <- function(sim_locs, predict_locs,
     # SD of RR
     layout(matrix(c(1,2), ncol=2, byrow=TRUE), widths=c(4, 1))
     par(oma=c(0,0,1,0),mar=c(5.1,4.1,4.1,2.1), pty="s")
-    image(rrsd_raster,  main = "Standard deviation of predicted relative risk of cases and controls\nin predictor space", col=rev(terrain.colors(256)),
-          xlab = "Predictor A", ylab = "Predictor B"
+    image(rrsd_raster,  main = "Standard deviation of predicted relative risk\nof cases and controls in predictor space", col=rev(terrain.colors(256)),
+          xlab = "Predictor A", ylab = "Predictor B",
+          xlim = c(rrsd_raster@extent@xmin-0.01*(abs(rrsd_raster@extent@xmin)),rrsd_raster@extent@xmax+0.01*(abs(rrsd_raster@extent@xmin))), ylim = c(rrsd_raster@extent@ymin-0.01*(abs(rrsd_raster@extent@ymin)),rrsd_raster@extent@ymax+0.01*(abs(rrsd_raster@extent@ymin)))
     )
     polygon(outer_poly)
     par(mai=c(0,0,0,0), mar=c(5.1,0.1,4.1,2.1)/4, pty = "m")
@@ -299,7 +316,7 @@ jitter_llren <- function(sim_locs, predict_locs,
     plot.new()
     legend(
       "bottomleft", title = "Legend", bty = "n",
-      legend = c("p-value < 0.01", "p-value < 0.05", "Insignficant", "p-value > 0.95", "p-value < 0.99"),
+      legend = c("p-value < 0.005", "p-value < 0.025", "Insignficant", "p-value > 0.975", "p-value > 0.995"),
       fill = c(
         col.01,
         col.05,
@@ -310,17 +327,19 @@ jitter_llren <- function(sim_locs, predict_locs,
       ncol = 1
     )
 
-    # SD of tolerance
+    # Proportion of tolerances are significant
     layout(matrix(c(1,2), ncol=2, byrow=TRUE), widths=c(4, 1))
     par(oma=c(0,0,1,0),mar=c(5.1,4.1,4.1,2.1), pty="s")
-    image(reclass_pval_sd,  main = "Standard deviation of predicted significant p-values\nin predictor space", col=rev(terrain.colors(256)),
+    #image(reclass_pval_sd,  main = "Standard deviation of predicted significant p-values\nin predictor space", col=rev(terrain.colors(256)),
+    image(reclass_pval_prop,  main = "Proportion of iterations predicted significant p-values\nin predictor space", col=rev(terrain.colors(256)),
           xlab = "Predictor A", ylab = "Predictor B"
     )
     polygon(outer_poly)
     par(mai=c(0,0,0,0), mar=c(5.1,0.1,4.1,2.1)/4, pty = "m")
     legend_image <- as.raster(matrix(terrain.colors(256)), ncol=1)
     plot(c(-10,20),c(-0.1,5),type = 'n', axes = F,xlab = '', ylab = '')
-    text(x=3.5, y = c(0,1,1.2), labels = c(paste(round(min(reclass_pval_sd@data@values, na.rm=T), digits = 2), sep=""),paste(round(max(reclass_pval_sd@data@values, na.rm=T), digits = 2), sep=""), "Standard Deviation"))
+    #text(x=3.5, y = c(0,1,1.2), labels = c(paste(round(min(reclass_pval_sd@data@values, na.rm=T), digits = 2), sep=""),paste(round(max(reclass_pval_sd@data@values, na.rm=T), digits = 2), sep=""), "Standard Deviation"))
+    text(x=3.5, y = c(0,1,1.2), labels = c(paste(round(min(reclass_pval_prop@data@values, na.rm=T), digits = 2), sep=""),paste(round(max(reclass_pval_prop@data@values, na.rm=T), digits = 2), sep=""), "Proportion Significant"))
     rasterImage(legend_image, 0, 0, 1,1, main = "")
     legend(
       "bottom",
@@ -345,13 +364,15 @@ jitter_llren <- function(sim_locs, predict_locs,
   mean_rr <- raster::extract(rr_raster, extract_predict)
   mean_pval <- raster::extract(pval_raster, extract_predict)
   sd_rr <- raster::extract(rrsd_raster, extract_predict)
-  sd_pval <- raster::extract(pvalsd_raster, extract_predict)
+  #sd_pval <- raster::extract(pvalsd_raster, extract_predict)
+  prop_pval <- raster::extract(pvalprop_raster, extract_predict)
 
 
   out_pred <- list("mean_rr" = mean_rr,
                    "mean_pval" = mean_pval,
                    "sd_rr" = sd_rr,
-                   "sd_pval" = sd_pval,
+                   #"sd_pval" = sd_pval,
+                   "prop_pval" = prop_pval,
                    "x" = predict_locs[,1],
                    "y" = predict_locs[,2]
    )
@@ -430,27 +451,38 @@ jitter_llren <- function(sim_locs, predict_locs,
                                                     9998,Inf,1))
 
     # Standard deviation of pvalues
-    dev_pval <- as.data.frame(dplyr::data_frame(
+    #dev_pval <- as.data.frame(dplyr::data_frame(
+    prob_pval <- as.data.frame(dplyr::data_frame(
       x = predict_locs[,1],
       y = predict_locs[,2],
-      sd = sd_pval
+      #sd = sd_pval
+      prop = prop_pval
     ))
-    naband_pval <- dev_pval
-    lrr_narm <- na.omit(dev_pval) # remove NAs
+    # naband_pval <- dev_pval
+    naband_pval <- prob_pval
+    # lrr_narm <- na.omit(dev_pval) # remove NAs
+    naband_prop <- prob_pval
+    lrr_narm <- na.omit(prob_pval) # remove NAs
     coordinates(lrr_narm) <- ~ x + y # coordinates
     gridded(lrr_narm) <- TRUE # gridded
-    sd_pval_raster <- raster(lrr_narm)
+    #sd_pval_raster <- raster(lrr_narm)
+    prob_pval_raster <- raster(lrr_narm)
 
     # Reclassify for alpha ranges
-    reclass_sd_pval <- sd_pval_raster
-    reclass_sd_pval@data@values <- ifelse(reclass_sd_pval@data@values < 0.01, NA, reclass_sd_pval@data@values)
+    #reclass_sd_pval <- sd_pval_raster
+    reclass_prob_pval <- prob_pval_raster
+    #reclass_sd_pval@data@values <- ifelse(reclass_sd_pval@data@values < 0.01, NA, reclass_sd_pval@data@values)
+    reclass_prob_pval@data@values <- ifelse(reclass_prob_pval@data@values == 0, NA, reclass_prob_pval@data@values)
 
     # Create separate layer for NAs (if any)
-    naband_pval$sd <- ifelse(is.na(naband_pval$sd),9999, naband_pval$sd)
+    #naband_pval$sd <- ifelse(is.na(naband_pval$sd),9999, naband_pval$sd)
+    naband_pval$prop <- ifelse(is.na(naband_pval$prop),9999, naband_pval$prop)
     coordinates(naband_pval) <- ~ x + y # coordinates
     gridded(naband_pval) <- TRUE # gridded
-    NA_sd_raster <- raster(naband_pval)
-    naband_pval_reclass <- reclassify(NA_sd_raster, c(-Inf,9998,NA,
+    #NA_sd_raster <- raster(naband_pval)
+    NA_prop_raster <- raster(naband_pval)
+    #naband_pval_reclass <- reclassify(NA_sd_raster, c(-Inf,9998,NA,
+    naband_pval_reclass <- reclassify(NA_prop_raster, c(-Inf,9998,NA,
                                                       9998,Inf,1))
 
     # Mean Relative Risk
@@ -498,7 +530,7 @@ jitter_llren <- function(sim_locs, predict_locs,
     # SD of RR
     layout(matrix(c(1,2), ncol=2, byrow=TRUE), widths=c(4, 1))
     par(oma=c(0,0,1,0),mar=c(5.1,4.1,4.1,2.1), pty="s")
-    image(sd_rr_raster,  main = "Standard deviation of predicted relative risk of cases and controls in geographic space", col=rev(terrain.colors(256)),
+    image(sd_rr_raster,  main = "Standard deviation of predicted relative risk\nof cases and controls in geographic space", col=rev(terrain.colors(256)),
           xlab = "Longitude", ylab = "Latitude",
           xlim = c(sd_rr_raster@extent@xmin-0.01*(abs(sd_rr_raster@extent@xmin)),reclass_tol@extent@xmax+0.01*(abs(sd_rr_raster@extent@xmin))), ylim = c(sd_rr_raster@extent@ymin-0.01*(abs(sd_rr_raster@extent@ymin)),sd_rr_raster@extent@ymax+0.01*(abs(sd_rr_raster@extent@ymin))))
     image(naband_sd_reclass, col = "black", add = T)
@@ -526,7 +558,7 @@ jitter_llren <- function(sim_locs, predict_locs,
     plot.new()
     legend(
       "bottomleft", title = "Legend", bty = "n",
-      legend = c("p-value < 0.01", "p-value < 0.05", "Insignficant", "p-value > 0.95", "p-value < 0.99", "Indeterminate"),
+      legend = c("p-value < 0.005", "p-value < 0.025", "Insignficant", "p-value > 0.975", "p-value > 0.995", "Indeterminate"),
       fill = c(
         col.01,
         col.05,
@@ -538,17 +570,20 @@ jitter_llren <- function(sim_locs, predict_locs,
       ncol = 1
     )
 
-    # SD of tolerance
+    # Proportion of tolerances significant
     layout(matrix(c(1,2), ncol=2, byrow=TRUE), widths=c(4, 1))
     par(oma=c(0,0,1,0),mar=c(5.1,4.1,4.1,2.1), pty="s")
-    image(reclass_sd_pval,  main = "Standard deviation of predicted p-values in geographic space", col=rev(terrain.colors(256)),
+    #image(reclass_sd_pval,  main = "Standard deviation of predicted p-values in geographic space", col=rev(terrain.colors(256)),
+    image(reclass_prob_pval,  main = "Proportion of iterations predicted significant p-values in geographic space", col=rev(terrain.colors(256)),
           xlab = "Longitude", ylab = "Latitude",
-          xlim = c(reclass_sd_pval@extent@xmin-0.01*(abs(reclass_sd_pval@extent@xmin)),reclass_tol@extent@xmax+0.01*(abs(reclass_sd_pval@extent@xmin))), ylim = c(reclass_sd_pval@extent@ymin-0.01*(abs(reclass_sd_pval@extent@ymin)),reclass_sd_pval@extent@ymax+0.01*(abs(reclass_sd_pval@extent@ymin))))
+          #xlim = c(reclass_sd_pval@extent@xmin-0.01*(abs(reclass_sd_pval@extent@xmin)),reclass_tol@extent@xmax+0.01*(abs(reclass_sd_pval@extent@xmin))), ylim = c(reclass_sd_pval@extent@ymin-0.01*(abs(reclass_sd_pval@extent@ymin)),reclass_sd_pval@extent@ymax+0.01*(abs(reclass_sd_pval@extent@ymin))))
+          xlim = c(reclass_prob_pval@extent@xmin-0.01*(abs(reclass_prob_pval@extent@xmin)),reclass_tol@extent@xmax+0.01*(abs(reclass_prob_pval@extent@xmin))), ylim = c(reclass_prob_pval@extent@ymin-0.01*(abs(reclass_prob_pval@extent@ymin)),reclass_prob_pval@extent@ymax+0.01*(abs(reclass_prob_pval@extent@ymin))))
     image(naband_pval_reclass, col = "black", add = T)
     par(mai=c(0,0,0,0), mar=c(5.1,0.1,4.1,2.1)/4, pty = "m")
     legend_image <- as.raster(matrix(terrain.colors(256)), ncol=1)
     plot(c(-10,20),c(-0.1,5),type = 'n', axes = F,xlab = '', ylab = '')
-    text(x=3.5, y = c(0,1,1.2), labels = c("0",paste(round(max(reclass_sd_pval@data@values, na.rm=T), digits = 2), sep=""), "Standard Deviation"))
+    #text(x=3.5, y = c(0,1,1.2), labels = c("0",paste(round(max(reclass_sd_pval@data@values, na.rm=T), digits = 2), sep=""), "Standard Deviation"))
+    text(x=3.5, y = c(0,1,1.2), labels = c("0",paste(round(max(reclass_prob_pval@data@values, na.rm=T), digits = 2), sep=""), "Proportion Significant"))
     rasterImage(legend_image, 0, 0, 1,1, main = "")
     legend(
       "bottom",
