@@ -32,6 +32,9 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 *.rds
+dissertation/
+#erroneously made a temp file for rasters in this directory
+## MUST RESOLVE
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/

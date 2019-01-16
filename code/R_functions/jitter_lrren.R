@@ -31,7 +31,7 @@ require("geoR")
 # control_locs = data.frame of 4 variables (lon, lat, pc1, pc2)
 # extract_locs = data.frame of 4 variables (lon, lat, pc1, pc2)
 
-jitter_llren <- function(sim_locs, predict_locs,
+jitter_lrren <- function(sim_locs, predict_locs,
                          #bandw=NULL, sim=NULL,quant=NULL,grid_number=NULL,
                          #cv=FALSE,
                          predict=TRUE,
@@ -48,6 +48,7 @@ jitter_llren <- function(sim_locs, predict_locs,
   require("rgeos")
   require("spatstat")
   require("raster")
+  require("foreach")
 
   ## Set colors for plotting
   if(is.null(plot.cols)){
@@ -89,6 +90,9 @@ jitter_llren <- function(sim_locs, predict_locs,
     #cat("Estimating jittered relative risk",k,"of",length(sim_locs),"simulations\n")
     case_locs = subset(sim_locs[[k]], sim_locs[[k]]$mark == 1)
     control_locs = subset(sim_locs[[k]], sim_locs[[k]]$mark == 0)
+
+    case_locs = case_locs[complete.cases(case_locs),] #remove any NAs
+    control_locs = control_locs[complete.cases(control_locs),] #remove any NAs
 
     ## Calculate Bandwidth or user specified value
       ## Input Preparation
@@ -156,8 +160,12 @@ jitter_llren <- function(sim_locs, predict_locs,
   proportionSignificant <- function(x) {
     x / length(sim_locs)
   }
+  pval_prop_wNA <- sapply(pval_count, FUN = proportionSignificant)
 
-  pval_prop <- sapply(pval_count, FUN = proportionSignificant)
+  # Force NA values for graphing, match position of NAs of mean p-value
+  pval_prop_wNA <- cbind(pval_mean,pval_prop_wNA)
+  pval_prop_wNA[,2][is.na(pval_prop_wNA[,1])] <- NA
+  pval_prop <- pval_prop_wNA[,2]
 
   # Convert to mean relative risk raster
   rr <- as.data.frame(dplyr::data_frame(
@@ -237,7 +245,7 @@ jitter_llren <- function(sim_locs, predict_locs,
     #reclass_pval_sd <- pvalsd_raster
     reclass_pval_prop <- pvalprop_raster
     #reclass_pval_sd@data@values <- ifelse(reclass_pval_sd@data@values < 0.01, NA, reclass_pval_sd@data@values)
-    reclass_pval_prop@data@values <- ifelse(reclass_pval_prop@data@values == 0, NA, reclass_pval_prop@data@values)
+    #reclass_pval_prop@data@values <- ifelse(reclass_pval_prop@data@values == 0, NA, reclass_pval_prop@data@values)
 
     # Mean relative risk
     upperhalf = length(rr_raster@data@values[rr_raster@data@values>0 & !is.na(rr_raster@data@values)])

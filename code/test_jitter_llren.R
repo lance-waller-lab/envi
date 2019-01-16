@@ -102,17 +102,45 @@ scaled_reproj_tmin_rast <- (reproj_tmin_rast-min(na.omit(reproj_tmin_rast@data@v
 scaled_reproj_vpdmax_rast <- (reproj_vpdmax_rast-min(na.omit(reproj_vpdmax_rast@data@values)))/(max(na.omit(reproj_vpdmax_rast@data@values))-min(na.omit(reproj_vpdmax_rast@data@values)))
 scaled_reproj_vpdmin_rast <-(reproj_vpdmin_rast-min(na.omit(reproj_vpdmin_rast@data@values)))/(max(na.omit(reproj_vpdmin_rast@data@values))-min(na.omit(reproj_vpdmin_rast@data@values)))
 
+# # Scale Rasters by Z-Transformation
+# scaled_reproj_ppt_rast <- (reproj_ppt_rast-mean(na.omit(reproj_ppt_rast@data@values)))/sd(na.omit(reproj_ppt_rast@data@values))
+# scaled_reproj_tdmean_rast <- (reproj_tdmean_rast-mean(na.omit(reproj_tdmean_rast@data@values)))/sd(na.omit(reproj_tdmean_rast@data@values))
+# scaled_reproj_tmax_rast <- (reproj_tmax_rast-mean(na.omit(reproj_tmax_rast@data@values)))/sd(na.omit(reproj_tmax_rast@data@values))
+# scaled_reproj_tmean_rast <- (reproj_tmean_rast-mean(na.omit(reproj_tmean_rast@data@values)))/sd(na.omit(reproj_tmean_rast@data@values))
+# scaled_reproj_tmin_rast <- (reproj_tmin_rast-mean(na.omit(reproj_tmin_rast@data@values)))/sd(na.omit(reproj_tmin_rast@data@values))
+# scaled_reproj_vpdmax_rast <- (reproj_vpdmax_rast-mean(na.omit(reproj_vpdmax_rast@data@values)))/sd(na.omit(reproj_vpdmax_rast@data@values))
+# scaled_reproj_vpdmin_rast <- (reproj_vpdmin_rast-mean(na.omit(reproj_vpdmin_rast@data@values)))/sd(na.omit(reproj_vpdmin_rast@data@values))
+
+# # Standardize Rasters by scale function
+scaled_reproj_ppt_rast <- scale(reproj_ppt_rast, center=TRUE, scale=TRUE)
+scaled_reproj_tdmean_rast <- scale(reproj_tdmean_rast, center=TRUE, scale=TRUE)
+scaled_reproj_tmax_rast <- scale(reproj_tmax_rast, center=TRUE, scale=TRUE)
+scaled_reproj_tmean_rast <- scale(reproj_tmean_rast, center=TRUE, scale=TRUE)
+scaled_reproj_tmin_rast <- scale(reproj_tmin_rast, center=TRUE, scale=TRUE)
+scaled_reproj_vpdmax_rast <- scale(reproj_vpdmax_rast, center=TRUE, scale=TRUE)
+scaled_reproj_vpdmin_rast <- scale(reproj_vpdmin_rast, center=TRUE, scale=TRUE)
+
 # Spatial PCA
 #install.packages("RStoolbox")
 library(RStoolbox)
 #library(raster)
 
+
+load("/Users/IDB/Documents/GitHub/dissertation/prism_standardized.Rdata")
+rasters_scaled
+pca3 <- RStoolbox::rasterPCA(rasters_scaled)
+pca1 <- pca3
+save(pca1, file = "pca_prism_range.Rdata")
+
+
 # Raster Stack for PCA
 mask_rasters_scaled <- stack(scaled_reproj_ppt_rast, scaled_reproj_tdmean_rast,
                              scaled_reproj_tmax_rast,scaled_reproj_tmean_rast,
-                             scaled_reproj_tmin_rast,scaled_reproj_vpdmax_rast,scaled_reproj_vpdmin_rast)
+                             scaled_reproj_tmin_rast,scaled_reproj_vpdmax_rast,
+                             scaled_reproj_vpdmin_rast)
 
 # PCA (rasters masked by window)
+pca2 <- RStoolbox::rasterPCA(mask_rasters_scaled)
 pca1 <- rasterPCA(mask_rasters_scaled)
 summary(pca1$model)
 pca1$model$loadings

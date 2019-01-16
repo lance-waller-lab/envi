@@ -12,7 +12,7 @@
 # rasters = raster or rasterstack of covariates
 # distances = vector of maximum distances per level
 
-jitterKnD <- function(data, rasters, distances, crs, sim){
+jitterKnD <- function(dat, rasters, distances, cref, sim){
 
   sample_raster_NA <- function(r, xy){
     apply(X = xy, MARGIN = 1,
@@ -32,25 +32,25 @@ jitterKnD <- function(data, rasters, distances, crs, sim){
   jitter_out <- NULL
 
 # if(unit = "degree"){
-# coords <- sp::coordinates(cbind(data$lon, data$lat))
+# coords <- sp::coordinates(cbind(dat$lon, dat$lat))
 # }
 if(!is.matrix(distances)){stop("Distances must be a matrix")}
 #if(unit !="km"){stop("Units must be in kilometers (km)")}
   ## Convert lon/lat coordinates to UTM
   # Get the UTM zone for a given longitude
-  data$zone = (floor((data[,2] + 180)/6) %% 60) + 1
-  names(data) <- c("id", "lon", "lat", "mark", "levels", "zone")
+  dat$zone = (floor((dat[,2] + 180)/6) %% 60) + 1
+  names(dat) <- c("id", "lon", "lat", "mark", "levels", "zone")
   # Split data by zone
-  df_list = split(data, as.factor(data$zone))
-  crs = crs
-  datum = gsub('^.*datum=\\s*|\\s* .*$', '', crs)
+  df_list = split(dat, as.factor(dat$zone))
+  cref = cref
+  datum = gsub('^.*datum=\\s*|\\s* .*$', '', cref)
 
   # Convert to correct UTM if multiple zones
   for (i in 1:length(df_list)){
     zone = df_list[[i]]$zone[1]
     crs_utm = paste("+proj=utm +zone=",zone," +datum=",datum, sep = "")
     coordinates(df_list[[i]]) = ~lon+lat
-    proj4string(df_list[[i]]) = CRS(crs)
+    proj4string(df_list[[i]]) = CRS(cref)
     sp_df = spTransform(df_list[[i]], CRS(crs_utm))
     coords_list[[i]] = as.data.frame(cbind(sp_df@coords, sp_df@data))
   }
@@ -80,7 +80,7 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
       crs_utm2 = paste("+proj=utm +zone=",zone_utm," +datum=",datum, sep = "")
       coordinates(jitter_zone[[i]]) = ~lon+lat
       proj4string(jitter_zone[[i]]) = CRS(crs_utm2)
-      spdf2 = spTransform(jitter_zone[[i]], CRS(crs))
+      spdf2 = spTransform(jitter_zone[[i]], CRS(cref))
       df_coords[[i]] = as.data.frame(cbind(spdf2@coords, spdf2@data))
     }
 
@@ -161,7 +161,7 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
       #xy <- extract_coords_na_df[,2:3]
       sampled_raster_list <- purrr::map(.x = rasters@layers, .f = sample_raster_NA, xy=extract_coords_na_df)
 
-      sampled_raster <- data.frame(id = as.numeric(unlist(Map(names, sampled_raster_list))), value = unlist(sampled_raster_list), layer = rep(unlist(lapply(rasters@layers, names)), lengths(sampled_raster_list)))
+      sampled_raster <- data.frame(id = as.numeric(unlist(Map(names, sampled_raster_list))), value = as.numeric(unlist(sampled_raster_list)), layer = rep(unlist(lapply(rasters@layers, names)), lengths(sampled_raster_list)))
 
       sampled_raster <- tidyr::spread(sampled_raster, layer, value)
 
@@ -190,8 +190,8 @@ if(!is.matrix(distances)){stop("Distances must be a matrix")}
   # Original Dataset (Observed)
 
   ## Extract Covariate Values from Rasters
-  extract_coords <- data[,2:3]
-  df_extract <-  data.frame(data, raster::extract(rasters,extract_coords))
+  extract_coords <- dat[,2:3]
+  df_extract <-  data.frame(dat, raster::extract(rasters,extract_coords))
   df_extract <- df_extract[order(df_extract$id),]
   df_extract$id <- as.character(df_extract$id)
   df_extract$zone <- NULL
