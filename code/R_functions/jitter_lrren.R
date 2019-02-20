@@ -149,9 +149,15 @@ jitter_lrren <- function(sim_locs, predict_locs,
   #                        "jitter_pval" = jitter_pval
   # )
 
-  rr_mean <- rowMeans(do.call(cbind, jitter_rr), na.rm = TRUE)
+  # Set -Inf and Inf to NA values
+  jitter_rr_dat <- do.call(cbind, jitter_rr)
+  jitter_rr_dat <- ifelse(jitter_rr_dat == -Inf, NA, jitter_rr_dat)
+  jitter_rr_dat <- ifelse(jitter_rr_dat == Inf, NA, jitter_rr_dat)
+
+  # Calculate Mean and Standard Deviation
+  rr_mean <- rowMeans(jitter_rr_dat, na.rm = TRUE)
   pval_mean <-  rowMeans(do.call(cbind, jitter_pval), na.rm = TRUE)
-  rr_sd <- apply(do.call(cbind,jitter_rr),1,sd, na.rm = TRUE)
+  rr_sd <- apply(jitter_rr_dat,1,sd, na.rm = TRUE)
   #pval_sd <- apply(do.call(cbind,jitter_pval),1,sd, na.rm = TRUE)
 
   pval_sig <- rapply(jitter_pval,function(x) ifelse(x < 0.025 | x > 0.975 ,TRUE,FALSE), how = "replace")
