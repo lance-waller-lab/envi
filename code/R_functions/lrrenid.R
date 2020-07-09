@@ -88,7 +88,8 @@ lrren <- function(obs_locs, predict_locs,
 
   ## Calculate boundary polygons
   # Calculate inner boundary polygon (extent of case and control locations in environmental space)
-  inner_chull <- concaveman::concaveman(cbind(obs_locs[,5], obs_locs[,6]))
+  
+  inner_chull <- concaveman::concaveman(as.matrix(obs_locs[,5:6]))
   inner_chull_pts <- sp::coordinates(inner_chull)
   inner_chull_pts <- rbind(inner_chull_pts, inner_chull_pts[1,]) # repeats the first coordinate to complete the polygon
   inner_chull_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(inner_chull_pts)),1))) # convert points to polygon
@@ -110,7 +111,7 @@ lrren <- function(obs_locs, predict_locs,
       outer_chull <- chull(x=predict_locs[,3], y=predict_locs[,4])
       outer_chull_pts <- predict_locs[c(outer_chull, outer_chull[1]), 3:4]
     }else{
-      outer_chull <- concaveman::concaveman(cbind(predict_locs[,3], predict_locs[,4]))
+      outer_chull <- concaveman::concaveman(as.matrix(predict_locs[,3:4]))
       outer_chull_pts <- sp::coordinates(outer_chull)
     }
 
