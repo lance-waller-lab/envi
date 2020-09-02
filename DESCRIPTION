@@ -1,11 +1,53 @@
 Package: aegis
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Ecological Niche Model using Relative Risk Surfaces
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: 
+    c(person(given = "Ian D.",
+             family = "Buller",
+             role = c("aut", "cre", "cph"),
+             email = "ian.buller@alumni.emory.edu"),
+      person(given = "A. Townsend",
+             family = "Peterson",
+             role = c("ctb"),
+             email = "town@ku.edu"),
+      person(given = "Lance A.",
+             family = "Waller",
+             role = "ctb",
+             email = "lwaller@emory.edu")
+             )
+Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
+Description: Estimate an ecological niche using presence/absence data and kernel-based 
+        the spatial relative risk function that is estimated using the 'sparr' package.
+        Details about the 'sparr' package methods can be found in the tutorial: Davies
+        et al. (2018) <doi:10.1002/sim.7577>.  Details about kernel density estimation 
+        can be found in J. F. Bethell (1990) <doi:10.1002/sim.4780090616>.  More 
+        information about relative risk functions using kernel-density estimation can 
+        be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2
+Depends: R (>= 3.5.0)
+Imports: 
+    concaveman,
+    cvAUC,
+    dplyr,
+    foreach,
+    pls,
+    plyr,
+    raster,
+    ROCR,
+    rgeos,
+    sp,
+    spatstat,
+    sparr,
+    utils
+Suggests: 
+    tidyverse,
+    testthat,
+    spelling,
+    R.rsp
+VignetteBuilder: R.rsp
+Language: en-US
