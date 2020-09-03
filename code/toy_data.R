@@ -1,19 +1,20 @@
-## ***************************************************************** #
-## Toy data for calculating overlap in niche of mulitiple species
-## ---------------------
-## Created by: Ian Buller
-## Created on: August 4, 2018
-## 
-## Recently edited by:
-## Recently edited on:
-##
-## Notes:
+# -------------------------------------------------------------- #
+# Toy data for calculating overlap in niche of mulitiple species
+#
+# Created by: Ian Buller, Ph.D., M.A. (Github: @idblr)
+# Created on: August 4, 2018
+#
+# Recently edited by: @idblr
+# Recently edited on: September 3, 2020
+#
+# Notes:
 # A) Toy data to estimate niche overlap and reproject to geographic space
 # B) Toy data is random normal, no induced clustering initially
 # C) Environmental variable chosen is PRISM data (http://www.prism.oregonstate.edu/)
 # D) Variables are standardized using the range transformation
 # E) Dimensionality reduction perfomed using Principal Component Analysis (non-spatial)
-## ***************************************************************** #
+# F) 09/02/2020 (@idblr) - Updated example to run updates to lrren() function and new plotting functions
+# -------------------------------------------------------------- #
 
 ### Set seed
 set.seed(42) # the answer to life, the universe and everything
@@ -226,4 +227,32 @@ dat_3d$mark <- c(rep(3,nrow(case_locs)), rep(2,nrow(control_locs)),rep(1,nrow(pr
 rgl::plot3d(x = dat_3d$pc1, y = dat_3d$pc2, z = dat_3d$pc3,
             xlab = "PC1", ylab = "PC2", zlab = "PC3", pch = 16, cex = 0.2, col = c("black", "blue", "red")[dat_3d$mark], cex = c(rep(0.2, nrow(predict_locs)), rep(1, nrow(control_locs)+nrow(case_locs))))
 
+# Test updated lrren() function
+## Data preparation
+case_locs$mark <- rep(1, nrow(case_locs))
+case_locs$id <- seq(1, nrow(case_locs), 1)
+control_locs$mark <- rep(0, nrow(control_locs))
+control_locs$id <- rep(1, nrow(control_locs), 1)
+obs_locs <- rbind(case_locs[ , c(7,1,2,6,3,4)], control_locs[ , c(7,1,2,6,3,4)])
 
+## lrren
+set.seed(1234)
+test <- lrren(obs_locs = obs_locs,
+              predict_locs = predict_locs,
+              verbose = T, conserve = T, cv = T,
+              parallel = F, balance = T)
+
+## lrren plots
+plot_obs(test, alpha = 0.05)
+plot_predict(test, alpha = 0.05)
+plot_cv(test, alpha = 0.05)
+
+# https://www.farb-tabelle.de/en/rgb2hex.htm?q=yellow
+# blue3: #0000cd
+# cornflowerblue: #6495ed
+# grey80: #cccccc
+# indianred1: #ff6a6a
+# indianred4: #8b3a3a
+# yellow: #ffff00
+
+# ------------------------ END OF CODE ------------------------- #
