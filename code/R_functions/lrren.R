@@ -25,20 +25,20 @@ lrren <- function(obs_locs,
   inner_chull_pts <- rbind(inner_chull_pts, inner_chull_pts[1, ])
   inner_chull_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(inner_chull_pts)), 1)))
 
-  if(is.null(poly_buffer)){
-    poly_buffer <- abs(min(diff(sp::bbox(inner_chull_poly)[1, ]), diff(sp::bbox(inner_chull_poly)))/100)
+  if (is.null(poly_buffer)) {
+    poly_buffer <- abs(min(diff(sp::bbox(inner_chull_poly)[1, ]), diff(sp::bbox(inner_chull_poly)[2, ])) / 100)
   }
 
   # add small buffer around polygon to include boundary points
   inner_chull_poly_buffer <- rgeos::gBuffer(inner_chull_poly, width = poly_buffer, byid = TRUE)
   inner_poly <- inner_chull_poly_buffer@polygons[[1]]@Polygons[[1]]@coords
 
-  if(is.null(predict_locs)){
+  if (is.null(predict_locs)) {
     outer_chull_poly <- inner_chull_poly_buffer
     outer_poly <- inner_poly
   } else {
     ## Calculate outer boundary polygon (full extent of geographical extent in environmental space)
-    if(nrow(predict_locs) > 5000000){ # convex hull
+    if (nrow(predict_locs) > 5000000) { # convex hull
       outer_chull <- grDevices::chull(x = predict_locs[ , 3], y = predict_locs[ , 4])
       outer_chull_pts <- predict_locs[c(outer_chull, outer_chull[1]), 3:4]
     } else { # concave hull
@@ -115,8 +115,8 @@ lrren <- function(obs_locs,
     # Prediction locations
     extract_points <- cbind(predict_locs[ , 3], predict_locs[ , 4])
     extract_predict <-  dplyr::data_frame(predict_locs = predict_locs,
-                                                    rr = raster::extract(rr_raster, extract_points),
-                                                    pval = raster::extract(pval_raster, extract_points))
+                                          rr = raster::extract(rr_raster, extract_points),
+                                          pval = raster::extract(pval_raster, extract_points))
 
 
     output <- list("obs" = obs,
@@ -136,9 +136,7 @@ lrren <- function(obs_locs,
     cv_labels <- list()
     cv_pvals <- list()
 
-    ## Set function used in foreach
-    `%fun%` <- `%do%`
-    # Combine function used in foreach
+    ## Combine function used in foreach
     comb <- function(x, ...) {
       lapply(seq_along(x),
              function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
@@ -157,22 +155,20 @@ lrren <- function(obs_locs,
     }
 
     ### Progress bar
-    if (verbose == TRUE & parallel == FALSE){
+    if (verbose == TRUE & parallel == FALSE) {
       message("Cross-validation in progress")
       pb <- txtProgressBar(min = 0, max = nfold, style = 3)
     }
 
     ### Set function used in foreach
-    if (parallel == TRUE){
+    if (parallel == TRUE) {
       loadedPackages <- c("doParallel", "parallel")
-      invisible(lapply(loadedPackages, require, character.only = T))
-      if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
+      invisible(lapply(loadedPackages, require, character.only = TRUE))
+      if (is.null(n_core)) { n_core <- parallel::detectCores() - 1 }
       cl <- parallel::makeCluster(n_core)
       doParallel::registerDoParallel(cl)
       `%fun%` <- `%dopar%`
-    } else {
-      `%fun%` <- `%do%`
-    }
+    } else { `%fun%` <- `%do%` }
 
     ### Foreach loop
     out_par <- foreach::foreach(k = 1:nfold,
@@ -183,14 +179,14 @@ lrren <- function(obs_locs,
                                 ) %fun% {
 
       #### Progress bar
-      if (verbose == TRUE & parallel == FALSE){ utils::setTxtProgressBar(pb, k) }
+      if (verbose == TRUE & parallel == FALSE) { utils::setTxtProgressBar(pb, k) }
 
-      if(balance == FALSE) {
+      if (balance == FALSE) {
         testing <- obs_locs[cv_segments[k]$V, ]
         training <- obs_locs[-(cv_segments[k]$V), ]
       } else {
         ind <- 1:length(cv_seg_con[k]$V)
-        randind <- sample(ind, length(cv_seg_cas[k]$V), replace = F)
+        randind <- sample(ind, length(cv_seg_cas[k]$V), replace = FALSE)
         testing_cas <- case_locs[cv_seg_cas[k]$V, ]
         testing_con <- control_locs[cv_seg_con[k]$V, ]
         testing_con <- testing_con[randind, ] # undersample the controls for testing
@@ -212,7 +208,7 @@ lrren <- function(obs_locs,
                                                                                 y = rev(window_poly[ , 2]))), checkdup = FALSE)
 
       ##### Calculate observed kernel density ratio
-      rand_lrr <- sparr::risk(f = ppp_case_training,g = ppp_control_training,
+      rand_lrr <- sparr::risk(f = ppp_case_training, g = ppp_control_training,
                               tolerate = TRUE, verbose = FALSE, ...)
 
       ##### Create index coordinates
@@ -233,8 +229,8 @@ lrren <- function(obs_locs,
       rr_raster[is.na(rr_raster[])] <- 0 # if NA, assigned null value (log(rr) = 0)
       ##### Convert to categorical raster
       pval <-  dplyr::data_frame(x = rx,
-                                           y = ry,
-                                           v = as.vector(t(rand_lrr$P$v)))
+                                 y = ry,
+                                 v = as.vector(t(rand_lrr$P$v)))
       pval$v <- ifelse(is.infinite(pval$v), NA, pval$v)
       sp::coordinates(pval) <- ~ x + y # coordinates
       sp::gridded(pval) <- TRUE # gridded
@@ -258,7 +254,7 @@ lrren <- function(obs_locs,
     }
 
     # Stop clusters, if parallel
-    if(parallel == TRUE){
+    if (parallel == TRUE) {
       parallel::stopCluster(cl)
     }
 

@@ -15,7 +15,7 @@ plot_predict <- function(input,
   sp::gridded(predict_risk) <- TRUE # gridded
   predict_risk_raster <- raster::raster(predict_risk)
   raster::crs(predict_risk_raster) <- cref0
-  if(!is.null(cref1)){
+  if (!is.null(cref1)) {
     predict_risk_raster <- raster::projectRaster(predict_risk_raster,
                                                  crs = cref1,
                                                  method = "ngb")
@@ -27,7 +27,7 @@ plot_predict <- function(input,
   sp::gridded(naband) <- TRUE # gridded
   NA_risk_raster <- raster::raster(naband)
   raster::crs(NA_risk_raster) <- cref0
-  if(!is.null(cref1)){
+  if (!is.null(cref1)) {
     NA_risk_raster <- raster::projectRaster(NA_risk_raster,
                                             crs = cref1,
                                             method = "ngb")
@@ -43,19 +43,19 @@ plot_predict <- function(input,
   sp::gridded(predict_tol) <- TRUE # gridded
   predict_tol_raster <- raster::raster(predict_tol)
   raster::crs(predict_tol_raster) <- cref0
-  if(!is.null(cref1)){
+  if (!is.null(cref1)) {
     predict_tol_raster <- raster::projectRaster(predict_tol_raster,
                                                 crs = cref1,
                                                 method = "ngb")
   }
 
   reclass_tol <- raster::cut(predict_tol_raster,
-                             breaks = c(-Inf, alpha/2, 1-alpha/2, Inf),
+                             breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
                              right = FALSE)
 
   # Plot 1: log relative risk
   rrp <- lrr_raster(input = predict_risk_raster,
-                  cols = plot_cols[c(3,2,1)],
+                  cols = plot_cols[c(3, 2, 1)],
                   midpoint = 0)
 
   par(pty = "s")
@@ -63,24 +63,22 @@ plot_predict <- function(input,
                            breaks = rrp$breaks,
                            col = rrp$cols,
                            axes = TRUE,
-                           cex.lab = 1,
                            main = "log relative risk",
                            xlab = "Longitude",
                            ylab = "Latitude",
-                           cex = 1,
                            axis.args = list(at = rrp$at,
                                             labels = rrp$labels,
                                             cex.axis = 0.67))
-  raster::image(naband_reclass, col = plot_cols[4], add = T)
+  raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
 
   # Plot 2: Significant p-values
-  if(all(raster::values(reclass_tol)[!is.na(raster::values(reclass_tol))] == 2)){
+  if (all(raster::values(reclass_tol)[!is.na(raster::values(reclass_tol))] == 2)) {
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2
     labp <- "Insignificant"
   } else {
-    pcols <- plot_cols[c(3,2,1)]
+    pcols <- plot_cols[c(3, 2, 1)]
     brp <- c(1, 1.67, 2.33, 3)
     atp <- c(1.33, 2, 2.67)
     labp <- c("Presence", "Insignificant", "Absence")
@@ -89,7 +87,6 @@ plot_predict <- function(input,
   p2 <- fields::image.plot(reclass_tol,
                            breaks = brp,
                            col = pcols,
-                           cex = 1,
                            axes = TRUE,
                            main = paste("Significant p-values\nalpha =", alpha, sep = " "),
                            xlab = "Longitude",
@@ -98,7 +95,7 @@ plot_predict <- function(input,
                                             labels = labp,
                                             las = 0,
                                             cex.axis = 0.67))
-  raster::image(naband_reclass, col = plot_cols[4], add = T)
+  raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
 
   suppressMessages(suppressWarnings(par(op)))
 }

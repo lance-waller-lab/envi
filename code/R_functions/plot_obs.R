@@ -27,7 +27,7 @@ plot_obs <- function(input,
 
   # Plot 2: log relative risk
   rrp <- lrr_plot(input = input$out$obs$rr,
-                  cols = plot_cols[c(3,2,1)],
+                  cols = plot_cols[c(3, 2, 1)],
                   midpoint = 0)
 
   p2 <- spatstat.core::plot.ppp(dat,
@@ -41,24 +41,22 @@ plot_obs <- function(input,
                                 ann = TRUE,
                                 ...)
   fields::image.plot(rrp$v,
-                     add = T,
+                     add = TRUE,
                      breaks = rrp$breaks,
                      col = rrp$cols,
-                     cex.lab = 1,
-                     cex = 1,
                      axis.args = list(at = rrp$at,
                                       labels = rrp$labels,
                                       cex.axis = 0.67))
 
   # Plot 3: Significant p-values
   pvalp <- pval_plot(input$out$obs$P, alpha = alpha)
-  if(all(raster::values(pvalp)[!is.na(raster::values(pvalp))] == 2)){
+  if (all(raster::values(pvalp)[!is.na(raster::values(pvalp))] == 2)) {
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2
     labp <- "Insignificant"
   } else {
-    pcols <- plot_cols[c(3,2,1)]
+    pcols <- plot_cols[c(3, 2, 1)]
     brp <- c(1, 1.67, 2.33, 3)
     atp <- c(1.33, 2, 2.67)
     labp <- c("Presence", "Insignificant", "Absence")
@@ -75,14 +73,12 @@ plot_obs <- function(input,
                                 main = paste("Significant p-values\nalpha =", alpha, sep = " "),
                                 ...)
   fields::image.plot(pvalp,
-                     add = T,
+                     add = TRUE,
                      breaks = brp,
                      col = pcols,
-                     cex = 1,
                      axis.args = list(at = atp,
                                       las = 0,
                                       labels = labp,
-                                      cex.axis = 0.67)
-                     )
+                                      cex.axis = 0.67))
   suppressMessages(suppressWarnings(par(op)))
 }

@@ -6,8 +6,8 @@ plot_cv <- function(input, alpha = 0.05) {
 
   out_cv_rr <- cvAUC::cvAUC(input$cv$cv_predictions_rr, input$cv$cv_labels)
   out_cv_pval <- cvAUC::cvAUC(input$cv$cv_predictions_pval, input$cv$cv_labels)
-  out_ci_rr <- cvAUC::ci.cvAUC(input$cv$cv_predictions_rr, input$cv$cv_labels, confidence = 1-alpha)
-  out_ci_pval <- cvAUC::ci.cvAUC(input$cv$cv_predictions_pval, input$cv$cv_labels, confidence = 1-alpha)
+  out_ci_rr <- cvAUC::ci.cvAUC(input$cv$cv_predictions_rr, input$cv$cv_labels, confidence = 1 - alpha)
+  out_ci_pval <- cvAUC::ci.cvAUC(input$cv$cv_predictions_pval, input$cv$cv_labels, confidence = 1 - alpha)
 
   layout(matrix(c(1, 2, 3, 3), ncol = 2, byrow = TRUE), heights = c(4, 1))
   par(oma = c(0, 1, 0, 0), mar = c(0.1, 4.1, 4.1, 2.1), pty = "s")
