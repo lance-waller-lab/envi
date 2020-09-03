@@ -11,11 +11,6 @@ lrren <- function(obs_locs,
                   verbose = FALSE,
                   ...) {
 
-  # packages
-  loadedPackages <- c("concaveman", "cvAUC", "dplyr", "foreach", "pls",
-                      "raster", "ROCR", "rgeos", "sp", "spatstat", "sparr", "utils")
-  suppressMessages(suppressWarnings(invisible(lapply(loadedPackages, require, character.only = TRUE))))
-
   if (verbose == TRUE) { message("Estimating relative risk surfaces\n") }
 
   # Compute spatial windows
