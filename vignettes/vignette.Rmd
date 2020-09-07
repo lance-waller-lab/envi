@@ -17,16 +17,16 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRU
 Start with the necessary packages and seed for the vignette
 ```{r packages}
 loadedPackages <- c("raster", "spatstat.core", "spatstat.data")
-#loadedPackages <- c("aegis", "raster", "spatstat.core", "spatstat.data")
+#loadedPackages <- c("envi", "raster", "spatstat.core", "spatstat.data")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
-source('~/Documents/GitHub/aegis/R/lrren.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/plot_obs.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/plot_predict.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/plot_cv.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/lrr_plot.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/pval_plot.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/aegis/R/lrr_raster.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/lrren.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/plot_obs.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/plot_predict.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/plot_cv.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/lrr_plot.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/pval_plot.R') # REMOVE IN FINAL VIGNETTE
+source('~/Documents/GitHub/envi/R/lrr_raster.R') # REMOVE IN FINAL VIGNETTE
 ```
 
 We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in Funwi-Gabga and Mateu (2012) <https://doi.org/10.1007/s00477-011-0541-1>. The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots (i.e., ecological niche) of nesting within the covariate information and then predict where these hot-spots are located within the park.
@@ -74,7 +74,7 @@ spatstat::marks(absence)$slopeangle <- slopeangle[absence]
 spatstat::marks(absence)$waterdist <- waterdist[absence]
 ```
 
-Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `aegis` package:
+Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `envi` package:
 
 1. ID
 2. X-coordinate
@@ -98,7 +98,7 @@ predict_locs <- data.frame(raster::rasterToPoints(slopeangle_raster))
 predict_locs$layer2 <- raster::extract(waterdist_raster, predict_locs[, 1:2])
 ```
 
-Run the `lrren` function within the `aegis` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct n-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`), and we quiet run messages (`verbose = TRUE`).
+Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct n-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`), and we quiet run messages (`verbose = TRUE`).
 ```{r lrren}
 # Run lrren
 test <- lrren(obs_locs = obs_locs,
