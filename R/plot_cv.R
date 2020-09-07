@@ -62,7 +62,7 @@ plot_cv <- function(input, alpha = 0.05) {
   plot(perf_pval, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
        xlab = "True Positive Rate (Sensitivity or Recall)\n",
        ylab = "\nPositive Predictive Value (Precision)")
-  abline((nrow(case_locs) / nfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
+  abline((nsamp / nfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
   suppressWarnings(lines(colMeans(do.call(rbind,perf_pval@x.values)),
         colMeans(do.call(rbind,perf_pval@y.values)),
         col = "red", lty = 1, lwd = 2)) # mean PRREC
@@ -78,5 +78,5 @@ plot_cv <- function(input, alpha = 0.05) {
          col = c("black", "red", "black"))
   mtext(paste("Precision-Recall Curve\n", nfold, "-fold cross-validation, alpha = ", alpha, sep=""), side = 3, line = -4, outer = TRUE, cex = 1.25)
 
-  suppressMessages(suppressWarnings(par(op)))
+ on.exit(par(op))
 }

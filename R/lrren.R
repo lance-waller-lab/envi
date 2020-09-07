@@ -1,6 +1,7 @@
 lrren <- function(obs_locs,
-                  predict_locs,
-                  predict = TRUE,
+                  predict_locs = NULL,
+                  obs_window = NULL,
+                  predict = FALSE,
                   conserve = TRUE,
                   cv = FALSE,
                   nfold = 10,
@@ -34,10 +35,10 @@ lrren <- function(obs_locs,
   } else {
     ## Calculate outer boundary polygon (full extent of geographical extent in environmental space)
     if (nrow(predict_locs) > 5000000) { # convex hull
-      outer_chull <- grDevices::chull(x = predict_locs[ , 3], y = predict_locs[ , 4])
+      outer_chull <- grDevices::chull(x = na.omit(predict_locs)[ , 3], y = na.omit(predict_locs)[ , 4])
       outer_chull_pts <- predict_locs[c(outer_chull, outer_chull[1]), 3:4]
     } else { # concave hull
-      outer_chull <- concaveman::concaveman(as.matrix(predict_locs[ , 3:4]))
+      outer_chull <- concaveman::concaveman(as.matrix(na.omit(predict_locs)[ , 3:4]))
       outer_chull_pts <- sp::coordinates(outer_chull)
     }
     outer_chull_pts <- rbind(outer_chull_pts, outer_chull_pts[1, ])
@@ -49,20 +50,23 @@ lrren <- function(obs_locs,
 
   if (conserve == TRUE) { window_poly <- inner_poly } else { window_poly <- outer_poly }
 
+  if (is.null(obs_window)) {
+    wind <- spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
+                                       y = rev(window_poly[ , 2])))
+  } else { wind <- obs_window }
+
   # Input Preparation
   ## case and control point pattern datasets
-  case_locs <- subset(obs_locs, obs_locs$mark == 1)
-  control_locs <- subset(obs_locs, obs_locs$mark == 0)
+  case_locs <- subset(obs_locs, obs_locs[ , 4] == 1)
+  control_locs <- subset(obs_locs, obs_locs[, 4] == 0)
 
   ppp_case <- spatstat::ppp(x = case_locs[ , 5],
                             y = case_locs[ , 6],
-                            window = spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
-                                                                y = rev(window_poly[ , 2]))),
+                            window = wind,
                             checkdup = FALSE)
   ppp_control <- spatstat::ppp(x = control_locs[ , 5],
                                y = control_locs[ , 6],
-                               window = spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
-                                                                   y = rev(window_poly[ , 2]))),
+                               window = wind,
                                checkdup = FALSE)
 
   # Calculate observed kernel density ratio
@@ -162,8 +166,8 @@ lrren <- function(obs_locs,
       if (is.null(n_core)) { n_core <- parallel::detectCores() - 1 }
       cl <- parallel::makeCluster(n_core)
       doParallel::registerDoParallel(cl)
-      `%fun%` <- `%dopar%`
-    } else { `%fun%` <- `%do%` }
+      `%fun%` <- foreach::`%dopar%`
+    } else { `%fun%` <- foreach::`%do%` }
 
     ### Foreach loop
     out_par <- foreach::foreach(k = 1:nfold,
@@ -195,12 +199,12 @@ lrren <- function(obs_locs,
       ###### case and control point pattern datasets
       ppp_case_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 1],
                                          y = training[ , 6][training[ , 4] == 1],
-                                         window = spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
-                                                                             y = rev(window_poly[ , 2]))), checkdup = FALSE)
+                                         window = wind,
+                                         checkdup = FALSE)
       ppp_control_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 0],
                                             y = training[ , 6][training[ , 4] == 0],
-                                            window = spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
-                                                                                y = rev(window_poly[ , 2]))), checkdup = FALSE)
+                                            window = wind,
+                                            checkdup = FALSE)
 
       ##### Calculate observed kernel density ratio
       rand_lrr <- sparr::risk(f = ppp_case_training, g = ppp_control_training,

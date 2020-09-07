@@ -66,7 +66,9 @@ plot_predict <- function(input,
                            main = "log relative risk",
                            xlab = "Longitude",
                            ylab = "Latitude",
+                           legend.mar = 3.1,
                            axis.args = list(at = rrp$at,
+                                            las = 0,
                                             labels = rrp$labels,
                                             cex.axis = 0.67))
   raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
@@ -91,11 +93,12 @@ plot_predict <- function(input,
                            main = paste("Significant p-values\nalpha =", alpha, sep = " "),
                            xlab = "Longitude",
                            ylab = "Latitude",
+                           legend.mar = 3.1,
                            axis.args = list(at = atp,
                                             labels = labp,
                                             las = 0,
                                             cex.axis = 0.67))
   raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
 
-  suppressMessages(suppressWarnings(par(op)))
+  on.exit(par(op))
 }

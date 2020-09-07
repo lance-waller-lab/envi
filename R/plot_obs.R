@@ -44,7 +44,9 @@ plot_obs <- function(input,
                      add = TRUE,
                      breaks = rrp$breaks,
                      col = rrp$cols,
+                     legend.mar = 3.1,
                      axis.args = list(at = rrp$at,
+                                      las = 0,
                                       labels = rrp$labels,
                                       cex.axis = 0.67))
 
@@ -76,9 +78,10 @@ plot_obs <- function(input,
                      add = TRUE,
                      breaks = brp,
                      col = pcols,
+                     legend.mar = 3.1,
                      axis.args = list(at = atp,
                                       las = 0,
                                       labels = labp,
                                       cex.axis = 0.67))
-  suppressMessages(suppressWarnings(par(op)))
+  on.exit(par(op))
 }
