@@ -1,6 +1,6 @@
 #' Plots for the prediciton diagnostics of the ecological niche
 #' 
-#' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal n-fold cross-validation diagnostics.
+#' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
 #' 
 #' @param input An object of class "list" from the \code{\link{lrren}} function.
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
@@ -57,7 +57,7 @@ plot_cv <- function(input, alpha = 0.05) {
   graphics::par(mai = c(0, 0, 0, 0), mar = c(5.1, 4.1, 0.1, 2.1) / 5, pty = "m")
   graphics::plot.new()
   graphics::legend(x = "top", inset = 0, title = "Legend",
-                   legend = c("Individual n-fold",
+                   legend = c("Individual k-fold",
                               "Average",
                               "Luck (Reference)"),
                    lty = c(3, 1, 2), bty = "n",
@@ -96,7 +96,7 @@ plot_cv <- function(input, alpha = 0.05) {
   graphics::par(mai = c(0, 0, 0, 0), mar = c(5.1, 4.1, 0.1, 2.1) / 5, pty = "m")
   graphics::plot.new()
   graphics::legend(x = "top", inset = 0, title = "Legend",
-                   legend = c("Individual n-fold",
+                   legend = c("Individual k-fold",
                               "Average",
                               "Luck (Reference)"),
                    lty = c(3, 1, 2), bty = "n",

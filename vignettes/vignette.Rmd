@@ -98,7 +98,7 @@ predict_locs <- data.frame(raster::rasterToPoints(slopeangle_raster))
 predict_locs$layer2 <- raster::extract(waterdist_raster, predict_locs[, 1:2])
 ```
 
-Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct n-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`), and we quiet run messages (`verbose = TRUE`).
+Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct k-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`), and we quiet run messages (`verbose = TRUE`).
 ```{r lrren}
 # Run lrren
 test <- lrren(obs_locs = obs_locs,

@@ -54,7 +54,7 @@ Available functions
 <td>Easily make multiple plots of the predicted spatial distribution from <code>lrren</code> output.</td>
 </tr>
 <td><code>plot_cv</code></td>
-<td>Easily make multiple plots of internal n-fold cross-validation diagnostics from <code>lrren</code> output.</td>
+<td>Easily make multiple plots of internal k-fold cross-validation diagnostics from <code>lrren</code> output.</td>
 </tr>
 </tbody>
 <table>
@@ -84,7 +84,7 @@ grad$v <- scale(grad)
 elev_raster <- raster::raster(elev)
 grad_raster <- raster::raster(grad)
 
-# Presence
+# Presence locations
 bei <- spatstat.data::bei
 spatstat::marks(bei) <- data.frame("presence" = rep(1, bei$n),
                                         "lon" = bei$x,
@@ -92,7 +92,7 @@ spatstat::marks(bei) <- data.frame("presence" = rep(1, bei$n),
 spatstat::marks(bei)$elev <- elev[bei]
 spatstat::marks(bei)$grad <- grad[bei]
 
-# Absence
+# Absence locations
 set.seed(1234) # for reproducibility
 absence <- spatstat::rpoispp(0.008, win = elev)
 spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),

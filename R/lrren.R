@@ -6,9 +6,9 @@
 #' @param predict Logical. If TRUE, will predict the ecological niche in geographic space. If FALSE (the default), will not predict. 
 #' @param predict_locs Input data frame of prediction locations with 4 features (columns): 1) longitude, 2) latitude, 3) covariate 1 as x-coordinate, 4) covariate 2 as y-coordinate. The covariates must be the same as those included in \code{obs_locs}.
 #' @param conserve Logical. If TRUE (the default), the ecological niche will be estimated within a concave hull around the locations in \code{obs_locs}. If FALSE, the ecological niche will be estimated within a concave hull around the locations in \code{predict_locs}.
-#' @param cv Logical. If TRUE, will calculate prediction diagnostics using internal n-fold cross-validation. If FALSE (the default), will not. 
+#' @param cv Logical. If TRUE, will calculate prediction diagnostics using internal k-fold cross-validation. If FALSE (the default), will not. 
 #' @param nfold Integer. Specify the number of folds using in the internal cross-validation. Default is 10.
-#' @param balance Logical. If TRUE, the prevalence within each n-fold will be 0.50 by undersampling absence locations (assumes absence data are more frequent). If FALSE (the default), the prevalnce within each n-fold will match the prevalence in \code{obs_locs}.
+#' @param balance Logical. If TRUE, the prevalence within each k-fold will be 0.50 by undersampling absence locations (assumes absence data are more frequent). If FALSE (the default), the prevalnce within each k-fold will match the prevalence in \code{obs_locs}.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param poly_buffer Optional. Specify a custom distance (in same units as covariates) to add to window within which the ecological niche is estimated. The default is 1/100th of the smallest range among the two covariates.
@@ -16,13 +16,13 @@
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
-#' @details This function estimates the ecological niche of a single species (presence/absence, or the presence of one species relative to another) using two covariates, will predict the ecological niche into a geographic area, and prepare n-fold cross-validation data sets for prediction diagnostics. 
+#' @details This function estimates the ecological niche of a single species (presence/absence, or the presence of one species relative to another) using two covariates, will predict the ecological niche into a geographic area, and prepare k-fold cross-validation data sets for prediction diagnostics. 
 #' 
 #' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values. The estiamted ecologial niche can be visualized using the \code{\link{plot_obs}} function.
 #' 
 #' If \code{predict = TRUE} this funciton will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_prediction}} function.
 #' 
-#' If \code{cv = TRUE} this function will prepare n-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{nfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of precence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv}} function.
+#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{nfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of precence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv}} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
@@ -228,9 +228,9 @@ lrren <- function(obs_locs,
 
     # Prediction locations
     extract_points <- cbind(predict_locs[ , 3], predict_locs[ , 4])
-    extract_predict <-  data.frame("predict_locs" = predict_locs,
-                                          "rr" = raster::extract(rr_raster, extract_points),
-                                          "pval" = raster::extract(pval_raster, extract_points))
+    extract_predict <- data.frame("predict_locs" = predict_locs,
+                                  "rr" = raster::extract(rr_raster, extract_points),
+                                  "pval" = raster::extract(pval_raster, extract_points))
 
     output <- list("obs" = obs,
                    "presence" = ppp_presence,
@@ -255,8 +255,8 @@ lrren <- function(obs_locs,
              function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
     }
 
-    ## Partition n-folds
-    ### Randomly sample data into n-folds
+    ## Partition k-folds
+    ### Randomly sample data into k-folds
     if (balance == FALSE) {
       cv_segments <- pls::cvsegments(nrow(obs_locs), nfold)
       cv_seg_cas <- NULL
@@ -353,7 +353,7 @@ lrren <- function(obs_locs,
       ##### Predict testing dataset
       extract_testing <- testing[ , 5:6]
 
-      ##### Output for each n-fold
+      ##### Output for each k-fold
       ###### Record category (semi-continuous) of testing data
       cv_predictions_rr <- raster::extract(rr_raster, extract_testing)
       ###### Record category (categorical) of testing data
