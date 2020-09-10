@@ -1,8 +1,8 @@
 context("plot_predict")
 
-#####################
+#########################
 # plot_predict testthat #
-#####################
+#########################
 
 # Generate testing data
 ## Environmental Covariates

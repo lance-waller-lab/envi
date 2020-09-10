@@ -100,7 +100,6 @@ spatstat.core::marks(absence)$grad <- grad[absence]
 
 # Combine
 obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
-spatstat.core::plot.ppp(obs_locs, which.marks = "presence")
 obs_locs <- spatstat.core::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
