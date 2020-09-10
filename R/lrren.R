@@ -1,4 +1,4 @@
-#' An ecological niche model using a log relative risk surface
+#' Ecological niche model using a log relative risk surface
 #' 
 #' Estimate the ecological niche of a single species with presence/absence data and two covariates. Predict the ecological niche in geographic space.
 #'
@@ -16,13 +16,13 @@
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
-#' @details This function estimates the ecological niche of a single species (presence/absence, or the presence of one species relative to another) using two covariates, will predict the ecological niche into a geographic area, and prepare k-fold cross-validation data sets for prediction diagnostics. 
+#' @details This function estimates the ecological niche of a single species (presence/absence data), or the presence of one species relative to another, using two covariates, will predict the ecological niche into a geographic area, and prepare k-fold cross-validation data sets for prediction diagnostics.
 #' 
-#' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values. The estiamted ecologial niche can be visualized using the \code{\link{plot_obs}} function.
+#' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces \code{risk(tolerate == TRUE)} in order to calculate asymptotic p-values. The estimated ecologial niche can be visualized using the \code{\link{plot_obs}} function.
 #' 
 #' If \code{predict = TRUE} this funciton will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_prediction}} function.
 #' 
-#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{nfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of precence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv}} function.
+#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{nfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of precence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
@@ -71,47 +71,51 @@
 #' @importFrom spatstat.core owin ppp
 #' @importFrom stats na.omit
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @import maptools
 #' @export
 #'
 #' @examples
-#' # Using the \code{\link[spatstat.data]{bei}} and \code{\link[bei.extra]{bei.extra}} datasets
-#' data(bei)
-#' data(bei.extra)
+#'   library(spatstat.core)
+#'   library(spatstat.data)
+#'   library(raster)
+#'   
+#'   # Using the bei and bei.extra datasets within the {spatstat.data} package
+#'   data(bei)
+#'   data(bei.extra)
+#'   
+#'   # Covariate data
+#'   elev <- spatstat.data::bei.extra$elev
+#'   grad <- spatstat.data::bei.extra$grad
+#'   elev$v <- scale(elev)
+#'   grad$v <- scale(grad)
+#'   elev_raster <- raster::raster(elev)
+#'   grad_raster <- raster::raster(grad)
 #' 
-#' # Environmental Covariates
-#' elev <- spatstat.data::bei.extra$elev
-#' grad <- spatstat.data::bei.extra$grad
-#' elev$v <- scale(elev)
-#' grad$v <- scale(grad)
-#' elev_raster <- raster::raster(elev)
-#' grad_raster <- raster::raster(grad)
+#'   # Presence data
+#'   bei <- spatstat.data::bei
+#'   spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
+#'                                           "lon" = bei$x,
+#'                                           "lat" = bei$y)
+#'   spatstat.core::marks(bei)$elev <- elev[bei]
+#'   spatstat.core::marks(bei)$grad <- grad[bei]
 #' 
-#' # Presence
-#' bei <- spatstat.data::bei
-#' spatstat::marks(bei) <- data.frame("presence" = rep(1, bei$n),
-#'                                    "lon" = bei$x,
-#'                                    "lat" = bei$y)
-#' spatstat::marks(bei)$elev <- elev[bei]
-#' spatstat::marks(bei)$grad <- grad[bei]
+#'   # (Pseudo-)Absence data
+#'   set.seed(1234)
+#'   absence <- spatstat.core::rpoispp(0.008, win = elev)
+#'   spatstat.core::marks(absence) <- data.frame("absence" = rep(0, absence$n),
+#'                                               "lon" = absence$x,
+#'                                               "lat" = absence$y)
+#'    spatstat.core::marks(absence)$elev <- elev[absence]
+#'    spatstat.core::marks(absence)$grad <- grad[absence]
 #' 
-#' # Absence
-#' set.seed(1234)
-#' absence <- spatstat::rpoispp(0.008, win = elev)
-#' spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-#'                                        "lon" = absence$x,
-#'                                        "lat" = absence$y)
-#' spatstat::marks(absence)$elev <- elev[absence]
-#' spatstat::marks(absence)$grad <- grad[absence]
+#'   # Combine into readable format
+#'   obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
+#'   obs_locs <- spatstat.core::marks(obs_locs)
+#'   obs_locs$id <- seq(1, nrow(obs_locs), 1)
+#'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #' 
-#' # Combine
-#' obs_locs <- spatstat::superimpose(bei, absence, check = FALSE)
-#' plot(obs_locs, which.marks = "presence")
-#' obs_locs <- spatstat::marks(obs_locs)
-#' obs_locs$id <- seq(1, nrow(obs_locs), 1)
-#' obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
-#' 
-#' # Run lrren
-#' test_lrren <- lrren(obs_locs = obs_locs)
+#'   # Run lrren
+#'   test_lrren <- lrren(obs_locs = obs_locs)
 #' 
 lrren <- function(obs_locs,
                   predict = FALSE,
@@ -287,7 +291,7 @@ lrren <- function(obs_locs,
     out_par <- foreach::foreach(k = 1:nfold,
                                 .combine = comb,
                                 .multicombine = TRUE,
-                                .packages = c("sparr", "spatstat.core", "dplyr", "raster"),
+                                .packages = c("sparr", "spatstat.core", "raster"),
                                 .init = list(list(), list(), list())
                                 ) %fun% {
 

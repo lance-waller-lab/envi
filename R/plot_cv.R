@@ -1,4 +1,4 @@
-#' Plots for the prediciton diagnostics of the ecological niche
+#' Visualizations for the prediciton diagnostics of an estimated ecological niche
 #' 
 #' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
 #' 

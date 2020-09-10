@@ -1,4 +1,36 @@
-lrr_plot <- function(input, cols, midpoint, thresh_up = NULL, thresh_low = NULL) {
+#' Prepare log relative risk values for plotting with a diverging color palette
+#' 
+#' Internal function to convert \code{im} object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}} function. 
+#' 
+#' @param input An object of class "rrs" from the \code{\link{lrren}} function.
+#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presense, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
+#' @param midpoint Numeric. The value to center the diverging color palette. 
+#' @param thresh_up Numeric. The upper value to concatonate the color key. The default (NULL) uses the maximum value from \code{input}.
+#' @param thresh_low Numeric. The lower value to concatonate the color key. The default (NULL) uses the minimum value from \code{input}.
+#' @param digits Integer. The number of significant digits for the labels using the \code{round} function (default is 1).
+#'
+#' @return An object of class "list". This is a named list with the following components:
+#' 
+#' \describe{
+#' \item{\code{v}}{An object of class 'vector' for the estimated ecological niche values.}
+#' \item{\code{cols}}{An object of class 'vector', returns diverging color palette values.}
+#' \item{\code{breaks}}{An object of class 'vector', returns diverging color palette breaks.}
+#' \item{\code{at}}{An object of class 'vector', returns legend breaks.}
+#' \item{\code{labels}}{An object of class 'vector', returns legend labels.}
+#' }
+#' 
+#' @importFrom grDevices colorRampPalette
+#' @importFrom raster raster
+#' @importFrom sp coordinates gridded
+#' @export
+#' @keywords internal
+
+lrr_plot <- function(input, 
+                     cols, 
+                     midpoint = 0, 
+                     thresh_up = NULL,
+                     thresh_low = NULL,
+                     digits = 1) {
 
   # Inputs
   if (class(input) != "im") {
@@ -16,7 +48,9 @@ lrr_plot <- function(input, cols, midpoint, thresh_up = NULL, thresh_low = NULL)
     if (i != 1) { ry <- c(ry, rep(input$yrow[i], length(input$xcol))) }
   }
 
-  out <- dplyr::data_frame(x = rx, y = ry, v = as.vector(t(input$v)))
+  out <- data.frame("x" = rx,
+                    "y" = ry,
+                    "v" = as.vector(t(input$v)))
   out$v <- ifelse(is.infinite(out$v), NA, out$v)
   out <- na.omit(out) # remove NAs
   sp::coordinates(out) <- ~ x + y # convert to spatialpixelsdataframe
@@ -62,10 +96,10 @@ lrr_plot <- function(input, cols, midpoint, thresh_up = NULL, thresh_low = NULL)
   rbs[rbm] <- midpoint
 
   # Text for colorkey labels
-  rbl <- round(rbs, digits = 1)
+  rbl <- round(rbs, digits = digits)
 
   # Output
-  out <- list("v" = out,
+  out <- list("v" = out$v,
               "cols" = rampcols,
               "breaks" = rampbreaks,
               "at" = rbs,

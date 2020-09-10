@@ -10,7 +10,7 @@ Overview
 
 </h2>
 
-The `envi` package is a suite of `R` functions to estimate the ecological niche of a species and predict the spatial distribution of the ecological niche -- a version of environmental interpolation -- with spatial kernel density estimation techniques. A two group comparison (e.g., presence and absence locations of a single species) is conducted using the spatial relative risk function that is estimated using the  [sparr](https://CRAN.R-project.org/package=sparr) package. Internal cross-validation and basic visualization are also supported. 
+The `envi` package is a suite of `R` functions to estimate the ecological niche of a species and predict the spatial distribution of the ecological niche -- a version of environmental interpolation -- with spatial kernel density estimation techniques. A two group comparison (e.g., presence and absence locations of a single species) is conducted using the spatial relative risk function that is estimated using the [sparr](https://CRAN.R-project.org/package=sparr) package. Internal cross-validation and basic visualization are also supported. 
 
 <h2 id="install">
 
@@ -92,10 +92,10 @@ spatstat::marks(bei) <- data.frame("presence" = rep(1, bei$n),
 spatstat::marks(bei)$elev <- elev[bei]
 spatstat::marks(bei)$grad <- grad[bei]
 
-# Absence locations
+# (Pseudo-)Absence locations
 set.seed(1234) # for reproducibility
 absence <- spatstat::rpoispp(0.008, win = elev)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+spatstat::marks(absence) <- data.frame("absence" = rep(0, absence$n),
                                        "lon" = absence$x,
                                        "lat" = absence$y)
 spatstat::marks(absence)$elev <- elev[absence]
@@ -118,9 +118,8 @@ predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
 
 test <- lrren(obs_locs = obs_locs,
               predict_locs = predict_locs,
-              predict = T,
-              verbose = T, conserve = T, cv = T,
-              parallel = F, balance = F, nfold = 10)
+              predict = TRUE,
+              cv = TRUE)
 
 # -------------- #
 # Run plot_obs() #

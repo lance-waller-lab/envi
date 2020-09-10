@@ -2,55 +2,60 @@ Package: envi
 Type: Package
 Title: Environmental interpolation using spatial kernel density estimation
 Version: 0.1.0
+Date: 2020-09-09
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
              role = c("aut", "cre", "cph"),
-             email = "ian.buller@alumni.emory.edu"),
-      person(given = "A. Townsend",
-             family = "Peterson",
-             role = c("ctb"),
-             email = "town@ku.edu"),
+             email = "ian.buller@alumni.emory.edu",
+             comment = c(ORCID = "0000-0001-9477-8582")),
       person(given = "Lance A.",
              family = "Waller",
              role = "ctb",
-             email = "lwaller@emory.edu")
+             email = "lwaller@emory.edu"),
+      person(given = "Emory University",
+             role = c("cph", "fnd"))
              )
 Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
-Description: Estimate an ecological niche using presence/absence data and kernel-based 
-        the spatial relative risk function that is estimated using the 'sparr' package.
-        Details about the 'sparr' package methods can be found in the tutorial: Davies
-        et al. (2018) <doi:10.1002/sim.7577>.  Details about kernel density estimation 
-        can be found in J. F. Bethell (1990) <doi:10.1002/sim.4780090616>.  More 
-        information about relative risk functions using kernel-density estimation can 
-        be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
+Description: Estimates an ecological niche using occurrence data, covariates, and kernel
+        density-based estimation methods. For a single species with presence and absence data,
+        the {envi} package uses the spatial relative risk function that is estimated using the
+        {sparr} package. Details about the {sparr} package methods can be found in the tutorial:
+        Davies et al. (2018) <doi:10.1002/sim.7577>. Details about kernel density estimation can
+        be found in J. F. Bethell (1990) <doi:10.1002/sim.4780090616>.  More information about
+        relative risk functions using kernel density estimation can be found in J. F. Bithell
+        (1991) <doi:10.1002/sim.4780101112>.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Depends: R (>= 3.5.0)
 Imports: 
     concaveman,
     cvAUC,
     doParallel,
-    dplyr,
-    foreach,
     fields,
+    foreach,
+    graphics,
     grDevices,
     maptools,
+    parallel,
     pls,
     raster,
-    ROCR,
     rgeos,
+    ROCR,
     sp,
-    spatstat,
     sparr,
+    spatstat.core,
     utils
 Suggests: 
-    tidyverse,
-    testthat,
+    knitr,
+    spatstat.data,
     spelling,
-    R.rsp
-VignetteBuilder: R.rsp
+    testthat
+VignetteBuilder: knitr
 Language: en-US
+URL: https://github.com/idblr/envi
+BugReports: https://github.com/idblr/envi/issues
+Author: Ian D. Buller [aut, cre, cph]

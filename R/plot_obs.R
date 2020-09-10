@@ -1,6 +1,6 @@
-#' Plots for the estimated ecological niche in covariate space
+#' Visualizations for an estimated ecological niche in covariate space
 #' 
-#' Create multiple plots of output from the \code{\link{lrren}} functions, specifically for the observation data and estimated ecological niche. 
+#' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the observation data and estimated ecological niche. 
 #' 
 #' @param input An object of class "list" from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presense, 2) neither, and 3) absence. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd")} or \code{c("indianred4", "grey80", "blue3")}.

@@ -1,9 +1,9 @@
-#' Plots for the predicted ecological niche in geographic space
+#' Visualizations for a predicted ecological niche in geographic space
 #' 
 #' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the predicted values of the ecological niche at geographic coordinates. 
 #' 
 #' @param input An object of class "list" from the \code{\link{lrren}} function.
-#' @param plot_cols Character string of length three (4) specifying the colors for plotting: 1) presense, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.
+#' @param plot_cols Character string of length four (4) specifying the colors for plotting: 1) presense, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
@@ -15,6 +15,7 @@
 #' @importFrom graphics par
 #' @importFrom raster crs cut image projectRaster raster reclassify values 
 #' @importFrom sp coordinates gridded
+#' @import maptools
 #' @export
 #'
 #' @examples

@@ -9,27 +9,19 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE, fig.width = 6, fig.height = 6, fig.show = "hold")
 ```
 
 Start with the necessary packages and seed for the vignette
 ```{r packages}
-loadedPackages <- c("raster", "spatstat.core", "spatstat.data")
-#loadedPackages <- c("envi", "raster", "spatstat.core", "spatstat.data")
+loadedPackages <- c("envi", "raster", "spatstat.core", "spatstat.data")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
-source('~/Documents/GitHub/envi/R/lrren.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/plot_obs.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/plot_predict.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/plot_cv.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/lrr_plot.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/pval_plot.R') # REMOVE IN FINAL VIGNETTE
-source('~/Documents/GitHub/envi/R/lrr_raster.R') # REMOVE IN FINAL VIGNETTE
 ```
 
-We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in Funwi-Gabga and Mateu (2012) <https://doi.org/10.1007/s00477-011-0541-1>. The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots (i.e., ecological niche) of nesting within the covariate information and then predict where these hot-spots are located within the park.
+We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots (i.e., ecological niche) of nesting within the covariate information and then predict where these hot-spots are located within the park.
 
 We start by importing the two covariate data of class `im`:
 

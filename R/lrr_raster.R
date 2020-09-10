@@ -1,4 +1,37 @@
-lrr_raster <- function(input, cols, midpoint, thresh_up = NULL, thresh_low = NULL) {
+#' Prepare raster for plotting with a diverging color palette
+#' 
+#' Internal function to convert \code{raster} object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_predict}} function. 
+#' 
+#' @param input An object of class "rrs" from the \code{\link{lrren}} function.
+#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presense, 2) neither, and 3) absence from the \code{\link{plot_predict}} function. 
+#' @param midpoint Numeric. The value to center the diverging color palette. 
+#' @param thresh_up Numeric. The upper value to concatonate the color key. The default (NULL) uses the maximum value from \code{input}.
+#' @param thresh_low Numeric. The lower value to concatonate the color key. The default (NULL) uses the minimum value from \code{input}.
+#' @param digits Integer. The number of significant digits for the labels using the \code{round} function (default is 1).
+#'
+#' @return An object of class "list". This is a named list with the following components:
+#' 
+#' \describe{
+#' \item{\code{v}}{An object of class 'vector' for the predicted ecological niche values.}
+#' \item{\code{cols}}{An object of class 'vector', returns diverging color palette values.}
+#' \item{\code{breaks}}{An object of class 'vector', returns diverging color palette breaks.}
+#' \item{\code{at}}{An object of class 'vector', returns legend breaks.}
+#' \item{\code{labels}}{An object of class 'vector', returns legend labels.}
+#' }
+#' 
+#' @importFrom grDevices colorRampPalette
+#' @importFrom raster raster
+#' @importFrom sp coordinates gridded
+#' @import maptools
+#' @export
+#' @keywords internal
+
+lrr_raster <- function(input,
+                       cols,
+                       midpoint = 0,
+                       thresh_up = NULL,
+                       thresh_low = NULL,
+                       digits = 1) {
 
   # Inputs
   if (class(input) != "RasterLayer") {
@@ -40,7 +73,7 @@ lrr_raster <- function(input, cols, midpoint, thresh_up = NULL, thresh_low = NUL
   rbs[rbm] <- midpoint
 
   # Text for colorkey labels
-  rbl <- round(rbs, digits = 1)
+  rbl <- round(rbs, digits = digits)
 
   # Output
   out <- list("v" = input$v,
