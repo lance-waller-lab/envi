@@ -22,7 +22,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom raster raster
 #' @importFrom sp coordinates gridded
-#' @export
+#'
 #' @keywords internal
 
 lrr_plot <- function(input, 

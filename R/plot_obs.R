@@ -24,6 +24,14 @@ plot_obs <- function(input,
                      plot_cols = c("#8b3a3a", "#cccccc", "#0000cd"),
                      alpha = 0.05,
                      ...) {
+  
+  if (alpha >= 1 | alpha <= 0) {
+    stop("The argument 'alpha' must be a numeric value between 0 and 1")
+  }
+  
+  if (length(plot_cols) != 3) { 
+    stop("The argument 'plot_cols' must have 3 colors")
+  }
 
   op <- graphics::par(no.readonly = TRUE)
   graphics::par(pty = "s")
@@ -105,5 +113,6 @@ plot_obs <- function(input,
                                       las = 0,
                                       labels = labp,
                                       cex.axis = 0.67))
+
   on.exit(graphics::par(op))
 }

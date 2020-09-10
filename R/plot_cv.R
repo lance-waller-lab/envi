@@ -19,9 +19,13 @@
 #' }
 #' 
 plot_cv <- function(input, alpha = 0.05) {
+  
+  if (alpha >= 1 | alpha <= 0) {
+    stop("The argument 'alpha' must be a numeric value between 0 and 1")
+  }
 
   op <- graphics::par(no.readonly = TRUE)
-  nfold <- length(input$cv$cv_predictions_rr)
+  kfold <- length(input$cv$cv_predictions_rr)
   nsamp <- input$out$presence$n
 
   out_cv_rr <- cvAUC::cvAUC(input$cv$cv_predictions_rr, input$cv$cv_labels)
@@ -62,7 +66,7 @@ plot_cv <- function(input, alpha = 0.05) {
                               "Luck (Reference)"),
                    lty = c(3, 1, 2), bty = "n",
                    col = c("black", "red", "black"))
-  graphics::mtext(paste("Area Under the Receiver Operating Characteristic Curve\n", nfold,
+  graphics::mtext(paste("Area Under the Receiver Operating Characteristic Curve\n", kfold,
                         "-fold cross-validation, alpha = ", alpha, sep = ""),
                   side = 3, line = -4, outer = TRUE, cex = 1.25)
 
@@ -78,7 +82,7 @@ plot_cv <- function(input, alpha = 0.05) {
   plot(perf_rr, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
        xlab = "True Positive Rate (Sensitivity or Recall)\n",
        ylab = "\nPositive Predictive Value (Precision)")
-  graphics::abline((nsamp / nfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
+  graphics::abline((nsamp / kfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
   suppressWarnings(lines(colMeans(do.call(rbind, perf_rr@x.values)),
                          colMeans(do.call(rbind, perf_rr@y.values)),
                          col = "red", lty = 1, lwd = 2)) # mean PRREC
@@ -87,7 +91,7 @@ plot_cv <- function(input, alpha = 0.05) {
   plot(perf_pval, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
        xlab = "True Positive Rate (Sensitivity or Recall)\n",
        ylab = "\nPositive Predictive Value (Precision)")
-  graphics::abline((nsamp / nfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
+  graphics::abline((nsamp / kfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
   suppressWarnings(lines(colMeans(do.call(rbind,perf_pval@x.values)),
                          colMeans(do.call(rbind,perf_pval@y.values)),
                          col = "red", lty = 1, lwd = 2)) # mean PRREC
@@ -101,7 +105,7 @@ plot_cv <- function(input, alpha = 0.05) {
                               "Luck (Reference)"),
                    lty = c(3, 1, 2), bty = "n",
                    col = c("black", "red", "black"))
-  graphics::mtext(paste("Precision-Recall Curve\n", nfold, "-fold cross-validation, alpha = ",
+  graphics::mtext(paste("Precision-Recall Curve\n", kfold, "-fold cross-validation, alpha = ",
                         alpha, sep=""),
                   side = 3, line = -4, outer = TRUE, cex = 1.25)
 

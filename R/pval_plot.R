@@ -9,7 +9,7 @@
 #' 
 #' @importFrom raster cut raster
 #' @importFrom sp coordinates gridded
-#' @export
+#'
 #' @keywords internal
 
 pval_plot <- function(input, alpha) {

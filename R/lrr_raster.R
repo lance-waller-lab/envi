@@ -23,7 +23,7 @@
 #' @importFrom raster raster
 #' @importFrom sp coordinates gridded
 #' @import maptools
-#' @export
+#'
 #' @keywords internal
 
 lrr_raster <- function(input,

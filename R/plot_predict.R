@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' \donttest{
-#' plot_predict(input = test_lrren)
+#' plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 #' }
 #' 
 plot_predict <- function(input,
@@ -29,6 +29,14 @@ plot_predict <- function(input,
                          cref0 = "+init=epsg:4326",
                          cref1 = NULL,
                          ...) {
+  
+  if (alpha >= 1 | alpha <= 0) {
+    stop("The argument 'alpha' must be a numeric value between 0 and 1")
+  }
+  
+  if (length(plot_cols) != 4) { 
+    stop("The argument 'plot_cols' must have 4 colors")
+    }
 
   op <- graphics::par(no.readonly = TRUE)
   # Convert to geospatial rasters
@@ -132,6 +140,6 @@ plot_predict <- function(input,
   if (!is.null(naband_reclass)) {
   raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
   }
-
+  
   on.exit(graphics::par(op))
 }

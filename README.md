@@ -1,9 +1,6 @@
 envi: Environmental interpolation using spatial kernel density estimation <img src="man/figures/envi.png" width="120" align="right" />
 ===================================================
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 <h2 id="overview">
 
 Overview
@@ -60,7 +57,7 @@ Available functions
 <table>
 
 ## Usage
-``` r
+```r
 # ------------------ #
 # Necessary packages #
 # ------------------ #
@@ -95,7 +92,7 @@ spatstat::marks(bei)$grad <- grad[bei]
 # (Pseudo-)Absence locations
 set.seed(1234) # for reproducibility
 absence <- spatstat::rpoispp(0.008, win = elev)
-spatstat::marks(absence) <- data.frame("absence" = rep(0, absence$n),
+spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                        "lon" = absence$x,
                                        "lat" = absence$y)
 spatstat::marks(absence)$elev <- elev[absence]
@@ -127,15 +124,15 @@ test <- lrren(obs_locs = obs_locs,
 
 plot_obs(test)
 
-# -------------- #
-# Run plot_obs() #
-# -------------- #
+# ------------------ #
+# Run plot_predict() #
+# ------------------ #
 
-plot_predict(test)
+plot_predict(test, cref0 = "+init=epsg:5472", cref1 = "+init=epsg:4326")
 
-# -------------- #
-# Run plot_obs() #
-# -------------- #
+# ------------- #
+# Run plot_cv() #
+# ------------- #
 
 plot_cv(test)
 
