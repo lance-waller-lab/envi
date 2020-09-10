@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_cv.R
 \name{plot_cv}
 \alias{plot_cv}
-\title{Visualizations for the prediciton diagnostics of an estimated ecological niche}
+\title{Visualizations for the prediction diagnostics of an estimated ecological niche}
 \usage{
 plot_cv(input, alpha = 0.05)
 }

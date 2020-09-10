@@ -18,13 +18,13 @@ lrr_plot(
 
 \item{midpoint}{Numeric. The value to center the diverging color palette.}
 
-\item{thresh_up}{Numeric. The upper value to concatonate the color key. The default (NULL) uses the maximum value from \code{input}.}
+\item{thresh_up}{Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.}
 
-\item{thresh_low}{Numeric. The lower value to concatonate the color key. The default (NULL) uses the minimum value from \code{input}.}
+\item{thresh_low}{Numeric. The lower value to concatenate the color key. The default (NULL) uses the minimum value from \code{input}.}
 
 \item{digits}{Integer. The number of significant digits for the labels using the \code{round} function (default is 1).}
 
-\item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presense, 2) neither, and 3) absence from the \code{\link{plot_obs}} function.}
+\item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function.}
 }
 \value{
 An object of class "list". This is a named list with the following components:

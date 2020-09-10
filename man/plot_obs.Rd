@@ -14,7 +14,7 @@ plot_obs(
 \arguments{
 \item{input}{An object of class "list" from the \code{\link{lrren}} function.}
 
-\item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presense, 2) neither, and 3) absence. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd")} or \code{c("indianred4", "grey80", "blue3")}.}
+\item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd")} or \code{c("indianred4", "grey80", "blue3")}.}
 
 \item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
 

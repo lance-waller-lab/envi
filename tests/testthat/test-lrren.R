@@ -15,24 +15,24 @@ grad_raster <- raster::raster(grad)
 
 ## Presence Locations
 bei <- spatstat.data::bei
-spatstat::marks(bei) <- data.frame("presence" = rep(1, bei$n),
+spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
                                    "lon" = bei$x,
                                    "lat" = bei$y)
-spatstat::marks(bei)$elev <- elev[bei]
-spatstat::marks(bei)$grad <- grad[bei]
+spatstat.core::marks(bei)$elev <- elev[bei]
+spatstat.core::marks(bei)$grad <- grad[bei]
 
 # (Pseudo-)Absence Locations
 set.seed(1234) # for reproducibility
-absence <- spatstat::rpoispp(0.008, win = elev)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat.core::rpoispp(0.008, win = elev)
+spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                        "lon" = absence$x,
                                        "lat" = absence$y)
-spatstat::marks(absence)$elev <- elev[absence]
-spatstat::marks(absence)$grad <- grad[absence]
+spatstat.core::marks(absence)$elev <- elev[absence]
+spatstat.core::marks(absence)$grad <- grad[absence]
 
 # Combine
-obs_locs <- spatstat::superimpose(bei, absence, check = FALSE)
-obs_locs <- spatstat::marks(obs_locs)
+obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
+obs_locs <- spatstat.core::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 

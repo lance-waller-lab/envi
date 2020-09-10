@@ -1,4 +1,4 @@
-#' Visualizations for the prediciton diagnostics of an estimated ecological niche
+#' Visualizations for the prediction diagnostics of an estimated ecological niche
 #' 
 #' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
 #' 
@@ -9,7 +9,7 @@
 #' 
 #' @importFrom cvAUC ci.cvAUC cvAUC
 #' @importFrom fields image.plot
-#' @importFrom graphics abline legend layout mtext par plot.new title
+#' @importFrom graphics abline layout legend lines mtext par plot plot.new title
 #' @importFrom ROCR performance prediction
 #' @export
 #'
@@ -37,22 +37,22 @@ plot_cv <- function(input, alpha = 0.05) {
 
   graphics::layout(matrix(c(1, 2, 3, 3), ncol = 2, byrow = TRUE), heights = c(4, 1))
   graphics::par(oma = c(0, 1, 0, 0), mar = c(0.1, 4.1, 4.1, 2.1), pty = "s")
-  plot(out_cv_rr$perf, col = "black", lty = 3,
-       xlab = "False Positive Rate (FPR)\n",
-       ylab = "\nTrue Positive Rate (TPR)") #Plot fold AUCs
+  graphics::plot(out_cv_rr$perf, col = "black", lty = 3,
+                 xlab = "False Positive Rate (FPR)\n",
+                 ylab = "\nTrue Positive Rate (TPR)") #Plot fold AUCs
   graphics::abline(0, 1, col = "black", lty = 2)
-  plot(out_cv_rr$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
+  graphics::plot(out_cv_rr$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
   graphics::title(paste("log relative risk prediction\nAUC = ",
                         round(out_cv_rr$cvAUC, digits = 3), " (95% CI: ",
                         round(out_ci_rr$ci[1], digits = 3), " - ",
                         round(out_ci_rr$ci[2], digits = 3), ")", sep = ""),
                   cex.main = 1.1)
 
-  plot(out_cv_pval$perf, col = "black", lty = 3,
-       xlab = "False Positive Rate (FPR)\n",
-       ylab = "\nTrue Positive Rate (TPR)") #Plot fold AUCs
+  graphics::plot(out_cv_pval$perf, col = "black", lty = 3,
+                 xlab = "False Positive Rate (FPR)\n",
+                 ylab = "\nTrue Positive Rate (TPR)") #Plot fold AUCs
   graphics::abline(0, 1, col = "black", lty = 2)
-  plot(out_cv_pval$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
+  graphics::plot(out_cv_pval$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
   graphics::title(paste("Asymptotic p-value prediction\nAUC = ",
                         round(out_cv_pval$cvAUC,digits = 3),
               " (95% CI: ", round(out_ci_pval$ci[1], digits = 3)," - ",
@@ -79,22 +79,22 @@ plot_cv <- function(input, alpha = 0.05) {
 
   graphics::layout(matrix(c(1, 2, 3, 3), ncol = 2, byrow = TRUE), heights = c(4, 1))
   graphics::par(oma = c(0, 1, 0, 0), mar = c(0.1, 4.1, 4.1, 2.1), pty = "s")
-  plot(perf_rr, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
-       xlab = "True Positive Rate (Sensitivity or Recall)\n",
-       ylab = "\nPositive Predictive Value (Precision)")
+  graphics::plot(perf_rr, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
+                 xlab = "True Positive Rate (Sensitivity or Recall)\n",
+                 ylab = "\nPositive Predictive Value (Precision)")
   graphics::abline((nsamp / kfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
-  suppressWarnings(lines(colMeans(do.call(rbind, perf_rr@x.values)),
-                         colMeans(do.call(rbind, perf_rr@y.values)),
-                         col = "red", lty = 1, lwd = 2)) # mean PRREC
+  suppressWarnings(graphics::lines(colMeans(do.call(rbind, perf_rr@x.values)),
+                                   colMeans(do.call(rbind, perf_rr@y.values)),
+                                   col = "red", lty = 1, lwd = 2)) # mean PRREC
   graphics::title("log relative risk prediction", cex.main = 1.1)
 
-  plot(perf_pval, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
-       xlab = "True Positive Rate (Sensitivity or Recall)\n",
-       ylab = "\nPositive Predictive Value (Precision)")
+  graphics::plot(perf_pval, ylim = c(0, 1), xlim = c(0, 1), lty = 3,
+                 xlab = "True Positive Rate (Sensitivity or Recall)\n",
+                 ylab = "\nPositive Predictive Value (Precision)")
   graphics::abline((nsamp / kfold) / length(input$cv$cv_labels[[1]]), 0, lty = 2, col = "black")
-  suppressWarnings(lines(colMeans(do.call(rbind,perf_pval@x.values)),
-                         colMeans(do.call(rbind,perf_pval@y.values)),
-                         col = "red", lty = 1, lwd = 2)) # mean PRREC
+  suppressWarnings(graphics::lines(colMeans(do.call(rbind,perf_pval@x.values)),
+                                   colMeans(do.call(rbind,perf_pval@y.values)),
+                                   col = "red", lty = 1, lwd = 2)) # mean PRREC
   graphics::title("Asymptotic p-value prediction", cex.main = 1.1)
 
   graphics::par(mai = c(0, 0, 0, 0), mar = c(5.1, 4.1, 0.1, 2.1) / 5, pty = "m")

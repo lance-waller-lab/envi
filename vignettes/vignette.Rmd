@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRU
 Start with the necessary packages and seed for the vignette
 ```{r packages}
 loadedPackages <- c("envi", "raster", "spatstat.core", "spatstat.data")
-invisible(lapply(loadedPackages, require, character.only = TRUE))
+invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
 
@@ -31,7 +31,7 @@ We start by importing the two covariate data of class `im`:
 ```{r covariate}
 slopeangle <- spatstat.data::gorillas.extra$slopeangle
 waterdist <- spatstat.data::gorillas.extra$waterdist
-plot(slopeangle); plot(waterdist)
+spatstat.core::plot.im(slopeangle); spatstat.core::plot.im(waterdist)
 ```
 
 Center and scale the covariate data.
@@ -49,21 +49,21 @@ waterdist_raster <- raster(waterdist)
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
 ```{r presence}
 gorillas <- unmark(spatstat.data::gorillas)
-spatstat::marks(gorillas) <- data.frame("presence" = rep(1, gorillas$n),
-                                        "lon" = gorillas$x,
-                                        "lat" = gorillas$y)
-spatstat::marks(gorillas)$slopeangle <- slopeangle[gorillas]
-spatstat::marks(gorillas)$waterdist <- waterdist[gorillas]
+spatstat.core::marks(gorillas) <- data.frame("presence" = rep(1, gorillas$n),
+                                             "lon" = gorillas$x,
+                                             "lat" = gorillas$y)
+spatstat.core::marks(gorillas)$slopeangle <- slopeangle[gorillas]
+spatstat.core::marks(gorillas)$waterdist <- waterdist[gorillas]
 ```
 
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "absence" locations. 
 ```{r absence}
-absence <- spatstat::rpoispp(0.00004, win = slopeangle)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-                                       "lon" = absence$x,
-                                       "lat" = absence$y)
-spatstat::marks(absence)$slopeangle <- slopeangle[absence]
-spatstat::marks(absence)$waterdist <- waterdist[absence]
+absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
+spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+                                            "lon" = absence$x,
+                                            "lat" = absence$y)
+spatstat.core::marks(absence)$slopeangle <- slopeangle[absence]
+spatstat.core::marks(absence)$waterdist <- waterdist[absence]
 ```
 
 Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `envi` package:
@@ -76,10 +76,10 @@ Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations 
 6. Covariate 2
 
 ```{r obs_locs}
-obs_locs <- spatstat::superimpose(gorillas, absence, check = FALSE)
-spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
-plot(obs_locs, which.marks = "presence")
-obs_locs <- spatstat::marks(obs_locs)
+obs_locs <- spatstat.core::superimpose(gorillas, absence, check = FALSE)
+spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
+spatstat.core::plot.ppp(obs_locs, which.marks = "presence")
+obs_locs <- spatstat.core::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 ```
@@ -109,7 +109,7 @@ plot_obs(test)
 
 We display the estimated ecological niche predicted to the study area within geographic space. We use the default two-tailed alpha-level (`alpha = 0.05`).
 ```{r plot_predict}
-plot_predict(test)
+plot_predict(test, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326")
 ```
 
 We display the 10-fold cross-validation diagnostics. We use the default two-tailed alpha-level (`alpha = 0.05`).
@@ -117,6 +117,6 @@ We display the 10-fold cross-validation diagnostics. We use the default two-tail
 plot_cv(test)
 ```
 
-Based on only two covariates, slope angle and distance to water, we detected two ecological niches of gorillas compared to psuedo-absence points drawn randomly from within the park. These two ecological niches are located in many small regions of the park. The log relative risk estimate accurately predicted about 60% of the gorilla nesting sites. 
+Based on only two covariates, slope angle and distance to water, we detected two ecological niches of gorillas compared to pseudo-absence points drawn randomly from within the park. These two ecological niches are located in many small regions of the park. The log relative risk estimate accurately predicted about 60% of the gorilla nesting sites. 
 
 Future improvement can be made to the choice in covariates, including using the first two components of a principal components analysis of all seven covariates available in the `gorillas.extra` data in the `spatstat.data` package.
