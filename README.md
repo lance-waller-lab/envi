@@ -93,8 +93,8 @@ spatstat.core::marks(bei)$grad <- grad[bei]
 set.seed(1234) # for reproducibility
 absence <- spatstat.core::rpoispp(0.008, win = elev)
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-                                       "lon" = absence$x,
-                                       "lat" = absence$y)
+                                            "lon" = absence$x,
+                                            "lat" = absence$y)
 spatstat.core::marks(absence)$elev <- elev[absence]
 spatstat.core::marks(absence)$grad <- grad[absence]
 

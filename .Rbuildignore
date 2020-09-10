@@ -2,3 +2,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^vignette\.Rmd$
+^build\.R$
+^hexsticker_envi\.R$
+^build$
