@@ -1,7 +1,7 @@
 Package: envi
 Type: Package
 Title: Environmental interpolation using spatial kernel density estimation
-Version: 0.1.0
+Version: 0.1.0.9000
 Date: 2020-09-09
 Authors@R: 
     c(person(given = "Ian D.",
@@ -56,7 +56,6 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 Language: en-US
-URL: https://github.com/idblr/envi
-BugReports: https://github.com/idblr/envi/issues
+URL: https://github.com/Waller-SUSAN/envi
+BugReports: https://github.com/Waller-SUSAN/envi/issues
 Author: Ian D. Buller [aut, cre, cph]
-

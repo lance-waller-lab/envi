@@ -21,7 +21,7 @@ To install the release version from CRAN:
 
 To install the development version from GitHub:
 
-    devtools::install_github("idblr/envi")
+    devtools::install_github("Waller-SUSAN/envi")
 
 <h2 id="available-functions">
 
