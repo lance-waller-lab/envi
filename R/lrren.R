@@ -2,7 +2,7 @@
 #' 
 #' Estimate the ecological niche of a single species with presence/absence data and two covariates. Predict the ecological niche in geographic space.
 #'
-#' @param obs_locs Input data frame of presence and absence observations with 5 features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate
+#' @param obs_locs Input data frame of presence and absence observations with 5 features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate.
 #' @param predict Logical. If TRUE, will predict the ecological niche in geographic space. If FALSE (the default), will not predict. 
 #' @param predict_locs Input data frame of prediction locations with 4 features (columns): 1) longitude, 2) latitude, 3) covariate 1 as x-coordinate, 4) covariate 2 as y-coordinate. The covariates must be the same as those included in \code{obs_locs}.
 #' @param conserve Logical. If TRUE (the default), the ecological niche will be estimated within a concave hull around the locations in \code{obs_locs}. If FALSE, the ecological niche will be estimated within a concave hull around the locations in \code{predict_locs}.

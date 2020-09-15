@@ -1,15 +1,15 @@
 #' Prepare log relative risk values for plotting with a diverging color palette
 #' 
-#' Internal function to convert \code{im} object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}} function. 
+#' Internal function to convert 'im' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}} function. 
 #' 
-#' @param input An object of class "rrs" from the \code{\link{lrren}} function.
+#' @param input An object of class 'rrs' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
 #' @param midpoint Numeric. The value to center the diverging color palette. 
 #' @param thresh_up Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.
 #' @param thresh_low Numeric. The lower value to concatenate the color key. The default (NULL) uses the minimum value from \code{input}.
 #' @param digits Integer. The number of significant digits for the labels using the \code{round} function (default is 1).
 #'
-#' @return An object of class "list". This is a named list with the following components:
+#' @return An object of class 'list'. This is a named list with the following components:
 #' 
 #' \describe{
 #' \item{\code{v}}{An object of class 'vector' for the estimated ecological niche values.}
@@ -34,7 +34,7 @@ lrr_plot <- function(input,
 
   # Inputs
   if (class(input) != "im") {
-    stop("The 'input' argument must be of class 'im' from an 'rrs' object from the 'sparr' package")
+    stop("The 'input' argument must be of class 'im' from an 'rrs' object")
   }
 
   if (length(cols) != 3) {

@@ -5,7 +5,13 @@
 #' @param input An object of class "rrs" from the \code{\link{lrren}} function.
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default in \code{\link{plot_obs}} is 0.05).
 #'
-#' @return An object of class "raster" with categorical values
+#' @return An object of class 'raster' with categorical values. 
+#' 
+#' \itemize{
+#' \item A value of 1: Significant presence.
+#' \item A value of 2: Insignificant.
+#' \item A value of 3: Significant absence.
+#' }
 #' 
 #' @importFrom raster cut raster
 #' @importFrom sp coordinates gridded
@@ -16,7 +22,7 @@ pval_plot <- function(input, alpha) {
 
   # Inputs
   if (class(input) != "im") {
-    stop("The 'input' argument must be of class 'im' from the 'sparr' package")
+    stop("The 'input' argument must be of class 'im'")
   }
 
   # Coordinates of grid points within input 'im'
