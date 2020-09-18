@@ -43,6 +43,4 @@ rsconnect/
 *.rds
 
 # Sandboxes
-build.R
 inst/doc
-hexsticker_envi.R

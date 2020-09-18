@@ -28,7 +28,7 @@ Key content of the {envi} package include:\cr
 \code{\link{plot_cv}} Visualizes the \code{\link{lrren}} output, specifically two prediction diagnostics (area under the receiver operating characteristic curve and precision-recall curve).
 }
 \section{Dependencies}{
- The {envi} package depends upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species, the spatial relative risk function uses the \code{\link[sparr]{risk}} function. The cross-validation can be performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}.
+ The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species, the spatial relative risk function uses the \code{\link[sparr]{risk}} function. The cross-validation can be performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 }
 
 \author{

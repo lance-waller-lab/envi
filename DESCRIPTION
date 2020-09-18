@@ -2,7 +2,7 @@ Package: envi
 Type: Package
 Title: Environmental interpolation using spatial kernel density estimation
 Version: 0.1.0.9000
-Date: 2020-09-09
+Date: 2020-09-15
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -11,10 +11,10 @@ Authors@R:
              comment = c(ORCID = "0000-0001-9477-8582")),
       person(given = "Lance A.",
              family = "Waller",
-             role = "ctb",
+             role = c("ctb", "ths"),
              email = "lwaller@emory.edu"),
       person(given = "Emory University",
-             role = c("cph", "fnd"))
+             role = "cph")
              )
 Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
 Description: Estimates an ecological niche using occurrence data, covariates, and kernel
@@ -29,7 +29,7 @@ License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends: R (>= 3.5.0)
 Imports: 
     concaveman,

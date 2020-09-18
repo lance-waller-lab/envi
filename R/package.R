@@ -26,9 +26,9 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The {envi} package depends upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species, the spatial relative risk function uses the \code{\link[sparr]{risk}} function. The cross-validation can be performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}.
+#' @section Dependencies: The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species, the spatial relative risk function uses the \code{\link[sparr]{risk}} function. The cross-validation can be performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
-#' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}
+#' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 
 #' Maintainer: I.D.B. \email{ian.buller@@alumni.emory.edu}
 #'
