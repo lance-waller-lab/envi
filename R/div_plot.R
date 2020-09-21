@@ -1,18 +1,18 @@
-#' Prepare raster for plotting with a diverging color palette
+#' Prepare an 'im' or 'raster' object for plotting with diverging color palette
 #' 
-#' Internal function to convert \code{raster} object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_predict}} function. 
+#' Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}} or \code{\link{plot_predict}} function. 
 #' 
-#' @param input An object of class "rrs" from the \code{\link{lrren}} function.
-#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_predict}} function. 
+#' @param input An object of class 'im' or 'RasterLayer' from the \code{\link{lrren}} function.
+#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
 #' @param midpoint Numeric. The value to center the diverging color palette. 
 #' @param thresh_up Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.
 #' @param thresh_low Numeric. The lower value to concatenate the color key. The default (NULL) uses the minimum value from \code{input}.
 #' @param digits Integer. The number of significant digits for the labels using the \code{round} function (default is 1).
 #'
-#' @return An object of class "list". This is a named list with the following components:
+#' @return An object of class 'list'. This is a named list with the following components:
 #' 
 #' \describe{
-#' \item{\code{v}}{An object of class 'vector' for the predicted ecological niche values.}
+#' \item{\code{v}}{An object of class 'vector' for the estimated ecological niche values.}
 #' \item{\code{cols}}{An object of class 'vector', returns diverging color palette values.}
 #' \item{\code{breaks}}{An object of class 'vector', returns diverging color palette breaks.}
 #' \item{\code{at}}{An object of class 'vector', returns legend breaks.}
@@ -21,33 +21,39 @@
 #' 
 #' @importFrom grDevices colorRampPalette
 #' @importFrom raster raster
-#' @importFrom sp coordinates gridded
-#' @import maptools
 #'
 #' @keywords internal
 
-lrr_raster <- function(input,
-                       cols,
-                       midpoint = 0,
-                       thresh_up = NULL,
-                       thresh_low = NULL,
-                       digits = 1) {
+div_plot <- function(input, 
+                     cols, 
+                     midpoint = 0, 
+                     thresh_up = NULL,
+                     thresh_low = NULL,
+                     digits = 1) {
 
   # Inputs
-  if (class(input) != "RasterLayer") {
-    stop("The 'input' argument must be of class 'RasterLayer'")
-  }
+  if (class(input) == "im") {
+    out <- raster::raster(input)
+  } else { out <- input }
 
   if (length(cols) != 3) {
     stop("The 'cols' argument must be a vector of length 3")
   }
 
+  # Restrict spurious log relative risk values
+  if (!is.null(thresh_low)) {
+    out[out <= thresh_low] <- thresh_low
+  }
+  if (!is.null(thresh_up)) {
+    out[out >= thresh_up] <- thresh_up
+  }
+
   # Identify ramp above and below midpoint
-  lowerhalf <- length(input@data@values[input@data@values < midpoint & !is.na(input@data@values)]) # values below 0
-  upperhalf <- length(input@data@values[input@data@values > midpoint & !is.na(input@data@values)]) # values above 0
-  nhalf <- length(input@data@values[!is.na(input@data@values)]) / 2 # number of values at half
-  min_absolute_value <- min(input@data@values[is.finite(input@data@values)], na.rm = TRUE) # minimum absolute value of raster
-  max_absolute_value <- max(input@data@values[is.finite(input@data@values)], na.rm = TRUE) # maximum absolute value of raster
+  lowerhalf <- length(out[out < midpoint & !is.na(out)]) # values below 0
+  upperhalf <- length(out[out > midpoint & !is.na(out)]) # values above 0
+  nhalf <- length(out[!is.na(out)]) / 2 # number of values at half
+  min_absolute_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of raster
+  max_absolute_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
 
   # Color ramp parameters
   ## Colors
@@ -76,10 +82,9 @@ lrr_raster <- function(input,
   rbl <- round(rbs, digits = digits)
 
   # Output
-  out <- list("v" = input$v,
+  out <- list("v" = out,
               "cols" = rampcols,
               "breaks" = rampbreaks,
               "at" = rbs,
-              "labels" = rbl
-  )
+              "labels" = rbl)
 }

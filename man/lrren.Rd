@@ -21,7 +21,7 @@ lrren(
 )
 }
 \arguments{
-\item{obs_locs}{Input data frame of presence and absence observations with 5 features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate}
+\item{obs_locs}{Input data frame of presence and absence observations with six (6) features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate.}
 
 \item{predict}{Logical. If TRUE, will predict the ecological niche in geographic space. If FALSE (the default), will not predict.}
 
@@ -90,7 +90,7 @@ The function uses the \code{\link[sparr]{risk}} function to estimate the spatial
 
 If \code{predict = TRUE} this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 
-If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 
 The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 }

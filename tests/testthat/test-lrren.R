@@ -101,6 +101,22 @@ test_that("lrren throws error with invalid arguments", {
           obs_window = custom_poly,
           verbose = FALSE)
   )
+  
+  # If conserve = FALSE, predict_locs must be specified
+  expect_error(
+    lrren(obs_locs = obs_locs,
+          predict = FALSE,
+          predict_locs = NULL,
+          conserve = FALSE,
+          cv = FALSE,
+          kfold = 10,
+          balance = FALSE,
+          parallel = FALSE,
+          n_core = NULL,
+          poly_buffer = NULL,
+          obs_window = custom_poly,
+          verbose = FALSE)
+  )
 }
 )
 
@@ -121,6 +137,24 @@ test_that("lrren throws warning for points lying outside the specified window", 
           poly_buffer = 0,
           obs_window = NULL,
           verbose = FALSE)
+  )
+}
+)
+
+test_that("lrren produces progress messages", {
+  expect_message(
+    lrren(obs_locs = obs_locs,
+          predict = TRUE,
+          predict_locs = predict_locs,
+          conserve = TRUE,
+          cv = TRUE,
+          kfold = 10,
+          balance = TRUE,
+          parallel = FALSE,
+          n_core = NULL,
+          poly_buffer = NULL,
+          obs_window = NULL,
+          verbose = TRUE)
   )
 }
 )
@@ -149,7 +183,7 @@ test_that("lrren works", {
   expect_named(
     lrren(obs_locs = obs_locs,
           predict = FALSE,
-          predict_locs = NULL,
+          predict_locs = predict_locs,
           conserve = FALSE,
           cv = FALSE,
           kfold = 10,
@@ -166,7 +200,7 @@ test_that("lrren works", {
   expect_named(
     lrren(obs_locs = obs_locs,
           predict = FALSE,
-          predict_locs = NULL,
+          predict_locs = predict_locs,
           conserve = FALSE,
           cv = FALSE,
           kfold = 10,
@@ -184,7 +218,7 @@ test_that("lrren works", {
     lrren(obs_locs = obs_locs,
           predict = FALSE,
           predict_locs = NULL,
-          conserve = FALSE,
+          conserve = TRUE,
           cv = FALSE,
           kfold = 10,
           balance = FALSE,

@@ -109,7 +109,6 @@ plot_predict(test, cref0 = "+init=epsg:5472", cref1 = "+init=epsg:4326")
 
 plot_cv(test)
 
-
 # Example in VIGNETTE
 # Packages
 library(spatstat.core)
@@ -371,16 +370,17 @@ spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
 
-# Combine
+# Combine into readable format
 obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
 spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(5, 2, 3, 1, 4)]
+spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1)]
 
-# Prediction Data
-prerdict_locs <- ims2df(ims)
+# Specify categories for varying degrees of spatial uncertainty
+## Creates three groups
+spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
 
-test <- perlrren(obs_ppp = obs_locs,
+# Run perlrren
+  test <- perlrren(obs_ppp = obs_locs,
                  covariates = ims,
                  predict = TRUE,
                  radii = c(10,100,500),
@@ -388,54 +388,11 @@ test <- perlrren(obs_ppp = obs_locs,
                  alpha = 0.01,
                  n_sim = 10)
 
-plot_sim(test, predict = T)
+plot_perturb(test, predict = T)
 
 
 plot(test[[1]])
 plot(test[[2]])
 plot(test[[3]])
 plot(test[[4]])
-
-
-rads <- c(10,100,500)
-n_sim <- 5
-#conserve forced to be FALSE (for consistent windows)
-
-
-
-
-
-
-
-
-
-
-
-#plot_obs(xxxx)
-#plot_predict(xxxx)
-
-
-
-
-
-
-
-plot_obs(xxxx)
-
-
-
-# names(ims[[i]])
-# names(marks(xx))
-
-
-
-
-
-plot(xx, use.marks = F, cols = "red")
-plot(input, use.marks = F, cols = "black", add = T)
-
-
-lapply(sbei, FUN = rjitter)
-
-plot(rjitter(bei, radius = 10), use.marks = F)
 

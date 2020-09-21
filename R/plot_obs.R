@@ -11,7 +11,7 @@
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics par
-#' @importFrom raster values
+#' @importFrom raster cut raster values
 #' @importFrom spatstat.core plot.ppp setmarks superimpose
 #' @export
 #'
@@ -34,6 +34,7 @@ plot_obs <- function(input,
   }
 
   op <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(op))
   graphics::par(pty = "s")
   names_obs <- names(input$dat)
   presence <- spatstat.core::setmarks(input$out$presence, "presence")
@@ -47,7 +48,7 @@ plot_obs <- function(input,
                                 cols = c(plot_cols[3], plot_cols[1]),
                                 leg.side = "bottom",
                                 leg.args = list(cex.axis = 0.9, cex = 1, pch = c(1,1)),
-                                main = "Locations",
+                                main = "locations",
                                 main.panel = "",
                                 xlab = names_obs[5],
                                 ylab = names_obs[6],
@@ -56,7 +57,7 @@ plot_obs <- function(input,
                                 ...)
 
   # Plot 2: log relative risk
-  rrp <- lrr_plot(input = input$out$obs$rr,
+  rrp <- div_plot(input = input$out$obs$rr,
                   cols = plot_cols,
                   midpoint = 0)
 
@@ -81,17 +82,21 @@ plot_obs <- function(input,
                                       cex.axis = 0.67))
 
   # Plot 3: Significant p-values
-  pvalp <- pval_plot(input$out$obs$P, alpha = alpha)
+  pvalp <- raster::raster(input$out$obs$P)  # create raster
+  pvalp <- raster::cut(pvalp,
+                     breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
+                     right = FALSE)
+  
   if (all(raster::values(pvalp)[!is.na(raster::values(pvalp))] == 2)) {
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2
-    labp <- "Insignificant"
+    labp <- "insignificant"
   } else {
     pcols <- plot_cols
     brp <- c(1, 1.67, 2.33, 3)
     atp <- c(1.33, 2, 2.67)
-    labp <- c("Presence", "Insignificant", "Absence")
+    labp <- c("presence", "insignificant", "absence")
   }
 
   p3 <- spatstat.core::plot.ppp(dat,
@@ -102,7 +107,7 @@ plot_obs <- function(input,
                                 ylab = names_obs[6],
                                 axes = TRUE,
                                 ann = TRUE,
-                                main = paste("Significant p-values\nalpha =", alpha, sep = " "),
+                                main = paste("significant p-values\nalpha =", alpha, sep = " "),
                                 ...)
   fields::image.plot(pvalp,
                      add = TRUE,
@@ -113,6 +118,4 @@ plot_obs <- function(input,
                                       las = 0,
                                       labels = labp,
                                       cex.axis = 0.67))
-
-  on.exit(graphics::par(op))
 }

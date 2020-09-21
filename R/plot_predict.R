@@ -39,6 +39,7 @@ plot_predict <- function(input,
     }
 
   op <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(op))
   # Convert to geospatial rasters
   predict_risk <-  data.frame("x" = input$out$predict$predict_locs.x,
                               "y" = input$out$predict$predict_locs.y,
@@ -71,7 +72,6 @@ plot_predict <- function(input,
                                          9998, Inf, 1))
   if (all(is.na(raster::values(naband_reclass)))) { naband_reclass <- NULL }
   
-
   # Convert to geospatial raster
   predict_tol <- data.frame("x" = input$out$predict$predict_locs.x,
                             "y" = input$out$predict$predict_locs.y,
@@ -91,7 +91,7 @@ plot_predict <- function(input,
                              right = FALSE)
 
   # Plot 1: log relative risk
-  rrp <- lrr_raster(input = predict_risk_raster,
+  rrp <- div_plot(input = predict_risk_raster,
                     cols = plot_cols[1:3],
                     midpoint = 0)
 
@@ -101,8 +101,8 @@ plot_predict <- function(input,
                            col = rrp$cols,
                            axes = TRUE,
                            main = "log relative risk",
-                           xlab = "Longitude",
-                           ylab = "Latitude",
+                           xlab = "longitude",
+                           ylab = "latitude",
                            legend.mar = 3.1,
                            axis.args = list(at = rrp$at,
                                             las = 0,
@@ -117,21 +117,21 @@ plot_predict <- function(input,
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2
-    labp <- "Insignificant"
+    labp <- "insignificant"
   } else {
     pcols <- plot_cols[1:3]
     brp <- c(1, 1.67, 2.33, 3)
     atp <- c(1.33, 2, 2.67)
-    labp <- c("Presence", "Insignificant", "Absence")
+    labp <- c("presence", "insignificant", "absence")
   }
 
   p2 <- fields::image.plot(reclass_tol,
                            breaks = brp,
                            col = pcols,
                            axes = TRUE,
-                           main = paste("Significant p-values\nalpha =", alpha, sep = " "),
-                           xlab = "Longitude",
-                           ylab = "Latitude",
+                           main = paste("significant p-values\nalpha =", alpha, sep = " "),
+                           xlab = "longitude",
+                           ylab = "latitude",
                            legend.mar = 3.1,
                            axis.args = list(at = atp,
                                             labels = labp,
@@ -140,6 +140,4 @@ plot_predict <- function(input,
   if (!is.null(naband_reclass)) {
   raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
   }
-  
-  on.exit(graphics::par(op))
 }

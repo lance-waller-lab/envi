@@ -2,7 +2,7 @@
 #' 
 #' Estimate the ecological niche of a single species with presence/absence data and two covariates. Predict the ecological niche in geographic space.
 #'
-#' @param obs_locs Input data frame of presence and absence observations with 5 features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate.
+#' @param obs_locs Input data frame of presence and absence observations with six (6) features (columns): 1) ID, 2) longitude, 3) latitude, 4) presence/absence binary variable, 5) covariate 1 as x-coordinate, 6) covariate 2 as y-coordinate.
 #' @param predict Logical. If TRUE, will predict the ecological niche in geographic space. If FALSE (the default), will not predict. 
 #' @param predict_locs Input data frame of prediction locations with 4 features (columns): 1) longitude, 2) latitude, 3) covariate 1 as x-coordinate, 4) covariate 2 as y-coordinate. The covariates must be the same as those included in \code{obs_locs}.
 #' @param conserve Logical. If TRUE (the default), the ecological niche will be estimated within a concave hull around the locations in \code{obs_locs}. If FALSE, the ecological niche will be estimated within a concave hull around the locations in \code{predict_locs}.
@@ -22,7 +22,7 @@
 #' 
 #' If \code{predict = TRUE} this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 #' 
-#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
@@ -66,7 +66,7 @@
 #' @importFrom pls cvsegments
 #' @importFrom raster extract raster
 #' @importFrom rgeos gBuffer
-#' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons
+#' @importFrom sp bbox coordinates Polygon Polygons SpatialPolygons
 #' @importFrom sparr risk
 #' @importFrom spatstat.core owin ppp
 #' @importFrom stats na.omit
@@ -166,7 +166,10 @@ lrren <- function(obs_locs,
     outer_chull_poly_buffer <- rgeos::gBuffer(outer_chull_poly, width = poly_buffer, byid = TRUE)
     outer_poly <- outer_chull_poly_buffer@polygons[[1]]@Polygons[[1]]@coords #extract coordinates of new polygon
   }
-
+  
+  if (conserve == FALSE & is.null(predict_locs)) {
+    stop("If the argument 'conserve' is FALSE, must specify the argument 'predict_locs'")
+  }
   if (conserve == TRUE) { window_poly <- inner_poly } else { window_poly <- outer_poly }
 
   if (is.null(obs_window)) {
@@ -180,17 +183,20 @@ lrren <- function(obs_locs,
   absence_locs <- subset(obs_locs, obs_locs[, 4] == 0)
 
   ppp_presence <- spatstat.core::ppp(x = presence_locs[ , 5],
-                            y = presence_locs[ , 6],
-                            window = wind,
-                            checkdup = FALSE)
+                                     y = presence_locs[ , 6],
+                                     window = wind,
+                                     checkdup = FALSE)
   ppp_absence <- spatstat.core::ppp(x = absence_locs[ , 5],
-                               y = absence_locs[ , 6],
-                               window = wind,
-                               checkdup = FALSE)
+                                    y = absence_locs[ , 6],
+                                    window = wind,
+                                    checkdup = FALSE)
 
   # Calculate observed kernel density ratio
-  obs <- sparr::risk(f = ppp_presence, g = ppp_absence,
-                         tolerate = TRUE, verbose = verbose, ...)
+  obs <- sparr::risk(f = ppp_presence,
+                     g = ppp_absence,
+                     tolerate = TRUE,
+                     verbose = verbose,
+                     ...)
   bandw <- obs$f$h0
 
   if (predict == FALSE) {
@@ -203,32 +209,11 @@ lrren <- function(obs_locs,
       # Project relative risk surface into geographic space
       if (verbose == TRUE) { message("Predicting area of interest") }
 
-      ## Create index coordinates
-      rx <- rep(obs$rr$xcol, length(obs$rr$yrow))
-      for(i in 1:length(obs$rr$yrow)) {
-        if (i == 1) { ry <- rep(obs$rr$yrow[i], length(obs$rr$xcol)) }
-        if (i != 1) { ry <- c(ry, rep(obs$rr$yrow[i], length(obs$rr$xcol))) }
-        }
-
     # Convert to semi-continuous raster
-    rr <-  data.frame("x" = rx,
-                      "y" = ry,
-                      "v" = as.vector(t(obs$rr$v)))
-    rr$v <- ifelse(is.infinite(rr$v), NA, rr$v)
-    rr <- stats::na.omit(rr) # remove NAs
-    sp::coordinates(rr) <- ~ x + y # coordinates
-    sp::gridded(rr) <- TRUE # gridded
-    rr_raster <- raster::raster(rr)
+    rr_raster <- raster::raster(obs$rr)
 
     # Convert to categorical raster
-    pval <-  data.frame("x" = rx,
-                        "y" = ry,
-                        "v" = as.vector(t(obs$P$v)))
-    pval$v <- ifelse(is.infinite(pval$v), NA, pval$v)
-    pval <- stats::na.omit(pval) # remove NAs
-    sp::coordinates(pval) <- ~ x + y # coordinates
-    sp::gridded(pval) <- TRUE # gridded
-    pval_raster <- raster::raster(pval)
+    pval_raster <- raster::raster(obs$P)
 
     # Prediction locations
     extract_points <- cbind(predict_locs[ , 3], predict_locs[ , 4])
@@ -257,12 +242,6 @@ lrren <- function(obs_locs,
     cv_labels <- list()
     cv_pvals <- list()
 
-    ## Combine function used in foreach
-    comb <- function(x, ...) {
-      lapply(seq_along(x),
-             function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-    }
-
     ## Partition k-folds
     ### Randomly sample data into k-folds
     if (balance == FALSE) {
@@ -276,15 +255,15 @@ lrren <- function(obs_locs,
     }
 
     ### Progress bar
-    if (verbose == TRUE & parallel == FALSE) {
+    if (verbose == TRUE) {
       message("Cross-validation in progress")
-      pb <- utils::txtProgressBar(min = 0, max = kfold, style = 3)
+      if (parallel == FALSE) {
+        pb <- utils::txtProgressBar(min = 0, max = kfold, style = 3)
+      }
     }
 
     ### Set function used in foreach
     if (parallel == TRUE) {
-      loadedPackages <- c("doParallel", "parallel")
-      invisible(lapply(loadedPackages, require, character.only = TRUE))
       if (is.null(n_core)) { n_core <- parallel::detectCores() - 1 }
       cl <- parallel::makeCluster(n_core)
       doParallel::registerDoParallel(cl)
@@ -295,7 +274,7 @@ lrren <- function(obs_locs,
     out_par <- foreach::foreach(k = 1:kfold,
                                 .combine = comb,
                                 .multicombine = TRUE,
-                                .packages = c("sparr", "spatstat.core", "raster"),
+                                .packages = c("sparr", "spatstat.core", "raster", "utils"),
                                 .init = list(list(), list(), list())
                                 ) %fun% {
 
@@ -320,42 +299,26 @@ lrren <- function(obs_locs,
       ##### training data
       ###### presence and absence point pattern datasets
       ppp_presence_training <- spatstat.core::ppp(x = training[ , 5][training[ , 4] == 1],
-                                         y = training[ , 6][training[ , 4] == 1],
-                                         window = wind,
-                                         checkdup = FALSE)
+                                                  y = training[ , 6][training[ , 4] == 1],
+                                                  window = wind,
+                                                  checkdup = FALSE)
       ppp_absence_training <- spatstat.core::ppp(x = training[ , 5][training[ , 4] == 0],
-                                            y = training[ , 6][training[ , 4] == 0],
-                                            window = wind,
-                                            checkdup = FALSE)
+                                                 y = training[ , 6][training[ , 4] == 0], 
+                                                 window = wind,
+                                                 checkdup = FALSE)
 
       ##### Calculate observed kernel density ratio
-      rand_lrr <- sparr::risk(f = ppp_presence_training, g = ppp_absence_training,
-                              tolerate = TRUE, verbose = FALSE, ...)
-
-      ##### Create index coordinates
-      rx <- rep(rand_lrr$rr$xcol, length(rand_lrr$rr$yrow))
-      for(i in 1:length(rand_lrr$rr$yrow)) {
-        if (i == 1) { ry <- rep(rand_lrr$rr$yrow[i], length(rand_lrr$rr$xcol)) }
-        if (i != 1) { ry <- c(ry, rep(rand_lrr$rr$yrow[i], length(rand_lrr$rr$xcol))) }
-        }
+      rand_lrr <- sparr::risk(f = ppp_presence_training,
+                              g = ppp_absence_training,
+                              tolerate = TRUE,
+                              verbose = FALSE,
+                              ...)
 
       ##### Convert to semi-continuous raster
-      rr <-  data.frame("x" = rx,
-                        "y" = ry,
-                        "v" = as.vector(t(rand_lrr$rr$v)))
-      rr$v <- ifelse(is.infinite(rr$v), NA, rr$v)
-      sp::coordinates(rr) <- ~ x + y # coordinates
-      sp::gridded(rr) <- TRUE # gridded
-      rr_raster <- raster::raster(rr)
+      rr_raster <- raster::raster(rand_lrr$rr)
       rr_raster[is.na(rr_raster[])] <- 0 # if NA, assigned null value (log(rr) = 0)
       ##### Convert to categorical raster
-      pval <-  data.frame("x" = rx,
-                          "y" = ry,
-                          "v" = as.vector(t(rand_lrr$P$v)))
-      pval$v <- ifelse(is.infinite(pval$v), NA, pval$v)
-      sp::coordinates(pval) <- ~ x + y # coordinates
-      sp::gridded(pval) <- TRUE # gridded
-      pval_raster <- raster::raster(pval)
+      pval_raster <- raster::raster(rand_lrr$P)
       pval_raster[is.na(pval_raster[])] <- 0.5 # if NA, assigned null value (p = 0.5)
 
       ##### Predict testing dataset

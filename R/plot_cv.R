@@ -25,6 +25,7 @@ plot_cv <- function(input, alpha = 0.05) {
   }
 
   op <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(op))
   kfold <- length(input$cv$cv_predictions_rr)
   nsamp <- input$out$presence$n
 
@@ -53,7 +54,7 @@ plot_cv <- function(input, alpha = 0.05) {
                  ylab = "\nTrue Positive Rate (TPR)") #Plot fold AUCs
   graphics::abline(0, 1, col = "black", lty = 2)
   graphics::plot(out_cv_pval$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
-  graphics::title(paste("Asymptotic p-value prediction\nAUC = ",
+  graphics::title(paste("asymptotic p-value prediction\nAUC = ",
                         round(out_cv_pval$cvAUC,digits = 3),
               " (95% CI: ", round(out_ci_pval$ci[1], digits = 3)," - ",
               round(out_ci_pval$ci[2], digits = 3), ")", sep = ""), cex.main = 1.1)
@@ -61,9 +62,9 @@ plot_cv <- function(input, alpha = 0.05) {
   graphics::par(mai = c(0, 0, 0, 0), mar = c(5.1, 4.1, 0.1, 2.1) / 5, pty = "m")
   graphics::plot.new()
   graphics::legend(x = "top", inset = 0, title = "Legend",
-                   legend = c("Individual k-fold",
-                              "Average",
-                              "Luck (Reference)"),
+                   legend = c("individual k-fold",
+                              "average",
+                              "luck (reference)"),
                    lty = c(3, 1, 2), bty = "n",
                    col = c("black", "red", "black"))
   graphics::mtext(paste("Area Under the Receiver Operating Characteristic Curve\n", kfold,
@@ -95,19 +96,17 @@ plot_cv <- function(input, alpha = 0.05) {
   suppressWarnings(graphics::lines(colMeans(do.call(rbind,perf_pval@x.values)),
                                    colMeans(do.call(rbind,perf_pval@y.values)),
                                    col = "red", lty = 1, lwd = 2)) # mean PRREC
-  graphics::title("Asymptotic p-value prediction", cex.main = 1.1)
+  graphics::title("asymptotic p-value prediction", cex.main = 1.1)
 
   graphics::par(mai = c(0, 0, 0, 0), mar = c(5.1, 4.1, 0.1, 2.1) / 5, pty = "m")
   graphics::plot.new()
   graphics::legend(x = "top", inset = 0, title = "Legend",
-                   legend = c("Individual k-fold",
-                              "Average",
-                              "Luck (Reference)"),
+                   legend = c("individual k-fold",
+                              "average",
+                              "luck (reference)"),
                    lty = c(3, 1, 2), bty = "n",
                    col = c("black", "red", "black"))
   graphics::mtext(paste("Precision-Recall Curve\n", kfold, "-fold cross-validation, alpha = ",
                         alpha, sep=""),
                   side = 3, line = -4, outer = TRUE, cex = 1.25)
-
- on.exit(graphics::par(op))
 }
