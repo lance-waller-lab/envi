@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' \donttest{
-#' plot_cv(input = test_lrren)
+#'   plot_cv(input = test_lrren)
 #' }
 #' 
 plot_cv <- function(input, alpha = 0.05) {

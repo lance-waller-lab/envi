@@ -21,7 +21,7 @@
 #' 
 #' @examples 
 #' \donttest{
-#' plot_obs(input = test_perlrren)
+#'   plot_obs(input = test_perlrren)
 #' }
 #' 
 plot_perturb <- function(input,

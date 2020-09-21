@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' \donttest{
-#' plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
+#'   plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 #' }
 #' 
 plot_predict <- function(input,

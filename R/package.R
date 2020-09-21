@@ -26,7 +26,7 @@
 #' 
 #' \code{\link{plot_cv}} Visualizes the \code{\link{lrren}} output, specifically two prediction diagnostics (area under the receiver operating characteristic curve and precision-recall curve).
 #' 
-#' #' \code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. Also has functionality to predict the spatial distribution of the summary statistics.
+#' \code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. Also has functionality to predict the spatial distribution of the summary statistics.
 #' 
 #' @name envi-package
 #' @aliases envi-package envi 

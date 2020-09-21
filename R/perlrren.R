@@ -43,7 +43,7 @@
 #' \item{\code{y}}{Values for y-coordinate in geographic space (e.g., latitude).}
 #' \item{\code{v}}{Values for x-coordinate in covariate space.}
 #' \item{\code{z}}{Values for x-coordinate in covariate space.}
-#' #' \item{\code{lrr_mean}}{Values for the mean log relative risk surface.}
+#' \item{\code{lrr_mean}}{Values for the mean log relative risk surface.}
 #' \item{\code{lrr_sd}}{Values for the standard deviation of log relative risk surface.}
 #' \item{\code{pval_mean}}{Values for the mean p-value surface.}
 #' \item{\code{pval_prop}}{Values for the proportion of iterations were statistically significant surface.}

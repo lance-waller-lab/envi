@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \donttest{
-#' plot_obs(input = test_lrren)
+#'   plot_obs(input = test_lrren)
 #' }
 #' 
 plot_obs <- function(input,
