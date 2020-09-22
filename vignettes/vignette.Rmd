@@ -14,14 +14,15 @@ library(knitr)
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE, fig.width = 6, fig.height = 6, fig.show = "hold")
 ```
 
-Start with the necessary packages and seed for the vignette
+Start with the necessary packages and seed for the vignette.
+
 ```{r packages}
 loadedPackages <- c("envi", "raster", "spatstat.core", "spatstat.data")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
 
-We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots (i.e., ecological niche) of nesting within the covariate information and then predict where these hot-spots are located within the park.
+We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots of nesting within the covariate information (i.e., the gorilla ecological niche) and then predict where these hot-spots are located within the park.
 
 We start by importing the two covariate data of class `im`:
 
@@ -35,28 +36,32 @@ spatstat.core::plot.im(slopeangle); spatstat.core::plot.im(waterdist)
 ```
 
 Center and scale the covariate data.
+
 ```{r scale}
 slopeangle$v <- scale(slopeangle)
 waterdist$v <- scale(waterdist)
 ```
 
-Convert the covariate data to class `raster`.
+Convert the covariate data to class `RasterLayer`.
+
 ```{r rasterize}
-slopeangle_raster <- raster(slopeangle)
-waterdist_raster <- raster(waterdist)
+slopeangle_raster <- raster::raster(slopeangle)
+waterdist_raster <- raster::raster(waterdist)
 ```
 
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
+
 ```{r presence}
-gorillas <- unmark(spatstat.data::gorillas)
-spatstat.core::marks(gorillas) <- data.frame("presence" = rep(1, gorillas$n),
-                                             "lon" = gorillas$x,
-                                             "lat" = gorillas$y)
-spatstat.core::marks(gorillas)$slopeangle <- slopeangle[gorillas]
-spatstat.core::marks(gorillas)$waterdist <- waterdist[gorillas]
+presence <- unmark(spatstat.data::gorillas)
+spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                             "lon" = presence$x,
+                                             "lat" = presence$y)
+spatstat.core::marks(presence)$slopeangle <- slopeangle[presence]
+spatstat.core::marks(presence)$waterdist <- waterdist[presence]
 ```
 
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "absence" locations. 
+
 ```{r absence}
 absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
@@ -66,7 +71,7 @@ spatstat.core::marks(absence)$slopeangle <- slopeangle[absence]
 spatstat.core::marks(absence)$waterdist <- waterdist[absence]
 ```
 
-Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `envi` package:
+Combine the presence (n = `r presence$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `envi` package:
 
 1. ID
 2. X-coordinate
@@ -76,7 +81,7 @@ Combine the presence (n = `r gorillas$n`) and absence (`r absence$n`) locations 
 6. Covariate 2
 
 ```{r obs_locs}
-obs_locs <- spatstat.core::superimpose(gorillas, absence, check = FALSE)
+obs_locs <- spatstat.core::superimpose(absence, presence, check = FALSE)
 spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
 spatstat.core::plot.ppp(obs_locs, which.marks = "presence")
 obs_locs <- spatstat.core::marks(obs_locs)
@@ -85,38 +90,104 @@ obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 ```
 
 Extract the prediction locations within the study area from one of the covariates.
+
 ```{r predict_locs}
 predict_locs <- data.frame(raster::rasterToPoints(slopeangle_raster))
 predict_locs$layer2 <- raster::extract(waterdist_raster, predict_locs[, 1:2])
 ```
 
-Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct k-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`), and we quiet run messages (`verbose = TRUE`).
+Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct k-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`).
+
 ```{r lrren}
-# Run lrren
-test <- lrren(obs_locs = obs_locs,
-              predict_locs = predict_locs,
-              predict = TRUE,
-              conserve = TRUE,
-              cv = TRUE,
-              balance = TRUE,
-              verbose = FALSE)
+start_time <- Sys.time() # record start time
+test_lrren <- lrren(obs_locs = obs_locs,
+                    predict_locs = predict_locs,
+                    predict = TRUE,
+                    cv = TRUE,
+                    balance = TRUE)
+end_time <- Sys.time() # record end time
+lrren_time <- end_time - start_time # calculate duration of lrren() example
 ```
 
+A single run of the `lrren` function took approximately `r round(lrren_time, digits = 1)` seconds on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory.
+
 We display the estimated ecological niche within a space of Covariate 1 by Covariate 2. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. 
+
 ```{r plot_obs}
-plot_obs(test)
+plot_obs(test_lrren)
 ```
 
 We display the estimated ecological niche predicted to the study area within geographic space. We use the default two-tailed alpha-level (`alpha = 0.05`).
+
 ```{r plot_predict}
-plot_predict(test, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326")
+plot_predict(test_lrren, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326")
 ```
 
 We display the 10-fold cross-validation diagnostics. We use the default two-tailed alpha-level (`alpha = 0.05`).
+
 ```{r plot_cv}
-plot_cv(test)
+plot_cv(test_lrren)
 ```
 
 Based on only two covariates, slope angle and distance to water, we detected two ecological niches of gorillas compared to pseudo-absence points drawn randomly from within the park. These two ecological niches are located in many small regions of the park. The log relative risk estimate accurately predicted about 60% of the gorilla nesting sites. 
 
 Future improvement can be made to the choice in covariates, including using the first two components of a principal components analysis of all seven covariates available in the `gorillas.extra` data in the `spatstat.data` package.
+
+### Sensitivity Analysis
+
+Now we perform a sensitivity analysis of our ecological niche model. For example, let us assume the investigators observed nesting sites at a distance and there is some spatial uncertainty in the exact coordinates of the nesting sites. Let us also assume there is more uncertainty about where the nesting sites of the 'major' gorilla group were located (within 100 meters) than the 'minor' gorilla group (within 50 meters). We can examine the influence of this type of uncertainty on our estimated ecological niche model and its predicted spatial distribution in the park. We assume there is no spatial uncertainty in the spatial location of pseudo-absence points (0.1 meter). The three groups must be categorized within a new feature named `levels` within the observation data.
+
+We start by preparing the observation data. Here, the data must be a marked planar point pattern of class 'ppp'.
+
+```{r sensitivity data}
+# Preserve 'group' feature from 'gorillas' data within {spatstat.data}
+## Assign as a new mark named 'level'
+spatstat.core::marks(presence)$levels <- spatstat.core::marks(spatstat.data::gorillas)$group
+
+# Assign a third 'level' for the pseudo-absences
+spatstat.core::marks(absence)$levels <- "none"
+
+# Combine
+obs_locs <- spatstat.core::superimpose(absence, presence, check = FALSE)
+
+# Set variables as class 'factor'
+spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
+spatstat.core::marks(obs_locs)$levels <- as.factor(spatstat.core::marks(obs_locs)$levels)
+
+# Create 'id' feature
+spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+
+# Reorder and drop the two covariate features
+spatstat.core:: marks(obs_locs) <- spatstat.core:: marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
+```
+
+The two covariate values will be assigned to all points in every iteration and are drawn from a list of objects of class 'im'. Here, we use the same variables as above (slope angle and distance to water), centered and scaled.
+
+```{r ims}
+ims <- spatstat.data::gorillas.extra[c(4,7)]
+ims[[1]]$v <- scale(ims[[1]]$v)
+ims[[2]]$v <- scale(ims[[2]]$v)
+```
+
+Run the `perlrren` function within the `envi` package. We use the default settings and 10 simulated iterations. The `radii` argument is a string of numeric values in the order of the `levels` feature of class 'factor' within the `obs_locs` object.
+
+```{r perlrren}
+start_time <- Sys.time() # record start time
+test_perlrren <- perlrren(obs_ppp = obs_locs,
+                          covariates = ims,
+                          radii = c(100, 50, 0.1),
+                          n_sim = 10)
+end_time <- Sys.time() # record end time
+perlrren_time <- end_time - start_time # calculate duration of perlrren() example
+```
+
+A single run of the `perlrren` function took approximately `r round(perlrren_time, digits = 1)` seconds on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory. In practice, a larger number of simulated iterations would be recommended (e.g., n = 10,000). 
+
+We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the defaults and display four (4) plots in covariate space and four (4) plots that are predicted into geographic space (i.e., the park). 
+
+```{r plot_perturb}
+plot_perturb(test_perlrren,
+             cov_labs = c("slopeangle", "waterdist"))
+```
+
+The uncertainty in the spatial coordinates of gorilla nesting sites greatly influences the estimate ecological niche of gorillas (based on the two selected covariates) compared to pseudo-absence points drawn randomly from within the park. One of the hot-spot within the covariate space was not statistically significant for a majority of simulated iterations.

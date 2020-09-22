@@ -396,3 +396,12 @@ plot(test[[2]])
 plot(test[[3]])
 plot(test[[4]])
 
+# If adding threshold category for plot_perturb
+if (is.null(prop_thresh)) {
+  pval_prop <- raster::cut(pval_prop,
+                           breaks = c(-Inf, prop_thresh, Inf),
+                           right = FALSE)
+  values(pval_prop) <- factor(values(pval_prop),
+                              labels = c("sufficient", "insufficient"))
+  
+}

@@ -19,6 +19,8 @@
 #' @importFrom raster crs raster projectRaster
 #' @importFrom spatstat.core pixellate
 #' 
+#' @export
+#' 
 #' @examples 
 #' \donttest{
 #'   plot_perturb(input = test_perlrren)

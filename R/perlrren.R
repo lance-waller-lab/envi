@@ -170,11 +170,16 @@ perlrren <- function(obs_ppp,
     
     # Extract Covariate Values
     for (i in 1:length(covariates)) {
-      spatstat.core::marks(xx)[[5 + i]] <- covariates[[i]][xx]
+      spatstat.core::marks(xx)[[5 + i]] <- covariates[[i]][xx, drop = FALSE]
       names(spatstat.core::marks(xx))[5 + i] <- names(covariates[i])
     }
     
     xxx <- spatstat.core::marks(xx)[ , -5]
+    
+    # remove observations with NA covariates values ()
+    ## typically will not be an issue
+    ## unless obs_ppp and covariates have dissimilar windows, even slightly dissimilar
+    xxx <- na.omit(xxx) 
     
     xxxx <- lrren(obs_locs = xxx, 
                   predict_locs = predict_locs,
@@ -240,7 +245,9 @@ perlrren <- function(obs_ppp,
     xxxxx <- spatstat.core::ppp(x = predict_locs[ , 3],
                                 y = predict_locs[ , 4],
                                 window = wind,
-                                marks = predict_locs)
+                                marks = predict_locs,
+                                check = FALSE) 
+    # points along polygon border will be lost
    
     spatstat.core::marks(xxxxx)[ , 5] <- lrr_mean[xxxxx]
     spatstat.core::marks(xxxxx)[ , 6] <- lrr_sd[xxxxx]

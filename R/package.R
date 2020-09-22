@@ -50,7 +50,7 @@ NULL
 #' @importFrom grDevices chull colorRampPalette
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom pls cvsegments
-#' @importFrom raster crs cut extract image projectRaster raster reclassify values
+#' @importFrom raster crs cut extract image projectRaster raster rasterToPoints reclassify values
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons

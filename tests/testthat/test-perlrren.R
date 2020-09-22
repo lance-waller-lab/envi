@@ -77,6 +77,14 @@ test_that("perlrren throws error with invalid arguments", {
              n_sim = 10)
   )
   
+  # A radius of 0
+  expect_error(
+    perlrren(obs_ppp = obs_locs,
+             covariates = ims,
+             radii = c(0, 100, 500),
+             n_sim = 10)
+  )
+  
   # Incorrect length of ims
   expect_error(
     perlrren(obs_ppp = obs_locs,
