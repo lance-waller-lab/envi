@@ -2,14 +2,14 @@
 #' 
 #' Create multiple plots of output from the \code{\link{perlrren}} function, specifically for the four summary statistics in covariate space and geographic space.
 #' 
-#' @param input An object of class "list" from the \code{\link{perlrren}} function.
+#' @param input An object of class 'list' from the \code{\link{perlrren}} function.
 #' @param predict Logical. If TRUE (the default), will visualize the four summary statistics in geographic space. If FALSE, will not.  
 #' @param mean_cols Character string of length three (3) specifying the colors for plots with a divergent color palette: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD")} or \code{c("indianred4", "grey80", "blue3")}.
 #' @param var_cols Character string of length two (2) specifying the colors for plots with a sequential color palette from low to high values. The default colors in hex are \code{c("#E5E5E5", "#1A1A1A")} or \code{c("grey90", "grey10")}.
 #' @param cov_labs Character string of length two (2) specifying the x- and y-axis labels in plots of the ecological niche in covariate space. The default values are generic \code{c("V1", "V2")}. 
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
-#' @param digits Integer. The number of significant digits for the color key labels using the \code{round} function (default is 1).
+#' @param digits Integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
 #' @param ... Arguments passed to \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces four plots in a two-dimensional space where the axes are the two specified covariates: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold. If \code{predict = TRUE}, this function produces an additional four plots of the summary statistics above in a two-dimensional geographic space where the axes are longitude and latitude.
@@ -21,7 +21,7 @@
 #' 
 #' @examples 
 #' \donttest{
-#'   plot_obs(input = test_perlrren)
+#'   plot_perturb(input = test_perlrren)
 #' }
 #' 
 plot_perturb <- function(input,

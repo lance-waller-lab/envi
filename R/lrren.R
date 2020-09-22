@@ -12,7 +12,7 @@
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param poly_buffer Optional. Specify a custom distance (in same units as covariates) to add to window within which the ecological niche is estimated. The default is 1/100th of the smallest range among the two covariates.
-#' @param obs_window Optional. Specify a custom window of class \code{owin} within which to estimate the ecological niche. The default computes a concave hull around the data specified in \code{conserve}.
+#' @param obs_window Optional. Specify a custom window of class 'owin' within which to estimate the ecological niche. The default computes a concave hull around the data specified in \code{conserve}.
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
@@ -20,13 +20,13 @@
 #' 
 #' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces \code{risk(tolerate == TRUE)} in order to calculate asymptotic p-values. The estimated ecological niche can be visualized using the \code{\link{plot_obs}} function.
 #' 
-#' If \code{predict = TRUE} this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
+#' If \code{predict = TRUE}, this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 #' 
-#' If \code{cv = TRUE} this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+#' If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
-#' @return An object of class "list". This is a named list with the following components:
+#' @return An object of class 'list'. This is a named list with the following components:
 #' 
 #' \describe{
 #' \item{\code{out}}{An object of class 'list' for the estimated ecological niche.}
@@ -43,14 +43,14 @@
 #' \item{\code{inner_poly}}{An object of class 'matrix' for the coordinates of the concave hull around the observation locations. Same as \code{outer_poly}.}
 #' }
 #' 
-#' If \code{predict = TRUE} the returned \code{out} has additional components:
+#' If \code{predict = TRUE}, the returned \code{out} has additional components:
 #' 
 #' \describe{
 #' \item{\code{outer_poly}}{An object of class 'matrix' for the coordinates of the concave hull around the prediction locations.}
 #' \item{\code{prediction}}{An object of class 'matrix' for the coordinates of the concave hull around the prediction locations.}
 #' }
 #' 
-#' If \code{cv = TRUE} the returned object of class "list" has an additional named list \code{cv} with the following components:
+#' If \code{cv = TRUE}, the returned object of class 'list' has an additional named list \code{cv} with the following components:
 #' 
 #' \describe{
 #' \item{\code{cv_predictions_rr}}{A list of length \code{kfold} with values of the log relative risk surface at each point randomly selected in a cross-validation fold.}
@@ -75,23 +75,22 @@
 #' @export
 #'
 #' @examples
+#'   set.seed(1234) # for reproducibility
+#' 
+#' # Necessary packages
 #'   library(spatstat.core)
 #'   library(spatstat.data)
 #'   library(raster)
 #'   
-#'   # Using the bei and bei.extra datasets within the {spatstat.data} package
-#'   data(bei)
-#'   data(bei.extra)
-#'   
-#'   # Covariate data
-#'   elev <- spatstat.data::bei.extra$elev
-#'   grad <- spatstat.data::bei.extra$grad
+#' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
+#' 
+#' # Covariate data (centered and scaled)
+#'   elev <- spatstat.data::bei.extra[[1]]
+#'   grad <- spatstat.data::bei.extra[[2]]
 #'   elev$v <- scale(elev)
 #'   grad$v <- scale(grad)
-#'   elev_raster <- raster::raster(elev)
-#'   grad_raster <- raster::raster(grad)
 #' 
-#'   # Presence data
+#' # Presence data
 #'   bei <- spatstat.data::bei
 #'   spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
 #'                                           "lon" = bei$x,
@@ -99,22 +98,21 @@
 #'   spatstat.core::marks(bei)$elev <- elev[bei]
 #'   spatstat.core::marks(bei)$grad <- grad[bei]
 #' 
-#'   # (Pseudo-)Absence data
-#'   set.seed(1234)
+#' # (Pseudo-)Absence data
 #'   absence <- spatstat.core::rpoispp(0.008, win = elev)
 #'   spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)
-#'    spatstat.core::marks(absence)$elev <- elev[absence]
-#'    spatstat.core::marks(absence)$grad <- grad[absence]
+#'   spatstat.core::marks(absence)$elev <- elev[absence]
+#'   spatstat.core::marks(absence)$grad <- grad[absence]
 #' 
-#'   # Combine into readable format
+#' # Combine into readable format
 #'   obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
 #'   obs_locs <- spatstat.core::marks(obs_locs)
 #'   obs_locs$id <- seq(1, nrow(obs_locs), 1)
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #' 
-#'   # Run lrren
+#' # Run lrren
 #'   test_lrren <- lrren(obs_locs = obs_locs)
 #' 
 lrren <- function(obs_locs,

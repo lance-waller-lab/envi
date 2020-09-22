@@ -6,7 +6,7 @@
 \usage{
 plot_predict(
   input,
-  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
+  plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD", "#FFFF00"),
   alpha = 0.05,
   cref0 = "+init=epsg:4326",
   cref1 = NULL,
@@ -14,9 +14,9 @@ plot_predict(
 )
 }
 \arguments{
-\item{input}{An object of class "list" from the \code{\link{lrren}} function.}
+\item{input}{An object of class 'list' from the \code{\link{lrren}} function.}
 
-\item{plot_cols}{Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.}
+\item{plot_cols}{Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD" "#FFFF00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.}
 
 \item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
 
@@ -34,7 +34,7 @@ Create multiple plots of output from the \code{\link{lrren}} function, specifica
 }
 \examples{
 \donttest{
-plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
+  plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 }
 
 }

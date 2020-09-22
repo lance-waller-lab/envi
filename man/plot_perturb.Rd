@@ -17,7 +17,7 @@ plot_perturb(
 )
 }
 \arguments{
-\item{input}{An object of class "list" from the \code{\link{perlrren}} function.}
+\item{input}{An object of class 'list' from the \code{\link{perlrren}} function.}
 
 \item{predict}{Logical. If TRUE (the default), will visualize the four summary statistics in geographic space. If FALSE, will not.}
 
@@ -31,7 +31,7 @@ plot_perturb(
 
 \item{cref1}{Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.}
 
-\item{digits}{Integer. The number of significant digits for the color key labels using the \code{round} function (default is 1).}
+\item{digits}{Integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).}
 
 \item{...}{Arguments passed to \code{\link[fields]{image.plot}} for additional graphical features.}
 }
@@ -43,7 +43,7 @@ Create multiple plots of output from the \code{\link{perlrren}} function, specif
 }
 \examples{
 \donttest{
-plot_obs(input = test_perlrren)
+  plot_perturb(input = test_perlrren)
 }
 
 }

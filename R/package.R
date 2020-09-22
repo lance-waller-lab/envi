@@ -1,6 +1,6 @@
 #' The envi Package: Environmental interpolation using spatial kernel density estimation
 #'
-#' Estimates an ecological niche using occurrence data, covariates, and kernel density-based estimation methods.
+#' Estimates an ecological niche model using occurrence data, covariates, and kernel density-based estimation methods.
 #'
 #' @details
 #' 
@@ -12,11 +12,11 @@
 #' 
 #' \bold{Ecological Niche Model}
 #' 
-#' \code{\link{lrren}} Estimates an ecological niche for a single species with presence/absence data, two covariates, and the spatial relative risk function. Provide functionality to predict the spatial distribution of the estimated ecological niche in geographic space and prepare internal k-fold cross-validation data.
+#' \code{\link{lrren}} Estimates the ecological niche for a single species with presence/absence data, two covariates, and the spatial relative risk function. Provide functionality to predict the spatial distribution of the estimated ecological niche in geographic space and prepare internal k-fold cross-validation data.
 #' 
 #' \bold{Sensitivity Analysis}
 #' 
-#' \code{\link{perlrren}} Iteratively estimates an ecological niche for a single species with spatially perturbed ("jittered") presence/absence data, two covariates, and the spatial relative risk function. Various radii for the spatial perturbation can be specified.
+#' \code{\link{perlrren}} Iteratively estimates the ecological niche for a single species with spatially perturbed ("jittered") presence/absence data, two covariates, and the spatial relative risk function. Various radii for the spatial perturbation can be specified.
 #' 
 #' \bold{Data Visualization}
 #' 
@@ -32,7 +32,7 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species, the spatial relative risk function uses the \code{\link[sparr]{risk}} function. The cross-validation can be performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. The spatial perturbation is performed using the \code{\link[spatstat.core]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.core]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 

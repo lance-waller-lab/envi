@@ -100,17 +100,17 @@ library(spatstat.data)
 # Prepare inputs #
 # -------------- #
 
-# Using the `bei` and `bei.extra` data from {spatstat.data}
+# Using the 'bei' and 'bei.extra' data within {spatstat.data}
 
 # Environmental Covariates
-elev <- spatstat.data::bei.extra$elev
-grad <- spatstat.data::bei.extra$grad
+elev <- spatstat.data::bei.extra[[1]]
+grad <- spatstat.data::bei.extra[[2]]
 elev$v <- scale(elev)
 grad$v <- scale(grad)
 elev_raster <- raster::raster(elev)
 grad_raster <- raster::raster(grad)
 
-# Presence locations
+# Presence data
 bei <- spatstat.data::bei
 spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
                                         "lon" = bei$x,
@@ -118,7 +118,7 @@ spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
 spatstat.core::marks(bei)$elev <- elev[bei]
 spatstat.core::marks(bei)$grad <- grad[bei]
 
-# (Pseudo-)Absence locations
+# (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = elev)
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
@@ -199,20 +199,20 @@ library(spatstat.data)
 # Prepare inputs #
 # -------------- #
 
-# Using the `bei` and `bei.extra` data from {spatstat.data}
+# Using the 'bei' and 'bei.extra' data within {spatstat.data}
 
 # Scale environmental covariates
 ims <- spatstat.data::bei.extra
 ims[[1]]$v <- scale(ims[[1]]$v)
 ims[[2]]$v <- scale(ims[[2]]$v)
 
-# Presence locations
+# Presence data
 presence <- spatstat.data::bei
 spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
                                              "lon" = bei$x,
                                              "lat" = bei$y)
 
-# (Pseudo-)Absence locations
+# (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,

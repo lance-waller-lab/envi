@@ -7,7 +7,7 @@
 plot_cv(input, alpha = 0.05)
 }
 \arguments{
-\item{input}{An object of class "list" from the \code{\link{lrren}} function.}
+\item{input}{An object of class 'list' from the \code{\link{lrren}} function.}
 
 \item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
 }
@@ -19,7 +19,7 @@ Create multiple plots of output from the \code{\link{lrren}} function, specifica
 }
 \examples{
 \donttest{
-plot_cv(input = test_lrren)
+  plot_cv(input = test_lrren)
 }
 
 }

@@ -7,11 +7,11 @@
 seq_plot(input, cols, thresh_up = NULL, digits = 1)
 }
 \arguments{
-\item{input}{An object of class 'im' or 'RasterLayer' from the \code{\link{lrren}} function.}
+\item{input}{An object of class 'im' or 'RasterLayer' from the \code{\link{perlrren}} function.}
 
 \item{thresh_up}{Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.}
 
-\item{digits}{Integer. The number of significant digits for the labels using the \code{round} function (default is 1).}
+\item{digits}{Integer. The number of significant digits for the labels using the \code{\link[base]{round}} function (default is 1).}
 
 \item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function.}
 }

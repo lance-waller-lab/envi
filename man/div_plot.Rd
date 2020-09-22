@@ -22,7 +22,7 @@ div_plot(
 
 \item{thresh_low}{Numeric. The lower value to concatenate the color key. The default (NULL) uses the minimum value from \code{input}.}
 
-\item{digits}{Integer. The number of significant digits for the labels using the \code{round} function (default is 1).}
+\item{digits}{Integer. The number of significant digits for the labels using the \code{\link[base]{round}} function (default is 1).}
 
 \item{plot_cols}{Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function.}
 }
@@ -38,6 +38,6 @@ An object of class 'list'. This is a named list with the following components:
 }
 }
 \description{
-Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}} or \code{\link{plot_predict}} function.
+Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}}, \code{\link{plot_predict}}, and \code{\link{plot_perturb}} functions.
 }
 \keyword{internal}

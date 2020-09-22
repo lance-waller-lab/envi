@@ -2,8 +2,8 @@
 #' 
 #' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the observation data and estimated ecological niche. 
 #' 
-#' @param input An object of class "list" from the \code{\link{lrren}} function.
-#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8b3a3a", "#cccccc", "#0000cd")} or \code{c("indianred4", "grey80", "blue3")}.
+#' @param input An object of class 'list' from the \code{\link{lrren}} function.
+#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD")} or \code{c("indianred4", "grey80", "blue3")}.
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
@@ -21,7 +21,7 @@
 #' }
 #' 
 plot_obs <- function(input,
-                     plot_cols = c("#8b3a3a", "#cccccc", "#0000cd"),
+                     plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD"),
                      alpha = 0.05,
                      ...) {
   

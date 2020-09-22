@@ -16,7 +16,7 @@
 #' 
 #' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat.core]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
 #' 
-#' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE} this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
+#' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
 #' 
 #' For more information about the spatial perturbation, please refer to the \code{\link[spatstat.core]{rjitter}} function documentation.
 #' 
@@ -36,7 +36,7 @@
 #' \item{\code{pval_prop}}{An object of class 'im' for the proportion of iterations were statistically significant surface.}
 #' }
 #' 
-#' If \code{predict = FALSE} the returned \code{predict} is empty. If \code{predict = TRUE} the returned \code{predict} is an object of class 'ppp' a marked point pattern with the following features:
+#' If \code{predict = FALSE}, the returned \code{predict} is empty. If \code{predict = TRUE}, the returned \code{predict} is an object of class 'ppp' a marked point pattern with the following features:
 #' 
 #' \describe{
 #' \item{\code{x}}{Values for x-coordinate in geographic space (e.g., longitude).}
@@ -59,41 +59,44 @@
 #' @export
 #' 
 #' @examples
+#'   set.seed(1234) # for reproducibility
+#' 
+#' # Necessary packages
 #'   library(spatstat.core)
 #'   library(spatstat.data)
 #' 
-#'   # Using the `bei` and `bei.extra` data from {spatstat.data}
+#' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
 #' 
-#'   # Scale environmental Covariates
+#' # Covariate data (centered and scaled)
 #'   ims <- spatstat.data::bei.extra
 #'   ims[[1]]$v <- scale(ims[[1]]$v)
 #'   ims[[2]]$v <- scale(ims[[2]]$v)
 #'   
-#'   # Presence locations
+#' # Presence data
 #'   presence <- spatstat.data::bei
 #'   spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
 #'                                                "lon" = bei$x,
 #'                                                "lat" = bei$y)
-#'  # (Pseudo-)Absence locations
-#'  absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
-#'  spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-#'                                              "lon" = absence$x,
-#'                                              "lat" = absence$y)
-#'  # Combine into readable format
-#'  obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-#'  spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-#'  spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1)]
+#' # (Pseudo-)Absence data
+#'   absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+#'   spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+#'                                               "lon" = absence$x,
+#'                                               "lat" = absence$y)
+#' # Combine into readable format
+#'   obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
+#'   spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+#'   spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1)]
 #'  
-#'  # Specify categories for varying degrees of spatial uncertainty
-#'  ## Creates three groups
-#'  spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
-#'                                                                  lambda = 0.05))
+#' # Specify categories for varying degrees of spatial uncertainty
+#' ## Creates three groups
+#'   spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
+#'                                                                   lambda = 0.05))
 
-#'  # Run perlrren
-#'  test_perlrren <- perlrren(obs_ppp = obs_locs,
-#'                            covariates = ims,
-#'                            radii = c(10, 100, 500),
-#'                            n_sim = 10)
+#' # Run perlrren
+#'   test_perlrren <- perlrren(obs_ppp = obs_locs,
+#'                             covariates = ims,
+#'                             radii = c(10, 100, 500),
+#'                             n_sim = 10)
 #' 
 perlrren <- function(obs_ppp,
                      covariates,
