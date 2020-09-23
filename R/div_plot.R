@@ -51,7 +51,6 @@ div_plot <- function(input,
   # Identify ramp above and below midpoint
   lowerhalf <- length(out[out < midpoint & !is.na(out)]) # values below 0
   upperhalf <- length(out[out > midpoint & !is.na(out)]) # values above 0
-  nhalf <- length(out[!is.na(out)]) / 2 # number of values at half
   min_absolute_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of raster
   max_absolute_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
 
