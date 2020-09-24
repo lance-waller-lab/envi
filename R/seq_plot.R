@@ -31,8 +31,13 @@ seq_plot <- function(input,
     out <- raster::raster(input)
   } else { out <- input }
   
+  max_raw_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
+  
   # Restrict spurious standard deviation values
   if (!is.null(thresh_up)) {
+    if (thresh_up <= 0) {
+      stop("The 'thresh_up' argument must be a numeric value greater than zero")
+    }
     out[out >= thresh_up] <- thresh_up
   }
   
@@ -52,6 +57,8 @@ seq_plot <- function(input,
   
   # Text for colorkey labels
   rbl <- round(rbs, digits = digits)
+  
+  if (max_raw_value > max_absolute_value) { rbl[5] <- paste(">", rbl[5], sep = "") }
   
   # Output
   out <- list("v" = out,

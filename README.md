@@ -143,7 +143,6 @@ predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
 test <- lrren(obs_locs = obs_locs,
               predict_locs = predict_locs,
               predict = TRUE,
-              parallel = TRUE,
               cv = TRUE)
 
 # -------------- #

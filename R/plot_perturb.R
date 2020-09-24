@@ -8,8 +8,11 @@
 #' @param var_cols Character string of length two (2) specifying the colors for plots with a sequential color palette from low to high values. The default colors in hex are \code{c("#E5E5E5", "#1A1A1A")} or \code{c("grey90", "grey10")}.
 #' @param cov_labs Character string of length two (2) specifying the x- and y-axis labels in plots of the ecological niche in covariate space. The default values are generic \code{c("V1", "V2")}. 
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
-#' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
-#' @param digits Integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
+#' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.
+#' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
+#' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
+#' @param upper_sd Optional, numeric. Upper cut-off value for the standard deviation of log relative risk value in the color key. The default is no limit and the color key will include the maximum value of the standard deviation surface.
+#' @param digits Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
 #' @param ... Arguments passed to \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces four plots in a two-dimensional space where the axes are the two specified covariates: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold. If \code{predict = TRUE}, this function produces an additional four plots of the summary statistics above in a two-dimensional geographic space where the axes are longitude and latitude.
@@ -33,6 +36,9 @@ plot_perturb <- function(input,
                          cov_labs = c("V1", "V2"),
                          cref0 = "+init=epsg:4326",
                          cref1 = NULL,
+                         lower_lrr = NULL,
+                         upper_lrr = NULL,
+                         upper_sd = NULL,
                          digits = 1,
                          ...) {
   
@@ -60,6 +66,8 @@ plot_perturb <- function(input,
   mlrr <- div_plot(input = input$sim$lrr_mean,
                    cols = mean_cols,
                    midpoint = 0,
+                   thresh_low = lower_lrr,
+                   thresh_up = upper_lrr,
                    digits = digits)
   p1 <- fields::image.plot(mlrr$v,
                            breaks = mlrr$breaks,
@@ -78,6 +86,7 @@ plot_perturb <- function(input,
   # Plot 2: standard deviation of log relative risk
   sdlrr <- seq_plot(input = input$sim$lrr_sd,
                     cols = var_cols,
+                    thresh_up = upper_sd,
                     digits = digits)
   p2 <- fields::image.plot(sdlrr$v,
                            breaks = sdlrr$breaks,
@@ -177,6 +186,8 @@ plot_perturb <- function(input,
     mlrr <- div_plot(input = lrr_mean,
                      cols = mean_cols,
                      midpoint = 0,
+                     thresh_low = lower_lrr,
+                     thresh_up = upper_lrr,
                      digits = digits)
     p5 <- fields::image.plot(mlrr$v,
                              breaks = mlrr$breaks,
@@ -195,6 +206,7 @@ plot_perturb <- function(input,
     # Plot 6: standard deviation of log relative risk
     sdlrr <- seq_plot(input = lrr_sd,
                       cols = var_cols,
+                      thresh_up = upper_sd,
                       digits = digits)
     p6 <- fields::image.plot(sdlrr$v,
                              breaks = sdlrr$breaks,

@@ -7,6 +7,9 @@
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
+#' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
+#' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
+#' @param digits Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
 #' @param ... Arguments passed to \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces two plots in a two-dimensional space where the axes are geographic coordinates (e.g., longitude and latitude): 1) predicted log relative risk, and 2) significant p-values. 
@@ -28,6 +31,9 @@ plot_predict <- function(input,
                          alpha = 0.05,
                          cref0 = "+init=epsg:4326",
                          cref1 = NULL,
+                         lower_lrr = NULL,
+                         upper_lrr = NULL,
+                         digits = 1,
                          ...) {
   
   if (alpha >= 1 | alpha <= 0) {
@@ -92,8 +98,11 @@ plot_predict <- function(input,
 
   # Plot 1: log relative risk
   rrp <- div_plot(input = predict_risk_raster,
-                    cols = plot_cols[1:3],
-                    midpoint = 0)
+                  cols = plot_cols[1:3],
+                  midpoint = 0,
+                  thresh_low = lower_lrr,
+                  thresh_up = upper_lrr,
+                  digits = digits)
 
   graphics::par(pty = "s")
   p1 <- fields::image.plot(rrp$v,

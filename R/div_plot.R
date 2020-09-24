@@ -39,12 +39,21 @@ div_plot <- function(input,
   if (length(cols) != 3) {
     stop("The 'cols' argument must be a vector of length 3")
   }
-
+  
+  min_raw_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of raster
+  max_raw_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
+  
   # Restrict spurious log relative risk values
   if (!is.null(thresh_low)) {
+    if (thresh_low >= 0) {
+      stop("The 'thresh_low' argument must be a numeric value less than zero")
+    }
     out[out <= thresh_low] <- thresh_low
   }
   if (!is.null(thresh_up)) {
+    if (thresh_up <= 0) {
+      stop("The 'thresh_up' argument must be a numeric value greater than zero")
+    }
     out[out >= thresh_up] <- thresh_up
   }
 
@@ -79,6 +88,10 @@ div_plot <- function(input,
 
   # Text for colorkey labels
   rbl <- round(rbs, digits = digits)
+  
+  if (min_raw_value < min_absolute_value) { rbl[1] <- paste("<", rbl[1], sep = "") }
+  
+  if (max_raw_value > max_absolute_value) { rbl[5] <- paste(">", rbl[5], sep = "") }
 
   # Output
   out <- list("v" = out,
