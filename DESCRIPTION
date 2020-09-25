@@ -51,11 +51,11 @@ Imports:
     stats,
     utils
 Suggests: 
-    knitr,
+    R.rsp,
     spatstat.data,
     spelling,
     testthat
-VignetteBuilder: knitr
+VignetteBuilder: R.rsp
 Language: en-US
 URL: https://github.com/Waller-SUSAN/envi
 BugReports: https://github.com/Waller-SUSAN/envi/issues

@@ -12,7 +12,7 @@ plot_cv(input, alpha = 0.05)
 \item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
 }
 \value{
-This function produces two plots: 1) area under the receiver operating characteristic curve, and 2) precision-recall curve. Each plot shows predictions for the log relative risk surface and asymptotic tolerance (p-value) surface. The red-colored lines are the average curves.
+This function produces two plots: 1) area under the receiver operating characteristic curve, and 2) precision-recall curve. Each plot shows predictions for the log relative risk surface. The red-colored lines are the average curves.
 }
 \description{
 Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
