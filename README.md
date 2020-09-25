@@ -178,8 +178,6 @@ plot_cv(test)
 
 ![](man/figures/plot_cv1.png)
 
-![](man/figures/plot_cv2.png)
-
 ### For the perlrren() function
 
 ```r
