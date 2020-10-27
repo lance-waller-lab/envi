@@ -1,4 +1,4 @@
-envi: Environmental interpolation using spatial kernel density estimation <img src="man/figures/envi.png" width="120" align="right" />
+envi: Environmental interpolation using spatial kernel density estimation <img src="dev/figures/envi.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">
@@ -111,12 +111,12 @@ elev_raster <- raster::raster(elev)
 grad_raster <- raster::raster(grad)
 
 # Presence data
-bei <- spatstat.data::bei
-spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
-                                        "lon" = bei$x,
-                                        "lat" = bei$y)
-spatstat.core::marks(bei)$elev <- elev[bei]
-spatstat.core::marks(bei)$grad <- grad[bei]
+presence <- spatstat.data::bei
+spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence),
+                                        "lon" = presence$x,
+                                        "lat" = presence$y)
+spatstat.core::marks(presence)$elev <- elev[presence]
+spatstat.core::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = elev)
@@ -127,7 +127,7 @@ spatstat.core::marks(absence)$elev <- elev[absence]
 spatstat.core::marks(absence)$grad <- grad[absence]
 
 # Combine
-obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
+obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
 obs_locs <- spatstat.core::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
@@ -166,17 +166,17 @@ plot_predict(test,
 plot_cv(test)
 
 ```
-![](man/figures/plot_obs1.png)
+![](dev/figures/plot_obs1.png)
 
-![](man/figures/plot_obs2.png)
+![](dev/figures/plot_obs2.png)
 
-![](man/figures/plot_obs3.png)
+![](dev/figures/plot_obs3.png)
 
-![](man/figures/plot_predict1.png)
+![](dev/figures/plot_predict1.png)
 
-![](man/figures/plot_predict2.png)
+![](dev/figures/plot_predict2.png)
 
-![](man/figures/plot_cv1.png)
+![](dev/figures/plot_cv1.png)
 
 ### For the perlrren() function
 
@@ -205,9 +205,9 @@ ims[[2]]$v <- scale(ims[[2]]$v)
 
 # Presence data
 presence <- spatstat.data::bei
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
-                                             "lon" = bei$x,
-                                             "lat" = bei$y)
+spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                             "lon" = presence$x,
+                                             "lat" = presence$y)
 
 # (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
@@ -246,18 +246,18 @@ plot_perturb(test1,
 
 ```
 
-![](man/figures/plot_perturb1.png)
+![](dev/figures/plot_perturb1.png)
 
-![](man/figures/plot_perturb2.png)
+![](dev/figures/plot_perturb2.png)
 
-![](man/figures/plot_perturb3.png)
+![](dev/figures/plot_perturb3.png)
 
-![](man/figures/plot_perturb4.png)
+![](dev/figures/plot_perturb4.png)
 
-![](man/figures/plot_perturb5.png)
+![](dev/figures/plot_perturb5.png)
 
-![](man/figures/plot_perturb6.png)
+![](dev/figures/plot_perturb6.png)
 
-![](man/figures/plot_perturb7.png)
+![](dev/figures/plot_perturb7.png)
 
-![](man/figures/plot_perturb8.png)
+![](dev/figures/plot_perturb8.png)

@@ -8,7 +8,7 @@ context("plot_perturb")
 ## Environmental Covariates
 library(envi)
 library(raster)
-library(spatstat.core)
+library(spatstat)
 library(spatstat.data)
 set.seed(1234)
 
@@ -25,24 +25,24 @@ ims[[2]]$v <- scale(ims[[2]]$v)
 
 # Presence locations
 presence <- spatstat.data::bei
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
-                                             "lon" = bei$x,
-                                             "lat" = bei$y)
+spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                             "lon" = presence$x,
+                                             "lat" = presence$y)
 
 # (Pseudo-)Absence locations
-absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
-spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat::rpoispp(0.008, win = ims[[1]])
+spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
 
 # Combine into readable format
-obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1)]
+obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
+spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+spatstat::marks(obs_locs) <- spatstat::marks(obs_locs)[ , c(4, 2, 3, 1)]
 
 # Specify categories for varying degrees of spatial uncertainty
 ## Creates three groups
-spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
+spatstat::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
 
 # Run perlrren
 test_perlrren <-  perlrren(obs_ppp = obs_locs,
@@ -73,19 +73,6 @@ test_that("plot_perturb throws error with invalid arguments", {
   expect_error(
     plot_perturb(input = test_perlrren,
              cov_labs = c("V1"))
-  )
-  
-  # improper cref0
-  expect_error(
-    plot_perturb(input = test_perlrren,
-                 cref0 = "a")
-  )
-  
-  # improper cref1
-  expect_error(
-    plot_perturb(input = test_perlrren,
-                 cref0 = "+init=epsg:5472",
-                 cref1 = "a")
   )
   
 }

@@ -97,11 +97,6 @@ The \code{obs_window} argument may be useful to specify a 'known' window for the
 \examples{
   set.seed(1234) # for reproducibility
 
-# Necessary packages
-  library(spatstat.core)
-  library(spatstat.data)
-  library(raster)
-  
 # Using the 'bei' and 'bei.extra' data within {spatstat.data}
 
 # Covariate data (centered and scaled)
@@ -109,30 +104,39 @@ The \code{obs_window} argument may be useful to specify a 'known' window for the
   grad <- spatstat.data::bei.extra[[2]]
   elev$v <- scale(elev)
   grad$v <- scale(grad)
+  elev_raster <- raster::raster(elev)
+  grad_raster <- raster::raster(grad)
 
 # Presence data
-  bei <- spatstat.data::bei
-  spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
-                                          "lon" = bei$x,
-                                          "lat" = bei$y)
-  spatstat.core::marks(bei)$elev <- elev[bei]
-  spatstat.core::marks(bei)$grad <- grad[bei]
+  presence <- spatstat.data::bei
+  spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                          "lon" = presence$x,
+                                          "lat" = presence$y)
+  spatstat::marks(presence)$elev <- elev[presence]
+  spatstat::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence data
-  absence <- spatstat.core::rpoispp(0.008, win = elev)
-  spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+  absence <- spatstat::rpoispp(0.008, win = elev)
+  spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                               "lon" = absence$x,
                                               "lat" = absence$y)
-  spatstat.core::marks(absence)$elev <- elev[absence]
-  spatstat.core::marks(absence)$grad <- grad[absence]
+  spatstat::marks(absence)$elev <- elev[absence]
+  spatstat::marks(absence)$grad <- grad[absence]
 
 # Combine into readable format
-  obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
-  obs_locs <- spatstat.core::marks(obs_locs)
+  obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
+  obs_locs <- spatstat::marks(obs_locs)
   obs_locs$id <- seq(1, nrow(obs_locs), 1)
   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
+  
+# Prediction Data
+  predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
+  predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
 
 # Run lrren
-  test_lrren <- lrren(obs_locs = obs_locs)
+  test_lrren <- lrren(obs_locs = obs_locs,
+                      predict_locs = predict_locs,
+                      predict = TRUE,
+                      cv = TRUE)
 
 }

@@ -51,7 +51,7 @@ This function produces four plots in a two-dimensional space where the axes are 
 Create multiple plots of output from the \code{\link{perlrren}} function, specifically for the four summary statistics in covariate space and geographic space.
 }
 \examples{
-\donttest{
+if (interactive()) {
   plot_perturb(input = test_perlrren)
 }
 

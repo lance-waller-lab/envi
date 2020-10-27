@@ -1,11 +1,11 @@
 ---
-title: "envi: Environmental interpolation using spatial kernel density estimation"
+title: "envi: Environmental Interpolation using Spatial Kernel Density Estimation"
 author: 'Ian D. Buller (Github: @idblr)'
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{envi: Environmental interpolation using spatial kernel density estimation}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{envi: Environmental Interpolation using Spatial Kernel Density Estimation}
+  %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -17,12 +17,12 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRU
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("envi", "raster", "RStoolbox", "spatstat.core", "spatstat.data")
+loadedPackages <- c("envi", "raster", "RStoolbox", "spatstat", "spatstat.data")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
 
-We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://cran.r-project.org/web/packages/spatstat.data/index.html). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots of nesting within the covariate information (i.e., the gorilla ecological niche) and then predict where these hot-spots are located within the park.
+We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://CRAN.R-project.org/package=spatstat.data). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots of nesting within the covariate information (i.e., the gorilla ecological niche) and then predict where these hot-spots are located within the park.
 
 ### Data preparation for lrren
 
@@ -34,11 +34,11 @@ We start by importing the two covariate data of class `im`:
 ```{r covariate}
 slopeangle <- spatstat.data::gorillas.extra$slopeangle
 waterdist <- spatstat.data::gorillas.extra$waterdist
-spatstat.core::plot.im(slopeangle,
+spatstat::plot.im(slopeangle,
                        main = "slope gradient (degrees)",
                        axes = TRUE,
                        ann = TRUE)
-spatstat.core::plot.im(waterdist,
+spatstat::plot.im(waterdist,
                        main = "distance from water (meters)",
                        axes = TRUE,
                        ann = TRUE)
@@ -61,23 +61,23 @@ waterdist_raster <- raster::raster(waterdist)
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
 
 ```{r presence}
-presence <- spatstat.core::unmark(spatstat.data::gorillas)
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+presence <- spatstat::unmark(spatstat.data::gorillas)
+spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lon" = presence$x,
                                              "lat" = presence$y)
-spatstat.core::marks(presence)$slopeangle <- slopeangle[presence]
-spatstat.core::marks(presence)$waterdist <- waterdist[presence]
+spatstat::marks(presence)$slopeangle <- slopeangle[presence]
+spatstat::marks(presence)$waterdist <- waterdist[presence]
 ```
 
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "(pseudo-)absence" locations. 
 
 ```{r absence}
-absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
-spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat::rpoispp(0.00004, win = slopeangle)
+spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
-spatstat.core::marks(absence)$slopeangle <- slopeangle[absence]
-spatstat.core::marks(absence)$waterdist <- waterdist[absence]
+spatstat::marks(absence)$slopeangle <- slopeangle[absence]
+spatstat::marks(absence)$waterdist <- waterdist[absence]
 ```
 
 Combine the presence (n = `r presence$n`) and absence (`r absence$n`) locations into one object of class `data.frame` and reorder the features required for the `lrren` function in the `envi` package:
@@ -90,16 +90,16 @@ Combine the presence (n = `r presence$n`) and absence (`r absence$n`) locations 
 6. Covariate 2
 
 ```{r obs_locs}
-obs_locs <- spatstat.core::superimpose(absence, presence, check = FALSE)
-spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
-spatstat.core::plot.ppp(obs_locs,
+obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
+spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
+spatstat::plot.ppp(obs_locs,
                         which.marks = "presence",
                         main = "Gorilla nesting sites (red-colored)\nPseudo-absence locations (blue-colored)",
                         cols = c("#0000CD","#8B3A3A"),
                         pch = 1,
                         axes = TRUE,
                         ann = TRUE)
-obs_locs <- spatstat.core::marks(obs_locs)
+obs_locs <- spatstat::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 ```
@@ -136,7 +136,7 @@ plot_obs(test_lrren)
 
 As expected, extreme values of the log relative risk surface are located near the edges of the surface, however these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1). 
 
-```{r plot_obs limited}
+```{r plot_obs_limited}
 plot_obs(test_lrren,
          lower_lrr = -1,
          upper_lrr = 1)
@@ -241,11 +241,11 @@ pc1 <- pca_bands[[1]] # PC1
 pc2 <- pca_bands[[2]] # PC2
 pc1 <- as.im(pc1) # convert to class 'im'
 pc2 <- as.im(pc2) # convert to class 'im'
-spatstat.core::plot.im(pc1,
+spatstat::plot.im(pc1,
                        main = 'Principal Component 1\nprimarily aspect (centered at "North")',
                        ann = TRUE,
                        axes = TRUE)
-spatstat.core::plot.im(pc2,
+spatstat::plot.im(pc2,
                        main = 'Principal Component 2\ncombination of vegetation type, slope type,\nelevation, and distance from water',
                        ann = TRUE,
                        axes = TRUE)
@@ -255,25 +255,25 @@ For the first component (centered aspect), we can observe northern (i.e., North,
 
 We prepare inputs for a new `lrren` run similar to the first example above. For consistency, we also reset the random number generator to select similar pseudo-absence locations as the example above. 
 
-```{r pca data}
+```{r pca_data}
 set.seed(1234) # for similar locations as above example
-presence <- spatstat.core::unmark(spatstat.data::gorillas)
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+presence <- spatstat::unmark(spatstat.data::gorillas)
+spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lon" = presence$x,
                                              "lat" = presence$y)
-spatstat.core::marks(presence)$pc1 <- pc1[presence]
-spatstat.core::marks(presence)$pc2 <- pc2[presence]
+spatstat::marks(presence)$pc1 <- pc1[presence]
+spatstat::marks(presence)$pc2 <- pc2[presence]
 
-absence <- spatstat.core::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
-spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
+spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
-spatstat.core::marks(absence)$pc1 <- pc1[absence]
-spatstat.core::marks(absence)$pc2 <- pc2[absence]
+spatstat::marks(absence)$pc1 <- pc1[absence]
+spatstat::marks(absence)$pc2 <- pc2[absence]
 
-obs_locs <- spatstat.core::superimpose(absence, presence, check = FALSE)
-spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
-obs_locs <- spatstat.core::marks(obs_locs)
+obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
+spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
+obs_locs <- spatstat::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
@@ -283,7 +283,7 @@ predict_locs$layer2 <- raster::extract(pca_bands[[2]], predict_locs[, 1:2])
 
 With the two principal components, we re-run the `lrren` function.
 
-```{r pca lrren}
+```{r pca_lrren}
 start_time <- Sys.time() # record start time
 pca_lrren <- lrren(obs_locs = obs_locs,
                     predict_locs = predict_locs,
@@ -298,7 +298,7 @@ A single run of the `lrren` function took approximately `r round(pca_time, digit
 
 We display the estimated ecological niche within a space of Principal Component 1 by Principal Component 2 using the `plot_obs` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk surface to (-1, 1). 
 
-```{r pca plot_obs}
+```{r pca_plot_obs}
 plot_obs(pca_lrren,
          lower_lrr = -1,
          upper_lrr = 1)
@@ -306,7 +306,7 @@ plot_obs(pca_lrren,
 
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and we limit the color key for the log relative risk prediction to (-1, 1). 
 
-```{r pca plot_predict}
+```{r pca_plot_predict}
 plot_predict(pca_lrren, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326",
              lower_lrr = -1,
              upper_lrr = 1)
@@ -314,7 +314,7 @@ plot_predict(pca_lrren, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326",
 
 We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha-level (`alpha = 0.05`).
 
-```{r pca plot_cv}
+```{r pca_plot_cv}
 plot_cv(pca_lrren)
 ```
 
@@ -330,32 +330,32 @@ Now we perform a sensitivity analysis of our ecological niche model. For example
 
 We start by preparing the observation data. Here, the data must be a marked planar point pattern of class 'ppp'.
 
-```{r sensitivity data}
+```{r sensitivity_data}
 # Preserve 'group' feature from 'gorillas' data within {spatstat.data}
 ## Assign as a new mark named 'level'
-spatstat.core::marks(presence)$levels <- spatstat.core::marks(spatstat.data::gorillas)$group
+spatstat::marks(presence)$levels <- spatstat::marks(spatstat.data::gorillas)$group
 
 # Assign a third 'level' for the pseudo-absences
-spatstat.core::marks(absence)$levels <- "none"
+spatstat::marks(absence)$levels <- "none"
 
 # Combine
-obs_locs <- spatstat.core::superimpose(absence, presence, check = FALSE)
+obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
 
 # Set variables as class 'factor'
-spatstat.core::marks(obs_locs)$presence <- as.factor(spatstat.core::marks(obs_locs)$presence)
-spatstat.core::marks(obs_locs)$levels <- as.factor(spatstat.core::marks(obs_locs)$levels)
+spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
+spatstat::marks(obs_locs)$levels <- as.factor(spatstat::marks(obs_locs)$levels)
 
 # Create 'id' feature
-spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
 
 # Reorder and drop the two covariate features
-spatstat.core:: marks(obs_locs) <- spatstat.core:: marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
+spatstat:: marks(obs_locs) <- spatstat:: marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
 ```
 
 The two covariate values will be assigned to all points in every iteration and are drawn from a list of objects of class 'im'. Here, we use the same variables as above (slope gradient and distance from water), centered and scaled.
 
 ```{r ims}
-ims <- spatstat.core::solist(pc1,pc2)
+ims <- spatstat::solist(pc1,pc2)
 names(ims) <- c("Component_1", "Component_2")
 ```
 

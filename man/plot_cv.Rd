@@ -18,7 +18,7 @@ This function produces two plots: 1) area under the receiver operating character
 Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
 }
 \examples{
-\donttest{
+if (interactive()) {
   plot_cv(input = test_lrren)
 }
 

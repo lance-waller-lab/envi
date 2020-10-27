@@ -42,7 +42,7 @@ This function produces two plots in a two-dimensional space where the axes are g
 Create multiple plots of output from the \code{\link{lrren}} function, specifically for the predicted values of the ecological niche at geographic coordinates.
 }
 \examples{
-\donttest{
+if (interactive()) {
   plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 }
 

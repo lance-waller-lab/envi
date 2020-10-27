@@ -1,6 +1,6 @@
 #' Visualizations for a predicted ecological niche in geographic space
 #' 
-#' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the predicted values of the ecological niche at geographic coordinates. 
+#' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the predicted values of the ecological niche at geographic coordinates.
 #' 
 #' @param input An object of class 'list' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD" "#FFFF00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.
@@ -22,7 +22,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' if (interactive()) {
 #'   plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 #' }
 #' 

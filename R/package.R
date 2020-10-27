@@ -1,14 +1,12 @@
-#' The envi Package: Environmental interpolation using spatial kernel density estimation
+#' The envi Package: Environmental Interpolation using Spatial Kernel Density Estimation
 #'
 #' Estimates an ecological niche model using occurrence data, covariates, and kernel density-based estimation methods.
 #'
-#' @details
+#' @details For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \url{https://doi.org/10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \url{https://doi.org/10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \url{https://doi.org/10.1002/sim.4780101112}.
 #' 
-#' For a single species with presence and absence data, the {envi} package uses the spatial relative risk function that is estimated using the {sparr} package. Details about the {sparr} package methods can be found in the tutorial: Davies et al. (2018) <doi:10.1002/sim.7577>. Details about kernel density estimation can be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
+#' This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics.
 #' 
-#' This package provides a function to estimate the ecological niche for a single species with presence and absence data. The {envi} package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics.
-#' 
-#' Key content of the {envi} package include:\cr
+#' Key content of the 'envi' package include:\cr
 #' 
 #' \bold{Ecological Niche Model}
 #' 
@@ -32,7 +30,7 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.core]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 
@@ -54,7 +52,7 @@ NULL
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons
-#' @importFrom spatstat.core as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
+#' @importFrom spatstat as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
 #' @importFrom stats na.omit sd
 #' @importFrom utils packageDescription setTxtProgressBar txtProgressBar 
 #' @import maptools

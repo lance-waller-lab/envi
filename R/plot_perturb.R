@@ -20,12 +20,12 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics par
 #' @importFrom raster crs raster projectRaster
-#' @importFrom spatstat.core pixellate
+#' @importFrom spatstat pixellate
 #' 
 #' @export
 #' 
 #' @examples 
-#' \donttest{
+#' if (interactive()) {
 #'   plot_perturb(input = test_perlrren)
 #' }
 #' 
@@ -142,7 +142,7 @@ plot_perturb <- function(input,
   if (predict == TRUE) {
     
     # Convert 'im' objects to spatially projected 'RasterLayer' objects
-    lrr_mean <- spatstat.core::pixellate(input$predict,
+    lrr_mean <- spatstat::pixellate(input$predict,
                                          weights = marks(input$predict)$lrr_mean)
     lrr_mean <- raster::raster(lrr_mean)
     raster::crs(lrr_mean) <- cref0
@@ -152,7 +152,7 @@ plot_perturb <- function(input,
                                         method = "ngb")
     }
     
-    lrr_sd <- spatstat.core::pixellate(input$predict,
+    lrr_sd <- spatstat::pixellate(input$predict,
                                        weights = marks(input$predict)$lrr_sd)
     lrr_sd <- raster::raster(lrr_sd)
     raster::crs(lrr_sd) <- cref0
@@ -162,7 +162,7 @@ plot_perturb <- function(input,
                                       method = "ngb")
     }
     
-    pval_mean <- spatstat.core::pixellate(input$predict,
+    pval_mean <- spatstat::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_mean)
     pval_mean <- raster::raster(pval_mean)
     raster::crs(pval_mean) <- cref0
@@ -172,7 +172,7 @@ plot_perturb <- function(input,
                                          method = "ngb")
     }
     
-    pval_prop <- spatstat.core::pixellate(input$predict,
+    pval_prop <- spatstat::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_prop)
     pval_prop <- raster::raster(pval_prop)
     raster::crs(pval_prop) <- cref0

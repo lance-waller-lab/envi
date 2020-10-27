@@ -27,7 +27,7 @@ plot_obs(
 
 \item{digits}{Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).}
 
-\item{...}{Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
+\item{...}{Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
 This function produces three plots in a two-dimensional space where the axes are the two specified covariates: 1) observation locations by group, 2) log relative risk surface, and 3) significant p-value surface.
@@ -36,7 +36,7 @@ This function produces three plots in a two-dimensional space where the axes are
 Create multiple plots of output from the \code{\link{lrren}} function, specifically for the observation data and estimated ecological niche.
 }
 \examples{
-\donttest{
+if (interactive()) {
   plot_obs(input = test_lrren)
 }
 

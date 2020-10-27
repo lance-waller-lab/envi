@@ -14,11 +14,11 @@
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link{lrren}}.
 #' 
-#' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat.core]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
+#' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
 #' 
 #' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
 #' 
-#' For more information about the spatial perturbation, please refer to the \code{\link[spatstat.core]{rjitter}} function documentation.
+#' For more information about the spatial perturbation, please refer to the \code{\link[spatstat]{rjitter}} function documentation.
 #' 
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -53,17 +53,13 @@
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom raster crs
-#' @importFrom spatstat.core as.solist im.apply marks owin ppp rjitter superimpose
+#' @importFrom spatstat as.solist im.apply marks owin ppp rjitter superimpose
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 #' 
 #' @examples
 #'   set.seed(1234) # for reproducibility
-#' 
-#' # Necessary packages
-#'   library(spatstat.core)
-#'   library(spatstat.data)
 #' 
 #' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
 #' 
@@ -74,24 +70,25 @@
 #'   
 #' # Presence data
 #'   presence <- spatstat.data::bei
-#'   spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
-#'                                                "lon" = bei$x,
-#'                                                "lat" = bei$y)
+#'   spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+#'                                               "lon" = presence$x,
+#'                                               "lat" = presence$y)
+#'                                           
 #' # (Pseudo-)Absence data
-#'   absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
-#'   spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+#'   absence <- spatstat::rpoispp(0.008, win = ims[[1]])
+#'   spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)
 #' # Combine into readable format
-#'   obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-#'   spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-#'   spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1)]
+#'   obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
+#'   spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+#'   spatstat::marks(obs_locs) <- spatstat::marks(obs_locs)[ , c(4, 2, 3, 1)]
 #'  
 #' # Specify categories for varying degrees of spatial uncertainty
 #' ## Creates three groups
-#'   spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
+#'   spatstat::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
 #'                                                                   lambda = 0.05))
-
+#'                                                                   
 #' # Run perlrren
 #'   test_perlrren <- perlrren(obs_ppp = obs_locs,
 #'                             covariates = ims,
@@ -115,11 +112,11 @@ perlrren <- function(obs_ppp,
   }
   
   if (is.null(radii)) {
-    radii <- rep(0, nlevels(spatstat.core::marks(obs_ppp)[ , 5]))
+    radii <- rep(0, nlevels(spatstat::marks(obs_ppp)[ , 5]))
     message("The argument 'radii' is unspecified and the observation coordinates are not perturbed")
   }
   
-  if (length(radii) != nlevels(spatstat.core::marks(obs_ppp)[ , 5])) {
+  if (length(radii) != nlevels(spatstat::marks(obs_ppp)[ , 5])) {
     stop("The argument 'radii' must have a length equal to the number of levels in 'obs_ppp'")
   }
   
@@ -148,7 +145,7 @@ perlrren <- function(obs_ppp,
   out_par <- foreach::foreach(k = 1:n_sim,
                               .combine = comb,
                               .multicombine = TRUE,
-                              .packages = c("envi", "spatstat.core", "utils"),
+                              .packages = c("envi", "spatstat", "utils"),
                               .init = list(list(), list(), list())
   ) %fun% {
     
@@ -157,24 +154,24 @@ perlrren <- function(obs_ppp,
       if (k == n_sim) cat("\n")
       }
     
-    x <- spatstat.core::split.ppp(obs_ppp, f = "levels")
+    x <- spatstat::split.ppp(obs_ppp, f = "levels")
     z <- vector("list", length(x))
     
     # Spatially perturb points based on categories
     for (i in 1:length(x)) {
-      z[[i]] <- spatstat.core::rjitter(x[[i]], radius = radii[i])
+      z[[i]] <- spatstat::rjitter(x[[i]], radius = radii[i])
       names(z) <- names(x)
-      z <- spatstat.core::as.solist(z, demote = TRUE)
+      z <- spatstat::as.solist(z, demote = TRUE)
     }
-    xx <- spatstat.core::superimpose(z) # re-combine
+    xx <- spatstat::superimpose(z) # re-combine
     
     # Extract Covariate Values
     for (i in 1:length(covariates)) {
-      spatstat.core::marks(xx)[[5 + i]] <- covariates[[i]][xx, drop = FALSE]
-      names(spatstat.core::marks(xx))[5 + i] <- names(covariates[i])
+      spatstat::marks(xx)[[5 + i]] <- covariates[[i]][xx, drop = FALSE]
+      names(spatstat::marks(xx))[5 + i] <- names(covariates[i])
     }
     
-    xxx <- spatstat.core::marks(xx)[ , -5]
+    xxx <- spatstat::marks(xx)[ , -5]
     
     # remove observations with NA covariates values ()
     ## typically will not be an issue
@@ -203,17 +200,17 @@ perlrren <- function(obs_ppp,
   
   # Post-statistics
   ## mean of log relative risk
-  lrr_mean <- spatstat.core::im.apply(out_par[[1]],
+  lrr_mean <- spatstat::im.apply(out_par[[1]],
                                       mean,
                                       fun.handles.na = TRUE,
                                       na.rm = TRUE)
   ## standard deviation of log relative risk
-  lrr_sd <- spatstat.core::im.apply(out_par[[1]],
+  lrr_sd <- spatstat::im.apply(out_par[[1]],
                                     stats::sd,
                                     fun.handles.na = TRUE,
                                     na.rm = TRUE)
   ## mean p-value 
-  pval_mean <- spatstat.core::im.apply(out_par[[2]],
+  pval_mean <- spatstat::im.apply(out_par[[2]],
                                        mean,
                                        fun.handles.na = TRUE,
                                        na.rm = TRUE)
@@ -239,28 +236,28 @@ perlrren <- function(obs_ppp,
     # Project relative risk surface into geographic space
     if (verbose == TRUE) { message("Predicting area of interest") }
     window_poly <- out_par[[3]][[1]]
-    wind <- spatstat.core::owin(poly = list(x = rev(window_poly[ , 1]),
+    wind <- spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
                                             y = rev(window_poly[ , 2])))
     
-    xxxxx <- spatstat.core::ppp(x = predict_locs[ , 3],
+    xxxxx <- spatstat::ppp(x = predict_locs[ , 3],
                                 y = predict_locs[ , 4],
                                 window = wind,
                                 marks = predict_locs,
                                 check = FALSE) 
     # points along polygon border will be lost
    
-    spatstat.core::marks(xxxxx)[ , 5] <- lrr_mean[xxxxx]
-    spatstat.core::marks(xxxxx)[ , 6] <- lrr_sd[xxxxx]
-    spatstat.core::marks(xxxxx)[ , 7] <- pval_mean[xxxxx]
-    spatstat.core::marks(xxxxx)[ , 8] <- pval_prop[xxxxx]
-    names(spatstat.core::marks(xxxxx))[5:8] <- c("lrr_mean",
+    spatstat::marks(xxxxx)[ , 5] <- lrr_mean[xxxxx]
+    spatstat::marks(xxxxx)[ , 6] <- lrr_sd[xxxxx]
+    spatstat::marks(xxxxx)[ , 7] <- pval_mean[xxxxx]
+    spatstat::marks(xxxxx)[ , 8] <- pval_prop[xxxxx]
+    names(spatstat::marks(xxxxx))[5:8] <- c("lrr_mean",
                                                  "lrr_sd",
                                                  "pval_mean",
                                                  "pval_prop")
-    out_pred <- spatstat.core::marks(xxxxx)
-    out_ppp <- spatstat.core::ppp(x = out_pred$x,
+    out_pred <- spatstat::marks(xxxxx)
+    out_ppp <- spatstat::ppp(x = out_pred$x,
                                   y = out_pred$y,
-                                  window = spatstat.core::as.owin(covariates[[1]]),
+                                  window = spatstat::as.owin(covariates[[1]]),
                                   marks = out_pred)
     
     output <- list("sim" = out_sim,

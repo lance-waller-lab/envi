@@ -31,6 +31,9 @@ check()
 # Ignore .R files from /build directory
 usethis::use_build_ignore(c("build"))
 
+# rhub
+rhub::check_for_cran()
+
 # README.md example
 # ------------------ #
 # Necessary packages #
@@ -405,3 +408,5 @@ if (is.null(prop_thresh)) {
                               labels = c("sufficient", "insufficient"))
   
 }
+
+

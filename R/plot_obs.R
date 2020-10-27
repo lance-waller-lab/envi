@@ -8,18 +8,18 @@
 #' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
 #' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
 #' @param digits Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
-#' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
+#' @param ... Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces three plots in a two-dimensional space where the axes are the two specified covariates: 1) observation locations by group, 2) log relative risk surface, and 3) significant p-value surface. 
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics par
 #' @importFrom raster cut raster values
-#' @importFrom spatstat.core plot.ppp setmarks superimpose
+#' @importFrom spatstat plot.ppp setmarks superimpose
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' if (interactive()) {
 #'   plot_obs(input = test_lrren)
 #' }
 #' 
@@ -43,12 +43,12 @@ plot_obs <- function(input,
   on.exit(graphics::par(op))
   graphics::par(pty = "s")
   names_obs <- names(input$dat)
-  presence <- spatstat.core::setmarks(input$out$presence, "presence")
-  absence <-  spatstat.core::setmarks(input$out$absence, "absence")
-  dat <- spatstat.core::superimpose(absence, presence, check = FALSE)
+  presence <- spatstat::setmarks(input$out$presence, "presence")
+  absence <-  spatstat::setmarks(input$out$absence, "absence")
+  dat <- spatstat::superimpose(absence, presence, check = FALSE)
 
   # Plot 1: Locations
-  p1 <- spatstat.core::plot.ppp(dat,
+  p1 <- spatstat::plot.ppp(dat,
                                 pch = 1,
                                 cex = 0.8,
                                 cols = c(plot_cols[3], plot_cols[1]),
@@ -70,7 +70,7 @@ plot_obs <- function(input,
                   thresh_up = upper_lrr,
                   digits = digits)
 
-  p2 <- spatstat.core::plot.ppp(dat,
+  p2 <- spatstat::plot.ppp(dat,
                                 cols = c("transparent", "transparent"),
                                 leg.side = "bottom",
                                 leg.args = list(annotate = FALSE),
@@ -108,7 +108,7 @@ plot_obs <- function(input,
     labp <- c("presence", "insignificant", "absence")
   }
 
-  p3 <- spatstat.core::plot.ppp(dat,
+  p3 <- spatstat::plot.ppp(dat,
                                 cols = c("transparent", "transparent"),
                                 leg.side = "bottom",
                                 leg.args = list(annotate = FALSE),

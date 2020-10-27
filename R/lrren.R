@@ -68,7 +68,7 @@
 #' @importFrom rgeos gBuffer
 #' @importFrom sp bbox coordinates Polygon Polygons SpatialPolygons
 #' @importFrom sparr risk
-#' @importFrom spatstat.core owin ppp
+#' @importFrom spatstat owin ppp
 #' @importFrom stats na.omit
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @import maptools
@@ -76,12 +76,7 @@
 #'
 #' @examples
 #'   set.seed(1234) # for reproducibility
-#' 
-#' # Necessary packages
-#'   library(spatstat.core)
-#'   library(spatstat.data)
-#'   library(raster)
-#'   
+#'
 #' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
 #' 
 #' # Covariate data (centered and scaled)
@@ -89,31 +84,40 @@
 #'   grad <- spatstat.data::bei.extra[[2]]
 #'   elev$v <- scale(elev)
 #'   grad$v <- scale(grad)
+#'   elev_raster <- raster::raster(elev)
+#'   grad_raster <- raster::raster(grad)
 #' 
 #' # Presence data
-#'   bei <- spatstat.data::bei
-#'   spatstat.core::marks(bei) <- data.frame("presence" = rep(1, bei$n),
-#'                                           "lon" = bei$x,
-#'                                           "lat" = bei$y)
-#'   spatstat.core::marks(bei)$elev <- elev[bei]
-#'   spatstat.core::marks(bei)$grad <- grad[bei]
+#'   presence <- spatstat.data::bei
+#'   spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+#'                                           "lon" = presence$x,
+#'                                           "lat" = presence$y)
+#'   spatstat::marks(presence)$elev <- elev[presence]
+#'   spatstat::marks(presence)$grad <- grad[presence]
 #' 
 #' # (Pseudo-)Absence data
-#'   absence <- spatstat.core::rpoispp(0.008, win = elev)
-#'   spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+#'   absence <- spatstat::rpoispp(0.008, win = elev)
+#'   spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)
-#'   spatstat.core::marks(absence)$elev <- elev[absence]
-#'   spatstat.core::marks(absence)$grad <- grad[absence]
+#'   spatstat::marks(absence)$elev <- elev[absence]
+#'   spatstat::marks(absence)$grad <- grad[absence]
 #' 
 #' # Combine into readable format
-#'   obs_locs <- spatstat.core::superimpose(bei, absence, check = FALSE)
-#'   obs_locs <- spatstat.core::marks(obs_locs)
+#'   obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
+#'   obs_locs <- spatstat::marks(obs_locs)
 #'   obs_locs$id <- seq(1, nrow(obs_locs), 1)
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
+#'   
+#' # Prediction Data
+#'   predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
+#'   predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
 #' 
 #' # Run lrren
-#'   test_lrren <- lrren(obs_locs = obs_locs)
+#'   test_lrren <- lrren(obs_locs = obs_locs,
+#'                       predict_locs = predict_locs,
+#'                       predict = TRUE,
+#'                       cv = TRUE)
 #' 
 lrren <- function(obs_locs,
                   predict = FALSE,
@@ -171,7 +175,7 @@ lrren <- function(obs_locs,
   if (conserve == TRUE) { window_poly <- inner_poly } else { window_poly <- outer_poly }
 
   if (is.null(obs_window)) {
-    wind <- spatstat.core::owin(poly = list(x = rev(window_poly[ , 1]),
+    wind <- spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
                                        y = rev(window_poly[ , 2])))
   } else { wind <- obs_window }
 
@@ -180,11 +184,11 @@ lrren <- function(obs_locs,
   presence_locs <- subset(obs_locs, obs_locs[ , 4] == 1)
   absence_locs <- subset(obs_locs, obs_locs[, 4] == 0)
 
-  ppp_presence <- spatstat.core::ppp(x = presence_locs[ , 5],
+  ppp_presence <- spatstat::ppp(x = presence_locs[ , 5],
                                      y = presence_locs[ , 6],
                                      window = wind,
                                      checkdup = FALSE)
-  ppp_absence <- spatstat.core::ppp(x = absence_locs[ , 5],
+  ppp_absence <- spatstat::ppp(x = absence_locs[ , 5],
                                     y = absence_locs[ , 6],
                                     window = wind,
                                     checkdup = FALSE)
@@ -272,7 +276,7 @@ lrren <- function(obs_locs,
     out_par <- foreach::foreach(k = 1:kfold,
                                 .combine = comb,
                                 .multicombine = TRUE,
-                                .packages = c("sparr", "spatstat.core", "raster", "utils"),
+                                .packages = c("sparr", "spatstat", "raster", "utils"),
                                 .init = list(list(), list(), list())
                                 ) %fun% {
 
@@ -296,11 +300,11 @@ lrren <- function(obs_locs,
 
       ##### training data
       ###### presence and absence point pattern datasets
-      ppp_presence_training <- spatstat.core::ppp(x = training[ , 5][training[ , 4] == 1],
+      ppp_presence_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 1],
                                                   y = training[ , 6][training[ , 4] == 1],
                                                   window = wind,
                                                   checkdup = FALSE)
-      ppp_absence_training <- spatstat.core::ppp(x = training[ , 5][training[ , 4] == 0],
+      ppp_absence_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 0],
                                                  y = training[ , 6][training[ , 4] == 0], 
                                                  window = wind,
                                                  checkdup = FALSE)

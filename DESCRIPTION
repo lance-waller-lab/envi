@@ -1,8 +1,8 @@
 Package: envi
 Type: Package
-Title: Environmental interpolation using spatial kernel density estimation
+Title: Environmental Interpolation using Spatial Kernel Density Estimation
 Version: 0.1.0.9000
-Date: 2020-09-21
+Date: 2020-10-26
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -12,15 +12,16 @@ Authors@R:
       person(given = "Lance A.",
              family = "Waller",
              role = c("ctb", "ths"),
-             email = "lwaller@emory.edu"),
+             email = "lwaller@emory.edu",
+             comment = c(ORCID = "0000-0001-5002-8886")),
       person(given = "Emory University",
              role = "cph")
              )
 Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
 Description: Estimates an ecological niche using occurrence data, covariates, and kernel
         density-based estimation methods. For a single species with presence and absence data,
-        the {envi} package uses the spatial relative risk function that is estimated using the
-        {sparr} package. Details about the {sparr} package methods can be found in the tutorial:
+        the 'envi' package uses the spatial relative risk function that is estimated using the
+        'sparr' package. Details about the 'sparr' package methods can be found in the tutorial:
         Davies et al. (2018) <doi:10.1002/sim.7577>. Details about kernel density estimation can
         be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>.  More information about
         relative risk functions using kernel density estimation can be found in J. F. Bithell
@@ -47,7 +48,7 @@ Imports:
     ROCR,
     sp,
     sparr,
-    spatstat.core,
+    spatstat,
     stats,
     utils
 Suggests: 
@@ -59,4 +60,3 @@ VignetteBuilder: R.rsp
 Language: en-US
 URL: https://github.com/Waller-SUSAN/envi
 BugReports: https://github.com/Waller-SUSAN/envi/issues
-Author: Ian D. Buller [aut, cre, cph]

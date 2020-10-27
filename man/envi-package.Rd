@@ -4,16 +4,16 @@
 \name{envi-package}
 \alias{envi-package}
 \alias{envi}
-\title{The envi Package: Environmental interpolation using spatial kernel density estimation}
+\title{The envi Package: Environmental Interpolation using Spatial Kernel Density Estimation}
 \description{
 Estimates an ecological niche model using occurrence data, covariates, and kernel density-based estimation methods.
 }
 \details{
-For a single species with presence and absence data, the {envi} package uses the spatial relative risk function that is estimated using the {sparr} package. Details about the {sparr} package methods can be found in the tutorial: Davies et al. (2018) \url{doi:10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \url{doi:10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \url{doi:10.1002/sim.4780101112}.
+For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \url{https://doi.org/10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \url{https://doi.org/10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \url{https://doi.org/10.1002/sim.4780101112}.
 
-This package provides a function to estimate the ecological niche for a single species with presence and absence data. The {envi} package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics.
+This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics.
 
-Key content of the {envi} package include:\cr
+Key content of the 'envi' package include:\cr
 
 \bold{Ecological Niche Model}
 
@@ -34,7 +34,7 @@ Key content of the {envi} package include:\cr
 \code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. Also has functionality to predict the spatial distribution of the summary statistics.
 }
 \section{Dependencies}{
- The {envi} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.core]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+ The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 }
 
 \author{
