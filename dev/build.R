@@ -37,6 +37,9 @@ rhub::check_for_cran()
 # Check on windows
 devtools::check_win_devel()
 
+# Release to CRAN
+#devtools::release()
+
 # README.md example
 # ------------------ #
 # Necessary packages #
