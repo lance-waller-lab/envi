@@ -26,13 +26,16 @@ document()
 install()
 
 # Check
-check()
+devtools::check()
 
 # Ignore .R files from /build directory
 usethis::use_build_ignore(c("build"))
 
 # rhub
 rhub::check_for_cran()
+
+# Check on windows
+devtools::check_win_devel()
 
 # README.md example
 # ------------------ #

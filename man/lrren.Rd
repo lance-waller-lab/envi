@@ -95,6 +95,7 @@ If \code{cv = TRUE}, this function will prepare k-fold cross-validation data set
 The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 }
 \examples{
+if (interactive()) {
   set.seed(1234) # for reproducibility
 
 # Using the 'bei' and 'bei.extra' data within {spatstat.data}
@@ -138,5 +139,6 @@ The \code{obs_window} argument may be useful to specify a 'known' window for the
                       predict_locs = predict_locs,
                       predict = TRUE,
                       cv = TRUE)
+}
 
 }

@@ -59,6 +59,7 @@
 #' @export
 #' 
 #' @examples
+#' if (interactive()) {
 #'   set.seed(1234) # for reproducibility
 #' 
 #' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
@@ -94,6 +95,7 @@
 #'                             covariates = ims,
 #'                             radii = c(10, 100, 500),
 #'                             n_sim = 10)
+#' }
 #' 
 perlrren <- function(obs_ppp,
                      covariates,

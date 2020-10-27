@@ -1,4 +1,4 @@
-envi: Environmental interpolation using spatial kernel density estimation <img src="dev/figures/envi.png" width="120" align="right" />
+envi: Environmental Interpolation using Spatial Kernel Density Estimation <img src="dev/figures/envi.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">

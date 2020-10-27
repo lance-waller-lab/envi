@@ -82,6 +82,7 @@ The function iteratively estimates the ecological niche using the \code{\link{lr
 For more information about the spatial perturbation, please refer to the \code{\link[spatstat]{rjitter}} function documentation.
 }
 \examples{
+if (interactive()) {
   set.seed(1234) # for reproducibility
 
 # Using the 'bei' and 'bei.extra' data within {spatstat.data}
@@ -117,5 +118,6 @@ For more information about the spatial perturbation, please refer to the \code{\
                             covariates = ims,
                             radii = c(10, 100, 500),
                             n_sim = 10)
+}
 
 }

@@ -75,6 +75,7 @@
 #' @export
 #'
 #' @examples
+#' if (interactive()) {
 #'   set.seed(1234) # for reproducibility
 #'
 #' # Using the 'bei' and 'bei.extra' data within {spatstat.data}
@@ -118,6 +119,7 @@
 #'                       predict_locs = predict_locs,
 #'                       predict = TRUE,
 #'                       cv = TRUE)
+#' }
 #' 
 lrren <- function(obs_locs,
                   predict = FALSE,
