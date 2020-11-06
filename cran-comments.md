@@ -1,11 +1,16 @@
-## This is a new release
+## This is the first resubmission
+
+* Actions taken regarding feedback from Julia Haider
+  * Removed vignette_cache from build which greatly reduced the size of tarball
+  * Tarball is now smaller than 5 MB
 
 ## Test environments
 * local OS X install, R 3.6.3
-* win-builder, (devel,  release)
+* win-builder, (devel, oldrelease, release)
 * Rhub
-  * macOS 10.13.6 High Sierra, R-release, CRAN's setup
-  * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  * Fedora Linux, R-devel, clang, gfortran
+  * Ubuntu Linux 16.04 LTS, R-release, GCC
+  * Windows Server 2008 R2 SP1, R-devel, 32⁄64 bit
   
 There was 1 NOTE:
 

@@ -32,10 +32,13 @@ devtools::check()
 usethis::use_build_ignore(c("build"))
 
 # rhub
+devtools::check_rhub()
 rhub::check_for_cran()
 
 # Check on windows
 devtools::check_win_devel()
+devtools::check_win_oldrelease()
+devtools::check_win_release()
 
 # Release to CRAN
 #devtools::release()

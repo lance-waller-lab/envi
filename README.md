@@ -1,4 +1,4 @@
-envi: Environmental Interpolation using Spatial Kernel Density Estimation <img src="dev/figures/envi.png" width="120" align="right" />
+envi: Environmental Interpolation using Spatial Kernel Density Estimation <img src="man/figures/envi.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">
@@ -166,17 +166,17 @@ plot_predict(test,
 plot_cv(test)
 
 ```
-![](dev/figures/plot_obs1.png)
+![](man/figures/plot_obs1.png)
 
-![](dev/figures/plot_obs2.png)
+![](man/figures/plot_obs2.png)
 
-![](dev/figures/plot_obs3.png)
+![](man/figures/plot_obs3.png)
 
-![](dev/figures/plot_predict1.png)
+![](man/figures/plot_predict1.png)
 
-![](dev/figures/plot_predict2.png)
+![](man/figures/plot_predict2.png)
 
-![](dev/figures/plot_cv1.png)
+![](man/figures/plot_cv1.png)
 
 ### For the perlrren() function
 
@@ -246,18 +246,18 @@ plot_perturb(test1,
 
 ```
 
-![](dev/figures/plot_perturb1.png)
+![](man/figures/plot_perturb1.png)
 
-![](dev/figures/plot_perturb2.png)
+![](man/figures/plot_perturb2.png)
 
-![](dev/figures/plot_perturb3.png)
+![](man/figures/plot_perturb3.png)
 
-![](dev/figures/plot_perturb4.png)
+![](man/figures/plot_perturb4.png)
 
-![](dev/figures/plot_perturb5.png)
+![](man/figures/plot_perturb5.png)
 
-![](dev/figures/plot_perturb6.png)
+![](man/figures/plot_perturb6.png)
 
-![](dev/figures/plot_perturb7.png)
+![](man/figures/plot_perturb7.png)
 
-![](dev/figures/plot_perturb8.png)
+![](man/figures/plot_perturb8.png)
