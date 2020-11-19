@@ -36,7 +36,7 @@ This function produces three plots in a two-dimensional space where the axes are
 Create multiple plots of output from the \code{\link{lrren}} function, specifically for the observation data and estimated ecological niche.
 }
 \examples{
-if (interactive()) {
+\donttest{
   plot_obs(input = test_lrren)
 }
 

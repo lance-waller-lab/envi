@@ -1,8 +1,8 @@
-## This is the first resubmission
+## This is the second resubmission
 
-* Actions taken regarding feedback from Julia Haider
-  * Removed vignette_cache from build which greatly reduced the size of tarball
-  * Tarball is now smaller than 5 MB
+* Actions taken regarding feedback from Gregor Seyer
+  * Used \donttest{} for examples that cannot be run interactively
+  * Reduced the size of the package by reducing the number of figures in the vignette
 
 ## Test environments
 * local OS X install, R 3.6.3

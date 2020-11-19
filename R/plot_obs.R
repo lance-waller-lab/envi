@@ -19,7 +19,7 @@
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #'   plot_obs(input = test_lrren)
 #' }
 #' 

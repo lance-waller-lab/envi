@@ -25,7 +25,7 @@
 #' @export
 #' 
 #' @examples 
-#' if (interactive()) {
+#' \donttest{
 #'   plot_perturb(input = test_perlrren)
 #' }
 #' 

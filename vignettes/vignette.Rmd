@@ -34,14 +34,6 @@ We start by importing the two covariate data of class `im`:
 ```{r covariate}
 slopeangle <- spatstat.data::gorillas.extra$slopeangle
 waterdist <- spatstat.data::gorillas.extra$waterdist
-spatstat::plot.im(slopeangle,
-                       main = "slope gradient (degrees)",
-                       axes = TRUE,
-                       ann = TRUE)
-spatstat::plot.im(waterdist,
-                       main = "distance from water (meters)",
-                       axes = TRUE,
-                       ann = TRUE)
 ```
 
 Center and scale the covariate data.
@@ -136,13 +128,7 @@ lrren_time <- end_time - start_time # calculate duration of lrren() example
 
 A single run of the `lrren` function took approximately `r round(lrren_time, digits = 1)` seconds on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory.
 
-We display the estimated ecological niche within a space of Covariate 1 by Covariate 2  using the `plot_obs` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations.
-
-```{r plot_obs}
-plot_obs(test_lrren)
-```
-
-As expected, extreme values of the log relative risk surface are located near the edges of the surface, however these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1). 
+We display the estimated ecological niche within a space of Covariate 1 by Covariate 2 using the `plot_obs` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. As expected, extreme values of the log relative risk surface are located near the edges of the surface, however these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1).
 
 ```{r plot_obs_limited}
 plot_obs(test_lrren,
@@ -414,9 +400,9 @@ rm(obs_locs, ims) # conserve memory
 
 A single (non-parallel) run of the `perlrren` function with `r n_sim` iterations took approximately `r round(perlrren_time, digits = 1)` minutes on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory. In practice, a larger number of simulated iterations would be recommended (e.g., n = 10,000). 
 
-We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the defaults and display four (4) plots in covariate space and four (4) plots that are predicted into geographic space (i.e., the park). We limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). 
+We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the default settings except we limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). We only display the plots pertaining to the proportion of iterations with a significant p-value, both in covariate space and predicted into geographic space (i.e., the park).
 
-```{r plot_perturb}
+```{r plot_perturb, fig.keep = c(4,8)}
 plot_perturb(test_perlrren,
              cov_labs = c("Component 1", "Component 2"),
              cref0 = "+init=epsg:32632",

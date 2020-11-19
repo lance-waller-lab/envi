@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #'   plot_cv(input = test_lrren)
 #' }
 #' 

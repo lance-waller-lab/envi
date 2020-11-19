@@ -22,7 +22,7 @@
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
+#' \donttest{
 #'   plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
 #' }
 #' 
