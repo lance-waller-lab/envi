@@ -1,8 +1,8 @@
-## This is the second resubmission
+## This is the third resubmission
 
-* Actions taken regarding feedback from Gregor Seyer
-  * Used \donttest{} for examples that cannot be run interactively
-  * Reduced the size of the package by reducing the number of figures in the vignette
+* Actions taken regarding feedback from Uwe Ligges:
+  * Changed examples for plot_cv(), plot_obs(), plot_perturb(), and plot_predict() to be fully interactive
+  * Changed \donttest{} back to if(interactive()){} but with full examples for generating inputs from the lrren() and perlrren() functions
 
 ## Test environments
 * local OS X install, R 3.6.3

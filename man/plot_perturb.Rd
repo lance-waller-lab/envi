@@ -51,7 +51,44 @@ This function produces four plots in a two-dimensional space where the axes are 
 Create multiple plots of output from the \code{\link{perlrren}} function, specifically for the four summary statistics in covariate space and geographic space.
 }
 \examples{
-\donttest{
+if (interactive()) {
+  set.seed(1234) # for reproducibility
+
+# Using the 'bei' and 'bei.extra' data within {spatstat.data}
+
+# Covariate data (centered and scaled)
+  ims <- spatstat.data::bei.extra
+  ims[[1]]$v <- scale(ims[[1]]$v)
+  ims[[2]]$v <- scale(ims[[2]]$v)
+  
+# Presence data
+  presence <- spatstat.data::bei
+  spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                              "lon" = presence$x,
+                                              "lat" = presence$y)
+                                          
+# (Pseudo-)Absence data
+  absence <- spatstat::rpoispp(0.008, win = ims[[1]])
+  spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+                                              "lon" = absence$x,
+                                              "lat" = absence$y)
+# Combine into readable format
+  obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
+  spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+  spatstat::marks(obs_locs) <- spatstat::marks(obs_locs)[ , c(4, 2, 3, 1)]
+ 
+# Specify categories for varying degrees of spatial uncertainty
+## Creates three groups
+  spatstat::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
+                                                                  lambda = 0.05))
+                                                                  
+# Run perlrren
+  test_perlrren <- perlrren(obs_ppp = obs_locs,
+                            covariates = ims,
+                            radii = c(10, 100, 500),
+                            n_sim = 10)
+                            
+# Run plot_perturb                             
   plot_perturb(input = test_perlrren)
 }
 
