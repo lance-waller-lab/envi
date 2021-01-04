@@ -6,6 +6,18 @@ context("plot_cv")
 
 # Generate testing data
 ## Environmental Covariates
+library(envi)
+library(raster)
+library(spatstat)
+library(spatstat.data)
+set.seed(1234)
+
+# -------------- #
+# Prepare inputs #
+# -------------- #
+
+# Using the `bei` and `bei.extra` data from {spatstat.data}
+
 elev <- spatstat.data::bei.extra$elev
 grad <- spatstat.data::bei.extra$grad
 elev$v <- scale(elev)
@@ -86,7 +98,7 @@ test_that("plot_cv throws error with invalid arguments", {
   # plot_cv without lrren output
   expect_error(
     plot_cv(input = NULL, 
-             alpha = 0.05)
+            alpha = 0.05)
     )
   
   # plot_cv with lrren output where cv = FALSE

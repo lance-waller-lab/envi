@@ -160,15 +160,15 @@ test_that("perlrren works", {
              n_sim = 10)
   )
   
-  # Parallel
-  expect_named(
-    perlrren(obs_ppp = obs_locs,
-             covariates = ims,
-             radii = c(10, 100, 500),
-             parallel = TRUE,
-             n_core = 2,
-             n_sim = 10)
-  )
+  # # Parallel
+  # expect_named(
+  #   perlrren(obs_ppp = obs_locs,
+  #            covariates = ims,
+  #            radii = c(10, 100, 500),
+  #            parallel = TRUE,
+  #            n_core = 2,
+  #            n_sim = 10)
+  # )
   
 }
 )

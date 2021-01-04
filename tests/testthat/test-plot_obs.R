@@ -6,6 +6,18 @@ context("plot_obs")
 
 # Generate testing data
 ## Environmental Covariates
+library(envi)
+library(raster)
+library(spatstat)
+library(spatstat.data)
+set.seed(1234)
+
+# -------------- #
+# Prepare inputs #
+# -------------- #
+
+# Using the `bei` and `bei.extra` data from {spatstat.data}
+
 elev <- spatstat.data::bei.extra$elev
 grad <- spatstat.data::bei.extra$grad
 elev$v <- scale(elev)

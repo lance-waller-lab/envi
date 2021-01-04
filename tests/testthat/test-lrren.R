@@ -6,6 +6,18 @@ context("lrren")
 
 # Generate testing data
 ## Environmental Covariates
+library(envi)
+library(raster)
+library(spatstat)
+library(spatstat.data)
+set.seed(1234)
+
+# -------------- #
+# Prepare inputs #
+# -------------- #
+
+# Using the `bei` and `bei.extra` data from {spatstat.data}
+
 elev <- spatstat.data::bei.extra$elev
 grad <- spatstat.data::bei.extra$grad
 elev$v <- scale(elev)
@@ -265,23 +277,23 @@ test_that("lrren works", {
           verbose = FALSE)
   )
 
-  # Estimate and cross-validation
-  ## Unbalanced sampling
-  ## Parallel (n = 2 cores)
-  expect_named(
-    lrren(obs_locs = obs_locs,
-          predict = FALSE,
-          predict_locs = NULL,
-          conserve = TRUE,
-          cv = TRUE,
-          kfold = 10,
-          balance = TRUE,
-          parallel = TRUE,
-          n_core = 2,
-          poly_buffer = NULL,
-          obs_window = NULL,
-          verbose = FALSE)
-  )
+  # # Estimate and cross-validation
+  # ## Unbalanced sampling
+  # ## Parallel (n = 2 cores)
+  # expect_named(
+  #   lrren(obs_locs = obs_locs,
+  #         predict = FALSE,
+  #         predict_locs = NULL,
+  #         conserve = TRUE,
+  #         cv = TRUE,
+  #         kfold = 10,
+  #         balance = TRUE,
+  #         parallel = TRUE,
+  #         n_core = 2,
+  #         poly_buffer = NULL,
+  #         obs_window = NULL,
+  #         verbose = FALSE)
+  # )
 
   # Estimate and predict
   expect_named(
