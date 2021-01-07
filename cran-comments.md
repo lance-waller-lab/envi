@@ -1,8 +1,7 @@
-## This is the fifth resubmission
+## This is the sixth resubmission
 
 * Actions taken after feedback from Uwe Ligges:
   * Updated URLs in envi-package.Rd
-  * Updated year in DESCRIPTION
 
 ## Test environments
 * local OS X install, R 3.6.3

@@ -1,5 +1,8 @@
 # envi (development version)
 
+# envi v0.1.6
+  * Updated URLs in envi-package.Rd
+
 # envi v0.1.5
   * Updated URLs in envi-package.Rd
   * Updated year in DESCRIPTION
