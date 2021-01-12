@@ -1,6 +1,16 @@
 envi: Environmental Interpolation using Spatial Kernel Density Estimation <img src="man/figures/envi.png" width="120" align="right" />
 ===================================================
 
+<!-- badges: start -->
+
+[![CRAN
+version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
+![license](https://img.shields.io/badge/license-apache-yellow)
+
+<!-- badges: end -->
+
 <h2 id="overview">
 
 Overview
