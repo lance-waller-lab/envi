@@ -34,7 +34,7 @@ Key content of the 'envi' package include:\cr
 \code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. Also has functionality to predict the spatial distribution of the summary statistics.
 }
 \section{Dependencies}{
- The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+ The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 }
 
 \author{

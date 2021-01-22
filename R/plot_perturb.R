@@ -20,7 +20,7 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics par
 #' @importFrom raster crs raster projectRaster
-#' @importFrom spatstat pixellate
+#' @importFrom spatstat.geom pixellate
 #' 
 #' @export
 #' 
@@ -37,23 +37,23 @@
 #'   
 #' # Presence data
 #'   presence <- spatstat.data::bei
-#'   spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+#'   spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
 #'                                               "lon" = presence$x,
 #'                                               "lat" = presence$y)
 #'                                           
 #' # (Pseudo-)Absence data
-#'   absence <- spatstat::rpoispp(0.008, win = ims[[1]])
-#'   spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+#'   absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+#'   spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)
 #' # Combine into readable format
-#'   obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
-#'   spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-#'   spatstat::marks(obs_locs) <- spatstat::marks(obs_locs)[ , c(4, 2, 3, 1)]
+#'   obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+#'   spatstat.geom::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+#'   spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(4, 2, 3, 1)]
 #'  
 #' # Specify categories for varying degrees of spatial uncertainty
 #' ## Creates three groups
-#'   spatstat::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
+#'   spatstat.geom::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
 #'                                                                   lambda = 0.05))
 #'                                                                   
 #' # Run perlrren
@@ -179,7 +179,7 @@ plot_perturb <- function(input,
   if (predict == TRUE) {
     
     # Convert 'im' objects to spatially projected 'RasterLayer' objects
-    lrr_mean <- spatstat::pixellate(input$predict,
+    lrr_mean <- spatstat.geom::pixellate(input$predict,
                                          weights = marks(input$predict)$lrr_mean)
     lrr_mean <- raster::raster(lrr_mean)
     raster::crs(lrr_mean) <- cref0
@@ -189,7 +189,7 @@ plot_perturb <- function(input,
                                         method = "ngb")
     }
     
-    lrr_sd <- spatstat::pixellate(input$predict,
+    lrr_sd <- spatstat.geom::pixellate(input$predict,
                                        weights = marks(input$predict)$lrr_sd)
     lrr_sd <- raster::raster(lrr_sd)
     raster::crs(lrr_sd) <- cref0
@@ -199,7 +199,7 @@ plot_perturb <- function(input,
                                       method = "ngb")
     }
     
-    pval_mean <- spatstat::pixellate(input$predict,
+    pval_mean <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_mean)
     pval_mean <- raster::raster(pval_mean)
     raster::crs(pval_mean) <- cref0
@@ -209,7 +209,7 @@ plot_perturb <- function(input,
                                          method = "ngb")
     }
     
-    pval_prop <- spatstat::pixellate(input$predict,
+    pval_prop <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_prop)
     pval_prop <- raster::raster(pval_prop)
     raster::crs(pval_prop) <- cref0

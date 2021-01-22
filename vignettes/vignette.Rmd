@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FAL
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("envi", "raster", "RStoolbox", "spatstat", "spatstat.data")
+loadedPackages <- c("envi", "raster", "RStoolbox", "spatstat.data", "spatstat.geom", "spatstat.core")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -53,23 +53,23 @@ waterdist_raster <- raster::raster(waterdist)
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
 
 ```{r presence}
-presence <- spatstat::unmark(spatstat.data::gorillas)
-spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+presence <- spatstat.geom::unmark(spatstat.data::gorillas)
+spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lon" = presence$x,
                                              "lat" = presence$y)
-spatstat::marks(presence)$slopeangle <- slopeangle[presence]
-spatstat::marks(presence)$waterdist <- waterdist[presence]
+spatstat.geom::marks(presence)$slopeangle <- slopeangle[presence]
+spatstat.geom::marks(presence)$waterdist <- waterdist[presence]
 ```
 
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "(pseudo-)absence" locations. 
 
 ```{r absence}
-absence <- spatstat::rpoispp(0.00004, win = slopeangle)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
+spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
-spatstat::marks(absence)$slopeangle <- slopeangle[absence]
-spatstat::marks(absence)$waterdist <- waterdist[absence]
+spatstat.geom::marks(absence)$slopeangle <- slopeangle[absence]
+spatstat.geom::marks(absence)$waterdist <- waterdist[absence]
 ```
 
 ```{r cleanup1, echo = FALSE}
@@ -86,16 +86,16 @@ Combine the presence (n = `r presence$n`) and absence (`r absence$n`) locations 
 6. Covariate 2
 
 ```{r obs_locs}
-obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
-spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
-spatstat::plot.ppp(obs_locs,
+obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
+spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
+spatstat.geom::plot.ppp(obs_locs,
                         which.marks = "presence",
                         main = "Gorilla nesting sites (red-colored)\nPseudo-absence locations (blue-colored)",
                         cols = c("#0000CD","#8B3A3A"),
                         pch = 1,
                         axes = TRUE,
                         ann = TRUE)
-obs_locs <- spatstat::marks(obs_locs)
+obs_locs <- spatstat.geom::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 ```
@@ -241,13 +241,13 @@ The loading of the first component is almost entirely the centered 'aspect' vari
 pca_bands <- pca_park$map
 pc1 <- pca_bands[[1]] # PC1
 pc2 <- pca_bands[[2]] # PC2
-pc1 <- spatstat::as.im(pc1) # convert to class 'im'
-pc2 <- spatstat::as.im(pc2) # convert to class 'im'
-spatstat::plot.im(pc1,
+pc1 <- spatstat.geom::as.im(pc1) # convert to class 'im'
+pc2 <- spatstat.geom::as.im(pc2) # convert to class 'im'
+spatstat.geom::plot.im(pc1,
                        main = 'Principal Component 1\nprimarily aspect (centered at "North")',
                        ann = TRUE,
                        axes = TRUE)
-spatstat::plot.im(pc2,
+spatstat.geom::plot.im(pc2,
                        main = 'Principal Component 2\ncombination of vegetation type, slope type,\nelevation, and distance from water',
                        ann = TRUE,
                        axes = TRUE)
@@ -263,23 +263,23 @@ We prepare inputs for a new `lrren` run similar to the first example above. For 
 
 ```{r pca_data}
 set.seed(1234) # for similar locations as above example
-presence <- spatstat::unmark(spatstat.data::gorillas)
-spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+presence <- spatstat.geom::unmark(spatstat.data::gorillas)
+spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lon" = presence$x,
                                              "lat" = presence$y)
-spatstat::marks(presence)$pc1 <- pc1[presence]
-spatstat::marks(presence)$pc2 <- pc2[presence]
+spatstat.geom::marks(presence)$pc1 <- pc1[presence]
+spatstat.geom::marks(presence)$pc2 <- pc2[presence]
 
-absence <- spatstat::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+absence <- spatstat.core::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
+spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
-spatstat::marks(absence)$pc1 <- pc1[absence]
-spatstat::marks(absence)$pc2 <- pc2[absence]
+spatstat.geom::marks(absence)$pc1 <- pc1[absence]
+spatstat.geom::marks(absence)$pc2 <- pc2[absence]
 
-obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
-spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
-obs_locs <- spatstat::marks(obs_locs)
+obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
+spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
+obs_locs <- spatstat.geom::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
@@ -347,23 +347,23 @@ We start by preparing the observation data. Here, the data must be a marked plan
 ```{r sensitivity_data}
 # Preserve 'group' feature from 'gorillas' data within {spatstat.data}
 ## Assign as a new mark named 'level'
-spatstat::marks(presence)$levels <- spatstat::marks(spatstat.data::gorillas)$group
+spatstat.geom::marks(presence)$levels <- spatstat.geom::marks(spatstat.data::gorillas)$group
 
 # Assign a third 'level' for the pseudo-absences
-spatstat::marks(absence)$levels <- "none"
+spatstat.geom::marks(absence)$levels <- "none"
 
 # Combine
-obs_locs <- spatstat::superimpose(absence, presence, check = FALSE)
+obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
 
 # Set variables as class 'factor'
-spatstat::marks(obs_locs)$presence <- as.factor(spatstat::marks(obs_locs)$presence)
-spatstat::marks(obs_locs)$levels <- as.factor(spatstat::marks(obs_locs)$levels)
+spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
+spatstat.geom::marks(obs_locs)$levels <- as.factor(spatstat.geom::marks(obs_locs)$levels)
 
 # Create 'id' feature
-spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+spatstat.geom::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
 
 # Reorder and drop the two covariate features
-spatstat:: marks(obs_locs) <- spatstat:: marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
+spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
 ```
 
 ```{r cleanup8, echo = FALSE}
@@ -373,7 +373,7 @@ rm(absence, presence) # conserve memory
 The two covariate values will be assigned to all points in every iteration and are drawn from a list of objects of class 'im'. Here, we use the same variables as above (slope gradient and distance from water), centered and scaled.
 
 ```{r ims}
-ims <- spatstat::solist(pc1,pc2)
+ims <- spatstat.geom::solist(pc1,pc2)
 names(ims) <- c("Component_1", "Component_2")
 ```
 

@@ -68,7 +68,7 @@
 #' @importFrom rgeos gBuffer
 #' @importFrom sp bbox coordinates Polygon Polygons SpatialPolygons
 #' @importFrom sparr risk
-#' @importFrom spatstat owin ppp
+#' @importFrom spatstat.geom owin ppp
 #' @importFrom stats na.omit
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @import maptools
@@ -90,23 +90,23 @@
 #' 
 #' # Presence data
 #'   presence <- spatstat.data::bei
-#'   spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+#'   spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
 #'                                           "lon" = presence$x,
 #'                                           "lat" = presence$y)
-#'   spatstat::marks(presence)$elev <- elev[presence]
-#'   spatstat::marks(presence)$grad <- grad[presence]
+#'   spatstat.geom::marks(presence)$elev <- elev[presence]
+#'   spatstat.geom::marks(presence)$grad <- grad[presence]
 #' 
 #' # (Pseudo-)Absence data
-#'   absence <- spatstat::rpoispp(0.008, win = elev)
-#'   spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+#'   absence <- spatstat.core::rpoispp(0.008, win = elev)
+#'   spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)
-#'   spatstat::marks(absence)$elev <- elev[absence]
-#'   spatstat::marks(absence)$grad <- grad[absence]
+#'   spatstat.geom::marks(absence)$elev <- elev[absence]
+#'   spatstat.geom::marks(absence)$grad <- grad[absence]
 #' 
 #' # Combine into readable format
-#'   obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
-#'   obs_locs <- spatstat::marks(obs_locs)
+#'   obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+#'   obs_locs <- spatstat.geom::marks(obs_locs)
 #'   obs_locs$id <- seq(1, nrow(obs_locs), 1)
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #'   
@@ -177,8 +177,8 @@ lrren <- function(obs_locs,
   if (conserve == TRUE) { window_poly <- inner_poly } else { window_poly <- outer_poly }
 
   if (is.null(obs_window)) {
-    wind <- spatstat::owin(poly = list(x = rev(window_poly[ , 1]),
-                                       y = rev(window_poly[ , 2])))
+    wind <- spatstat.geom::owin(poly = list(x = rev(window_poly[ , 1]),
+                                            y = rev(window_poly[ , 2])))
   } else { wind <- obs_window }
 
   # Input Preparation
@@ -186,11 +186,11 @@ lrren <- function(obs_locs,
   presence_locs <- subset(obs_locs, obs_locs[ , 4] == 1)
   absence_locs <- subset(obs_locs, obs_locs[, 4] == 0)
 
-  ppp_presence <- spatstat::ppp(x = presence_locs[ , 5],
+  ppp_presence <- spatstat.geom::ppp(x = presence_locs[ , 5],
                                      y = presence_locs[ , 6],
                                      window = wind,
                                      checkdup = FALSE)
-  ppp_absence <- spatstat::ppp(x = absence_locs[ , 5],
+  ppp_absence <- spatstat.geom::ppp(x = absence_locs[ , 5],
                                     y = absence_locs[ , 6],
                                     window = wind,
                                     checkdup = FALSE)
@@ -278,7 +278,7 @@ lrren <- function(obs_locs,
     out_par <- foreach::foreach(k = 1:kfold,
                                 .combine = comb,
                                 .multicombine = TRUE,
-                                .packages = c("sparr", "spatstat", "raster", "utils"),
+                                .packages = c("sparr", "spatstat.geom", "raster", "utils"),
                                 .init = list(list(), list(), list())
                                 ) %fun% {
 
@@ -302,11 +302,11 @@ lrren <- function(obs_locs,
 
       ##### training data
       ###### presence and absence point pattern datasets
-      ppp_presence_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 1],
+      ppp_presence_training <- spatstat.geom::ppp(x = training[ , 5][training[ , 4] == 1],
                                                   y = training[ , 6][training[ , 4] == 1],
                                                   window = wind,
                                                   checkdup = FALSE)
-      ppp_absence_training <- spatstat::ppp(x = training[ , 5][training[ , 4] == 0],
+      ppp_absence_training <- spatstat.geom::ppp(x = training[ , 5][training[ , 4] == 0],
                                                  y = training[ , 6][training[ , 4] == 0], 
                                                  window = wind,
                                                  checkdup = FALSE)

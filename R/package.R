@@ -30,7 +30,7 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat]{rjitter}} function. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 
@@ -52,7 +52,8 @@ NULL
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons
-#' @importFrom spatstat as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
+#' @importFrom spatstat.core rpoispp
+#' @importFrom spatstat.geom as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
 #' @importFrom stats na.omit sd
 #' @importFrom utils packageDescription setTxtProgressBar txtProgressBar 
 #' @import maptools

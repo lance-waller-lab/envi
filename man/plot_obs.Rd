@@ -27,7 +27,7 @@ plot_obs(
 
 \item{digits}{Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).}
 
-\item{...}{Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
+\item{...}{Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
 This function produces three plots in a two-dimensional space where the axes are the two specified covariates: 1) observation locations by group, 2) log relative risk surface, and 3) significant p-value surface.
@@ -51,23 +51,23 @@ if (interactive()) {
 
 # Presence data
   presence <- spatstat.data::bei
-  spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                          "lon" = presence$x,
-                                          "lat" = presence$y)
-  spatstat::marks(presence)$elev <- elev[presence]
-  spatstat::marks(presence)$grad <- grad[presence]
+  spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                               "lon" = presence$x,
+                                               "lat" = presence$y)
+  spatstat.geom::marks(presence)$elev <- elev[presence]
+  spatstat.geom::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence data
-  absence <- spatstat::rpoispp(0.008, win = elev)
-  spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+  absence <- spatstat.core::rpoispp(0.008, win = elev)
+  spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                               "lon" = absence$x,
                                               "lat" = absence$y)
-  spatstat::marks(absence)$elev <- elev[absence]
-  spatstat::marks(absence)$grad <- grad[absence]
+  spatstat.geom::marks(absence)$elev <- elev[absence]
+  spatstat.geom::marks(absence)$grad <- grad[absence]
 
 # Combine into readable format
-  obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
-  obs_locs <- spatstat::marks(obs_locs)
+  obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+  obs_locs <- spatstat.geom::marks(obs_locs)
   obs_locs$id <- seq(1, nrow(obs_locs), 1)
   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
   

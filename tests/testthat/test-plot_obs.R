@@ -8,8 +8,9 @@ context("plot_obs")
 ## Environmental Covariates
 library(envi)
 library(raster)
-library(spatstat)
 library(spatstat.data)
+library(spatstat.geom)
+library(spatstat.core)
 set.seed(1234)
 
 # -------------- #
@@ -27,24 +28,24 @@ grad_raster <- raster::raster(grad)
 
 ## Presence Locations
 presence <- spatstat.data::bei
-spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                   "lon" = presence$x,
-                                   "lat" = presence$y)
-spatstat::marks(presence)$elev <- elev[presence]
-spatstat::marks(presence)$grad <- grad[presence]
+spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+                                             "lon" = presence$x,
+                                             "lat" = presence$y)
+spatstat.geom::marks(presence)$elev <- elev[presence]
+spatstat.geom::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence Locations
 set.seed(1234) # for reproducibility
-absence <- spatstat::rpoispp(0.008, win = elev)
-spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-                                       "lon" = absence$x,
-                                       "lat" = absence$y)
-spatstat::marks(absence)$elev <- elev[absence]
-spatstat::marks(absence)$grad <- grad[absence]
+absence <- spatstat.core::rpoispp(0.008, win = elev)
+spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+                                            "lon" = absence$x,
+                                            "lat" = absence$y)
+spatstat.geom::marks(absence)$elev <- elev[absence]
+spatstat.geom::marks(absence)$grad <- grad[absence]
 
 # Combine
-obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
-obs_locs <- spatstat::marks(obs_locs)
+obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+obs_locs <- spatstat.geom::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 

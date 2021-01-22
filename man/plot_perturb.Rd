@@ -63,23 +63,23 @@ if (interactive()) {
   
 # Presence data
   presence <- spatstat.data::bei
-  spatstat::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+  spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                               "lon" = presence$x,
                                               "lat" = presence$y)
                                           
 # (Pseudo-)Absence data
-  absence <- spatstat::rpoispp(0.008, win = ims[[1]])
-  spatstat::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+  absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+  spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                               "lon" = absence$x,
                                               "lat" = absence$y)
 # Combine into readable format
-  obs_locs <- spatstat::superimpose(presence, absence, check = FALSE)
-  spatstat::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-  spatstat::marks(obs_locs) <- spatstat::marks(obs_locs)[ , c(4, 2, 3, 1)]
+  obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+  spatstat.geom::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+  spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(4, 2, 3, 1)]
  
 # Specify categories for varying degrees of spatial uncertainty
 ## Creates three groups
-  spatstat::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
+  spatstat.geom::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n,
                                                                   lambda = 0.05))
                                                                   
 # Run perlrren
