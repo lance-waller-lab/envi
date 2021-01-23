@@ -122,23 +122,23 @@ grad_raster <- raster::raster(grad)
 
 # Presence data
 presence <- spatstat.data::bei
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence),
+spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                         "lon" = presence$x,
                                         "lat" = presence$y)
-spatstat.core::marks(presence)$elev <- elev[presence]
-spatstat.core::marks(presence)$grad <- grad[presence]
+spatstat.geom::marks(presence)$elev <- elev[presence]
+spatstat.geom::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = elev)
-spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
-spatstat.core::marks(absence)$elev <- elev[absence]
-spatstat.core::marks(absence)$grad <- grad[absence]
+spatstat.geom::marks(absence)$elev <- elev[absence]
+spatstat.geom::marks(absence)$grad <- grad[absence]
 
 # Combine
-obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-obs_locs <- spatstat.core::marks(obs_locs)
+obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+obs_locs <- spatstat.geom::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
@@ -154,6 +154,8 @@ test <- lrren(obs_locs = obs_locs,
               predict_locs = predict_locs,
               predict = TRUE,
               cv = TRUE)
+              
+
 
 # -------------- #
 # Run plot_obs() #
@@ -215,21 +217,21 @@ ims[[2]]$v <- scale(ims[[2]]$v)
 
 # Presence data
 presence <- spatstat.data::bei
-spatstat.core::marks(presence) <- data.frame("presence" = rep(1, presence$n),
+spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lon" = presence$x,
                                              "lat" = presence$y)
 
 # (Pseudo-)Absence data
 absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
-spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
+spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
 
 # Combine and create 'id' and 'levels' features
-obs_locs <- spatstat.core::superimpose(presence, absence, check = FALSE)
-spatstat.core::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
-spatstat.core::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
-spatstat.core::marks(obs_locs) <- spatstat.core::marks(obs_locs)[ , c(4, 2, 3, 1, 5)]
+obs_locs <- spatstat.geom::superimpose(presence, absence, check = FALSE)
+spatstat.geom::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+spatstat.geom::marks(obs_locs)$levels <- as.factor(stats::rpois(obs_locs$n, lambda = 0.05))
+spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(4, 2, 3, 1, 5)]
 
 # -------------- #
 # Run perlrren() #
