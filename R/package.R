@@ -54,7 +54,7 @@ NULL
 #' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons
 #' @importFrom spatstat.core rpoispp
 #' @importFrom spatstat.geom as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
-#' @importFrom stats na.omit sd
+#' @importFrom stats median na.omit sd
 #' @importFrom utils packageDescription setTxtProgressBar txtProgressBar 
 #' @import maptools
 NULL

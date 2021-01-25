@@ -418,4 +418,43 @@ if (is.null(prop_thresh)) {
   
 }
 
+###
+# Spatial Correlation
+# https://stackoverflow.com/questions/33409501/spatial-correlogram-using-the-raster-package
 
+Moran(raster(test$out$obs$rr))
+
+r <- raster(test$out$obs$rr)
+xy <- coordinates(r)
+z.value <- as.vector(t(test$out$obs$rr$v))
+
+library(SpatialPack)
+testt <- modified.ttest(z.value, z.value, coords = xy, nclass = 30)
+
+bins <- testt$upper.bounds
+library(raster)
+sp.Corr <- matrix(nrow = 0,ncol = 2)
+for (i in bins) {
+  cat(paste0("..",i)) #print the bin, which is currently calculated
+  w = focalWeight(r,d = i,type = 'circle')
+  wTemp <- w #temporarily saves the weigtht matrix
+  if (i > bins[1]) {
+    midpoint <- ceiling(dim(w)/2) # get the midpoint      
+    half_range <- floor(dim(wOld)/2)
+    w[(midpoint[1] - half_range[1]):(midpoint[1] + half_range[1]),
+      (midpoint[2] - half_range[2]):(midpoint[2] + half_range[2])] <- 
+      w[(midpoint[1] - half_range[1]):(midpoint[1] + half_range[1]),
+        (midpoint[2] - half_range[2]):(midpoint[2] + half_range[2])]*(wOld==0)
+    w <- w * (1/sum(w)) #normalizes the vector to sum the weights to 1
+  }
+  wOld <- wTemp #save this weight matrix for the next run
+  mor <- Moran(r, w = w)
+  sp.Corr <- rbind(sp.Corr,c(Moran =mor,Distance = i))
+}
+
+sp.Corr[ , 2][min(which(sp.Corr[ , 1] <= 0))]
+
+plot(x=testt$upper.bounds, testt$imoran[, 1], col = 2,type = "b",ylab = "Moran's I",xlab="Upper bound of distance", lwd = 2)
+lines(x=sp.Corr[,2],y = sp.Corr[,1], col = 3)
+points(x=sp.Corr[,2],y = sp.Corr[,1], col = 3)
+legend('topright', legend = c('SpatialPack', 'Own code'), col = 2:3, lty = 1, lwd = 2:1)

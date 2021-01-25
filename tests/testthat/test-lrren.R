@@ -241,6 +241,24 @@ test_that("lrren works", {
           obs_window = custom_owin,
           verbose = FALSE)
   )
+  
+  # Only estimates ecological niche
+  ## p-value correction
+  expect_named(
+    lrren(obs_locs = obs_locs,
+          predict = FALSE,
+          predict_locs = predict_locs,
+          conserve = FALSE,
+          p_correct = "Bonferroni",
+          cv = FALSE,
+          kfold = 10,
+          balance = FALSE,
+          parallel = FALSE,
+          n_core = NULL,
+          poly_buffer = NULL,
+          obs_window = NULL,
+          verbose = FALSE)
+  )
 
   # Estimate and cross-validation
   ## Unbalanced sampling

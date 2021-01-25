@@ -4,7 +4,7 @@
 #' 
 #' @param input An object of class 'list' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD")} or \code{c("indianred4", "grey80", "blue3")}.
-#' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
+#' @param alpha Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).
 #' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
 #' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
 #' @param digits Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
@@ -70,7 +70,7 @@
 #' 
 plot_obs <- function(input,
                      plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD"),
-                     alpha = 0.05,
+                     alpha = input$p_critical,
                      lower_lrr = NULL,
                      upper_lrr = NULL,
                      digits = 1,
@@ -161,7 +161,7 @@ plot_obs <- function(input,
                                 ylab = names_obs[6],
                                 axes = TRUE,
                                 ann = TRUE,
-                                main = paste("significant p-values\nalpha =", alpha, sep = " "),
+                                main = paste("significant p-values\nalpha =", formatC(alpha, format = "e", digits = 2), sep = " "),
                                 ...)
   fields::image.plot(pvalp,
                      add = TRUE,

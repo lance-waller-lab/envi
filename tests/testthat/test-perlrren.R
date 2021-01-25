@@ -152,6 +152,16 @@ test_that("perlrren works", {
              n_sim = 10)
   )
   
+  # p-value correction
+  expect_named(
+    perlrren(obs_ppp = obs_locs,
+             predict = FALSE,
+             p_correct = "Bonferroni",
+             covariates = ims,
+             radii = c(10, 100, 500),
+             n_sim = 10)
+  )
+  
   # Alpha small
   expect_named(
     perlrren(obs_ppp = obs_locs,

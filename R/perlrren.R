@@ -9,6 +9,7 @@
 #' @param radii Vector of length equal to the number of levels of ordinal ID in \code{obs_ppp}. Specifies the radii of the spatial perturbation at each level in units equivalent to the coordinate reference system of \code{obs_ppp}.
 #' @param n_sim Integer, specifying the number of simulation iterations to perform.
 #' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
+#' @param p_correct Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -19,6 +20,8 @@
 #' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
 #' 
 #' For more information about the spatial perturbation, please refer to the \code{\link[spatstat.geom]{rjitter}} function documentation.
+#' 
+#' The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 #' 
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -34,6 +37,7 @@
 #' \item{\code{lrr_sd}}{An object of class 'im' for the standard deviation of log relative risk surface.}
 #' \item{\code{pval_mean}}{An object of class 'im' for the mean p-value surface.}
 #' \item{\code{pval_prop}}{An object of class 'im' for the proportion of iterations were statistically significant surface.}
+#' \item{\code{alpha_median}}{A numeric value of the median critical p-value across all iterations.}
 #' }
 #' 
 #' If \code{predict = FALSE}, the returned \code{predict} is empty. If \code{predict = TRUE}, the returned \code{predict} is an object of class 'ppp' a marked point pattern with the following features:
@@ -54,7 +58,7 @@
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom raster crs
 #' @importFrom spatstat.geom as.solist im.apply marks owin ppp rjitter superimpose
-#' @importFrom stats sd
+#' @importFrom stats median sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 #' 
@@ -104,6 +108,7 @@ perlrren <- function(obs_ppp,
                      radii = NULL,
                      n_sim = 2,
                      alpha = 0.05,
+                     p_correct = "none",
                      parallel = FALSE,
                      n_core = NULL,
                      verbose = FALSE,
@@ -128,6 +133,8 @@ perlrren <- function(obs_ppp,
   
   if (is.null(predict_locs)) { predict_locs <- ims2df(covariates) }
   
+  match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
+  
   ### Progress bar
   if (verbose == TRUE) {
     message("Randomly perturbing the spatial coordinates and estimating ecological niche")
@@ -148,7 +155,7 @@ perlrren <- function(obs_ppp,
                               .combine = comb,
                               .multicombine = TRUE,
                               .packages = c("envi", "spatstat.geom", "utils"),
-                              .init = list(list(), list(), list())
+                              .init = list(list(), list(), list(), list(), list())
   ) %fun% {
     
     if (verbose == TRUE & parallel == FALSE) {
@@ -189,10 +196,23 @@ perlrren <- function(obs_ppp,
       outer_poly <- xxxx$out$outer_poly
     } else { outer_poly <- NULL }
     
+    if (p_correct != "none") {
+      p_critical <- pval_correct(input = xxxx$out$obs$P$v, type = p_correct, alpha = alpha)
+    } else {
+      p_critical <- alpha
+    }
+    
+      lower_tail <- p_critical / 2
+      upper_tail <- 1 - lower_tail
+      
+      sig_pval <- xxxx$out$obs$P < lower_tail | xxxx$out$obs$P > upper_tail
+      
     # Output for each n-fold
     par_results <- list("sim_risk" = xxxx$out$obs$rr,
                         "sim_pval" = xxxx$out$obs$P,
-                        "outer_poly" = outer_poly)
+                        "outer_poly" = outer_poly,
+                        "p_critical" = p_critical,
+                        "sig_pval" = sig_pval)
   }
   
   # Stop clusters, if parallel
@@ -217,18 +237,17 @@ perlrren <- function(obs_ppp,
                                        fun.handles.na = TRUE,
                                        na.rm = TRUE)
   ## proportion significant
-  pval_sig <- lapply(out_par[[2]],
-                     function(x) ifelse(x$v < alpha / 2 | x$v > (1 - alpha / 2),
-                                        TRUE,
-                                        FALSE))
-  pval_count <- Reduce(`+`, pval_sig) / n_sim
-  pval_prop <- pval_mean
-  pval_prop$v <- pval_count
+  pval_prop <- spatstat.geom::im.apply(out_par[[5]],
+                                       function(x, y = n_sim) (sum(x) / y))
+  
+  ## Median critical p-value
+  alpha_median <- stats::median(unlist(out_par[[4]]))
   
   out_sim <- list("lrr_mean" = lrr_mean,
                   "lrr_sd" = lrr_sd,
                   "pval_mean" = pval_mean,
-                  "pval_prop" = pval_prop)
+                  "pval_prop" = pval_prop,
+                  "alpha_median" = alpha_median)
   
   if (predict == FALSE) {
     output <- list("sim" = out_sim,

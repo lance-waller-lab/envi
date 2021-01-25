@@ -9,6 +9,8 @@ lrren(
   predict = FALSE,
   predict_locs = NULL,
   conserve = TRUE,
+  alpha = 0.05,
+  p_correct = "none",
   cv = FALSE,
   kfold = 10,
   balance = FALSE,
@@ -28,6 +30,10 @@ lrren(
 \item{predict_locs}{Input data frame of prediction locations with 4 features (columns): 1) longitude, 2) latitude, 3) covariate 1 as x-coordinate, 4) covariate 2 as y-coordinate. The covariates must be the same as those included in \code{obs_locs}.}
 
 \item{conserve}{Logical. If TRUE (the default), the ecological niche will be estimated within a concave hull around the locations in \code{obs_locs}. If FALSE, the ecological niche will be estimated within a concave hull around the locations in \code{predict_locs}.}
+
+\item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
+
+\item{p_correct}{Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.}
 
 \item{cv}{Logical. If TRUE, will calculate prediction diagnostics using internal k-fold cross-validation. If FALSE (the default), will not.}
 
@@ -53,6 +59,7 @@ An object of class 'list'. This is a named list with the following components:
 \describe{
 \item{\code{out}}{An object of class 'list' for the estimated ecological niche.}
 \item{\code{dat}}{An object of class 'data.frame', returns \code{obs_locs} that are used in the accompanying plotting functions.}
+\item{\code{p_critical}}{A numeric value for the critical p-value used for significance tests.}
 }
 
 The returned \code{out} is a named list with the following components:
@@ -76,7 +83,6 @@ If \code{cv = TRUE}, the returned object of class 'list' has an additional named
 
 \describe{
 \item{\code{cv_predictions_rr}}{A list of length \code{kfold} with values of the log relative risk surface at each point randomly selected in a cross-validation fold.}
-\item{\code{cv_predictions_pval}}{A list of length \code{kfold} with values of the asymptotic tolerance (p-value) surface at each point randomly selected in a cross-validation fold.}
 \item{\code{cv_labels}}{A list of length \code{kfold} with a binary value of presence (1) or absence (0) for each point randomly selected in a cross-validation fold.}
 }
 }
@@ -93,6 +99,8 @@ If \code{predict = TRUE}, this function will predict ecological niche at every l
 If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 
 The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
+
+This function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 }
 \examples{
 if (interactive()) {

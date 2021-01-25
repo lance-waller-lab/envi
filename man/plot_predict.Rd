@@ -7,7 +7,7 @@
 plot_predict(
   input,
   plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD", "#FFFF00"),
-  alpha = 0.05,
+  alpha = input$p_critical,
   cref0 = "+init=epsg:4326",
   cref1 = NULL,
   lower_lrr = NULL,
@@ -21,7 +21,7 @@ plot_predict(
 
 \item{plot_cols}{Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD" "#FFFF00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.}
 
-\item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
+\item{alpha}{Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).}
 
 \item{cref0}{Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.}
 

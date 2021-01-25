@@ -4,7 +4,7 @@
 #' 
 #' @param input An object of class 'list' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD" "#FFFF00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.
-#' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
+#' @param alpha Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
 #' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
@@ -73,7 +73,7 @@
 #' 
 plot_predict <- function(input,
                          plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD", "#FFFF00"),
-                         alpha = 0.05,
+                         alpha = input$p_critical,
                          cref0 = "+init=epsg:4326",
                          cref1 = NULL,
                          lower_lrr = NULL,
@@ -87,8 +87,8 @@ plot_predict <- function(input,
   
   if (length(plot_cols) != 4) { 
     stop("The argument 'plot_cols' must have 4 colors")
-    }
-
+  }
+  
   op <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(op))
   # Convert to geospatial rasters
@@ -183,7 +183,7 @@ plot_predict <- function(input,
                            breaks = brp,
                            col = pcols,
                            axes = TRUE,
-                           main = paste("significant p-values\nalpha =", alpha, sep = " "),
+                           main = paste("significant p-values\nalpha =", formatC(alpha, format = "e", digits = 2), sep = " "),
                            xlab = "longitude",
                            ylab = "latitude",
                            legend.mar = 3.1,
