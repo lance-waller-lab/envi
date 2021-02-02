@@ -1,7 +1,11 @@
-## This is the sixth resubmission
+## This is the seventh resubmission
 
-* Actions taken after feedback from Uwe Ligges:
-  * Updated URLs in envi-package.Rd
+* Updates since previous submission:
+  * Updated 'spatstat' package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). 'spatstat.geom' and spatstat.core' packages replace 'spatstat' package in Imports
+  * Added `p_correct` argument to `lrren()` and `perlrren()` which calls a new, internal function `pval_correct()` that calculates three types of corrections for multiple testing (FDR, Sidak, Bonferroni)
+  * Removed a cv output for pval surface in `lrren()` that is not used in `plot_cv()`
+  
+* Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE in win-builder but no other environment
 
 ## Test environments
 * local OS X install, R 3.6.3

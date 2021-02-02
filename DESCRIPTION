@@ -2,7 +2,7 @@ Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
 Version: 0.1.7
-Date: 2021-01-24
+Date: 2021-02-02
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -50,7 +50,6 @@ Imports:
     sparr,
     spatstat.geom,
     spatstat.core,
-    spatstat,
     stats,
     utils
 Suggests: 
