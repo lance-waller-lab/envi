@@ -1,5 +1,8 @@
 # envi (development version)
 
+# envi v0.1.8.9000
+  * Fixed bug in `pval_correct()` when `p_correct = "FDR"` that will return the minimum p-value instead of NULL if no p-value is less than the p-critical value
+
 # envi v0.1.7
   * Updated 'spatstat' package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). 'spatstat.geom' and spatstat.core' packages replace 'spatstat' package in Imports
   * Added `p_correct` argument to `lrren()` and `perlrren()` which calls a new, internal function `pval_correct()` that calculates three types of corrections for multiple testing (FDR, Sidak, Bonferroni)
