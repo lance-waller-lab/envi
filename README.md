@@ -207,8 +207,8 @@ plot_obs(test2)
 
 # Note: Only showing second plot
 plot_predict(test2,
-             cref0 = "+init=epsg:5472",
-             cref1 = "+init=epsg:4326")
+             cref0 = "EPSG:5472",
+             cref1 = "EPSG:4326")
 
 # Note: plot_cv() will display the same results because cross-validation only performed for the log relative risk estimate
 ```
