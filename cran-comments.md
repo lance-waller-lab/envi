@@ -1,14 +1,14 @@
-## This is the seventh resubmission
+## This is the eighth resubmission
 
 * Updates since previous submission:
-  * Updated 'spatstat' package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). 'spatstat.geom' and spatstat.core' packages replace 'spatstat' package in Imports
-  * Added `p_correct` argument to `lrren()` and `perlrren()` which calls a new, internal function `pval_correct()` that calculates three types of corrections for multiple testing (FDR, Sidak, Bonferroni)
-  * Removed a cv output for pval surface in `lrren()` that is not used in `plot_cv()`
-  
-* Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE in win-builder but no other environment
+  * Replaced `parallel` and `doParallel` packages in Imports with `doFuture`, `doRNG`, and `future` packages to allow for parallel processing in `lrren()` and `perlrren()` functions to work across all CRAN environments
+  * Removed `utils` package from Imports because the progress bar in `lrren()` and `perlrren()` functions is now produced with a helper function in utils.R that imports the `iterators` package
+  * Set default for `n_core` argument in `lrren()` and `perlrren()` to be `n_core = 2` to match documentation
+    * Fixed bug in `pval_correct()` when `p_correct = "FDR"` that will return the minimum p-value instead of NULL if no p-value is less than the p-critical value
+  * Updated testthat checks for parallelization in `lrren()` and `perlrren()` functions
 
 ## Test environments
-* local OS X install, R 3.6.3
+* local OS X install, R 4.0.3
 * win-builder, (devel, oldrelease, release)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

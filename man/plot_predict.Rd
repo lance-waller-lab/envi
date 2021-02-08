@@ -8,7 +8,7 @@ plot_predict(
   input,
   plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD", "#FFFF00"),
   alpha = input$p_critical,
-  cref0 = "+init=epsg:4326",
+  cref0 = "EPSG:4326",
   cref1 = NULL,
   lower_lrr = NULL,
   upper_lrr = NULL,
@@ -23,7 +23,7 @@ plot_predict(
 
 \item{alpha}{Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).}
 
-\item{cref0}{Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.}
+\item{cref0}{Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"EPSG:4326"}.}
 
 \item{cref1}{Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.}
 
@@ -88,7 +88,7 @@ if (interactive()) {
                       cv = TRUE)
                       
 # Run plot_predict
-  plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
+  plot_predict(input = test_lrren, cref0 = "EPSG:5472")
 }
 
 }

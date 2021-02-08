@@ -5,7 +5,7 @@
 #' @param input An object of class 'list' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length four (4) specifying the colors for plotting: 1) presence, 2) neither, 3) absence, and 4) NA values. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD" "#FFFF00")} or \code{c("indianred4", "grey80", "blue3", "yellow")}.
 #' @param alpha Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).
-#' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
+#' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"EPSG:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space. 
 #' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
 #' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
@@ -17,7 +17,7 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics par
 #' @importFrom raster crs cut image projectRaster raster reclassify values 
-#' @importFrom sp coordinates gridded
+#' @importFrom sp coordinates CRS gridded
 #' @import maptools
 #' @export
 #'
@@ -68,13 +68,13 @@
 #'                       cv = TRUE)
 #'                       
 #' # Run plot_predict
-#'   plot_predict(input = test_lrren, cref0 = "+init=epsg:5472")
+#'   plot_predict(input = test_lrren, cref0 = "EPSG:5472")
 #' }
 #' 
 plot_predict <- function(input,
                          plot_cols = c("#8B3A3A", "#CCCCCC", "#0000CD", "#FFFF00"),
                          alpha = input$p_critical,
-                         cref0 = "+init=epsg:4326",
+                         cref0 = "EPSG:4326",
                          cref1 = NULL,
                          lower_lrr = NULL,
                          upper_lrr = NULL,
@@ -99,11 +99,12 @@ plot_predict <- function(input,
   sp::coordinates(predict_risk) <- ~ x + y # coordinates
   sp::gridded(predict_risk) <- TRUE # gridded
   predict_risk_raster <- raster::raster(predict_risk)
-  raster::crs(predict_risk_raster) <- cref0
+  raster::crs(predict_risk_raster) <- sp::CRS(SRS_string = cref0)
   if (!is.null(cref1)) {
     predict_risk_raster <- raster::projectRaster(predict_risk_raster,
-                                                 crs = cref1,
-                                                 method = "ngb")
+                                                 crs = sp::CRS(SRS_string = cref1),
+                                                 method = "ngb",
+                                                 legacy = TRUE)
   }
 
   # Create separate layer for NAs (if any)
@@ -111,11 +112,12 @@ plot_predict <- function(input,
   sp::coordinates(naband) <- ~ x + y # coordinates
   sp::gridded(naband) <- TRUE # gridded
   NA_risk_raster <- raster::raster(naband)
-  raster::crs(NA_risk_raster) <- cref0
+  raster::crs(NA_risk_raster) <- sp::CRS(SRS_string = cref0)
   if (!is.null(cref1)) {
     NA_risk_raster <- raster::projectRaster(NA_risk_raster,
-                                            crs = cref1,
-                                            method = "ngb")
+                                            crs = sp::CRS(SRS_string = cref1),
+                                            method = "ngb",
+                                            legacy = TRUE)
   }
   
   naband_reclass <- raster::reclassify(NA_risk_raster,
@@ -130,11 +132,12 @@ plot_predict <- function(input,
   sp::coordinates(predict_tol) <- ~ x + y # coordinates
   sp::gridded(predict_tol) <- TRUE # gridded
   predict_tol_raster <- raster::raster(predict_tol)
-  raster::crs(predict_tol_raster) <- cref0
+  raster::crs(predict_tol_raster) <- sp::CRS(SRS_string = cref0)
   if (!is.null(cref1)) {
     predict_tol_raster <- raster::projectRaster(predict_tol_raster,
-                                                crs = cref1,
-                                                method = "ngb")
+                                                crs = sp::CRS(SRS_string = cref1),
+                                                method = "ngb",
+                                                legacy = TRUE)
   }
 
   reclass_tol <- raster::cut(predict_tol_raster,

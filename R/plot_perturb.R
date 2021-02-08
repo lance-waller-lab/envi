@@ -7,7 +7,7 @@
 #' @param mean_cols Character string of length three (3) specifying the colors for plots with a divergent color palette: 1) presence, 2) neither, and 3) absence. The default colors in hex are \code{c("#8B3A3A", "#CCCCCC", "#0000CD")} or \code{c("indianred4", "grey80", "blue3")}.
 #' @param var_cols Character string of length two (2) specifying the colors for plots with a sequential color palette from low to high values. The default colors in hex are \code{c("#E5E5E5", "#1A1A1A")} or \code{c("grey90", "grey10")}.
 #' @param cov_labs Character string of length two (2) specifying the x- and y-axis labels in plots of the ecological niche in covariate space. The default values are generic \code{c("V1", "V2")}. 
-#' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.
+#' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"EPSG:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.
 #' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
 #' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
@@ -20,6 +20,7 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics par
 #' @importFrom raster crs raster projectRaster
+#' @importFrom sp CRS
 #' @importFrom spatstat.geom pixellate
 #' 
 #' @export
@@ -71,7 +72,7 @@ plot_perturb <- function(input,
                          mean_cols = c("#8B3A3A", "#CCCCCC", "#0000CD"),
                          var_cols = c("#E5E5E5", "#1A1A1A"),
                          cov_labs = c("V1", "V2"),
-                         cref0 = "+init=epsg:4326",
+                         cref0 = "EPSG:4326",
                          cref1 = NULL,
                          lower_lrr = NULL,
                          upper_lrr = NULL,
@@ -182,41 +183,45 @@ plot_perturb <- function(input,
     lrr_mean <- spatstat.geom::pixellate(input$predict,
                                          weights = marks(input$predict)$lrr_mean)
     lrr_mean <- raster::raster(lrr_mean)
-    raster::crs(lrr_mean) <- cref0
+    raster::crs(lrr_mean) <- sp::CRS(SRS_string = cref0)
     if (!is.null(cref1)) {
       lrr_mean <- raster::projectRaster(lrr_mean,
-                                        crs = cref1,
-                                        method = "ngb")
+                                        crs = sp::CRS(SRS_string = cref1),
+                                        method = "ngb",
+                                        legacy = TRUE)
     }
     
     lrr_sd <- spatstat.geom::pixellate(input$predict,
                                        weights = marks(input$predict)$lrr_sd)
     lrr_sd <- raster::raster(lrr_sd)
-    raster::crs(lrr_sd) <- cref0
+    raster::crs(lrr_sd) <- sp::CRS(SRS_string = cref0)
     if (!is.null(cref1)) {
       lrr_sd <- raster::projectRaster(lrr_sd,
-                                      crs = cref1,
-                                      method = "ngb")
+                                      crs = sp::CRS(SRS_string = cref1),
+                                      method = "ngb",
+                                      legacy = TRUE)
     }
     
     pval_mean <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_mean)
     pval_mean <- raster::raster(pval_mean)
-    raster::crs(pval_mean) <- cref0
+    raster::crs(pval_mean) <- sp::CRS(SRS_string = cref0)
     if (!is.null(cref1)) {
       pval_mean <- raster::projectRaster(pval_mean,
-                                         crs = cref1,
-                                         method = "ngb")
+                                         crs = sp::CRS(SRS_string = cref1),
+                                         method = "ngb",
+                                         legacy = TRUE)
     }
     
     pval_prop <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_prop)
     pval_prop <- raster::raster(pval_prop)
-    raster::crs(pval_prop) <- cref0
+    raster::crs(pval_prop) <- sp::CRS(SRS_string = cref0)
     if (!is.null(cref1)) {
       pval_prop <- raster::projectRaster(pval_prop,
-                                         crs = cref1,
-                                         method = "ngb")
+                                         crs = sp::CRS(SRS_string = cref1),
+                                         method = "ngb",
+                                         legacy = TRUE)
     }
     
     # Plot 5: mean log relative risk

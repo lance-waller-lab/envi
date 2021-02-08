@@ -10,7 +10,7 @@ plot_perturb(
   mean_cols = c("#8B3A3A", "#CCCCCC", "#0000CD"),
   var_cols = c("#E5E5E5", "#1A1A1A"),
   cov_labs = c("V1", "V2"),
-  cref0 = "+init=epsg:4326",
+  cref0 = "EPSG:4326",
   cref1 = NULL,
   lower_lrr = NULL,
   upper_lrr = NULL,
@@ -30,7 +30,7 @@ plot_perturb(
 
 \item{cov_labs}{Character string of length two (2) specifying the x- and y-axis labels in plots of the ecological niche in covariate space. The default values are generic \code{c("V1", "V2")}.}
 
-\item{cref0}{Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"+init=epsg:4326"}.}
+\item{cref0}{Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"EPSG:4326"}.}
 
 \item{cref1}{Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.}
 

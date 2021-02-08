@@ -92,10 +92,10 @@ test_that("plot_obs works", {
   )
   
   # With spatial transformation
-  expect_silent(
+  expect_warning(
     plot_perturb(input = test_perlrren,
-                 cref0 = "+init=epsg:5472",
-                 cref1 = "+init=epsg:4326")
+                 cref0 = "EPSG:5472",
+                 cref1 = "EPSG:4326")
   )
   
   # Without prediction

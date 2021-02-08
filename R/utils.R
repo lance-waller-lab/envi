@@ -19,3 +19,16 @@ ims2df <- function(ims) {
   out$z <- ifelse(is.infinite(out$z), NA, out$z)
   return(out)
 }
+
+# Progress bar used in foreach
+progBar <- function(kk, N, per = 1) {
+  if (kk %in% seq(1, N, per)) {
+    x <- round(kk * 100 / N)
+    message("[ ", 
+            paste(rep("=", x), collapse = ""),
+            paste(rep("-", 100 - x), collapse = ""), 
+            " ] ", x, "%", "\r",
+            appendLF = FALSE)
+    if (kk == N) cat("\r")
+  }
+}

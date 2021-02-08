@@ -24,7 +24,7 @@
 #' 
 #' If \code{predict = TRUE}, this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 #' 
-#' If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+#' If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
@@ -63,10 +63,12 @@
 #' }
 #' 
 #' @importFrom concaveman concaveman
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doFuture registerDoFuture
+#' @importFrom doRNG %dorng%
 #' @importFrom foreach %do% %dopar% foreach
+#' @importFrom future multisession plan
 #' @importFrom grDevices chull
-#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom iterators icount
 #' @importFrom pls cvsegments
 #' @importFrom raster extract raster
 #' @importFrom rgeos gBuffer
@@ -74,7 +76,6 @@
 #' @importFrom sparr risk
 #' @importFrom spatstat.geom owin ppp
 #' @importFrom stats na.omit
-#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @import maptools
 #' @export
 #'
@@ -135,7 +136,7 @@ lrren <- function(obs_locs,
                   kfold = 10,
                   balance = FALSE,
                   parallel = FALSE,
-                  n_core = NULL,
+                  n_core = 2,
                   poly_buffer = NULL,
                   obs_window = NULL,
                   verbose = FALSE,
@@ -272,33 +273,28 @@ lrren <- function(obs_locs,
       cv_seg_con <-  pls::cvsegments(nrow(absence_locs), kfold)
       cv_segments <- NULL
     }
-
-    ### Progress bar
-    if (verbose == TRUE) {
-      message("Cross-validation in progress")
-      if (parallel == FALSE) {
-        pb <- utils::txtProgressBar(min = 0, max = kfold, style = 3)
-      }
+    
+    if (verbose == TRUE) { 
+      message("Cross-validation in progress") 
     }
 
     ### Set function used in foreach
     if (parallel == TRUE) {
-      if (is.null(n_core)) { n_core <- parallel::detectCores() - 1 }
-      cl <- parallel::makeCluster(n_core)
-      doParallel::registerDoParallel(cl)
-      `%fun%` <- foreach::`%dopar%`
+      doFuture::registerDoFuture()
+      future::plan(multisession, workers = n_core)
+      `%fun%` <- doRNG::`%dorng%`
     } else { `%fun%` <- foreach::`%do%` }
 
     ### Foreach loop
     out_par <- foreach::foreach(k = 1:kfold,
+                                kk = iterators::icount(),
                                 .combine = comb,
                                 .multicombine = TRUE,
-                                .packages = c("sparr", "spatstat.geom", "raster", "utils"),
                                 .init = list(list(), list())
                                 ) %fun% {
 
-      #### Progress bar
-      if (verbose == TRUE & parallel == FALSE) { utils::setTxtProgressBar(pb, k) }
+      # Progress bar
+      if (verbose == TRUE) { progBar(kk, kfold) }
 
       if (balance == FALSE) {
         testing <- obs_locs[cv_segments[k]$V, ]
@@ -348,11 +344,6 @@ lrren <- function(obs_locs,
       par_results <- list("cv_predictions_rr" = cv_predictions_rr,
                           "cv_labels"= cv_labels)
       return(par_results)
-    }
-
-    # Stop clusters, if parallel
-    if (parallel == TRUE) {
-      parallel::stopCluster(cl)
     }
 
     if (verbose == TRUE) { message("\nCalculating Cross-Validation Statistics") }

@@ -156,6 +156,7 @@ predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
 test1 <- lrren(obs_locs = obs_locs,
                predict_locs = predict_locs,
                predict = TRUE,
+               verbose = TRUE,
                cv = TRUE)
               
 # -------------- #
@@ -169,8 +170,8 @@ plot_obs(test1)
 # ------------------ #
 
 plot_predict(test1,
-             cref0 = "+init=epsg:5472",
-             cref1 = "+init=epsg:4326")
+             cref0 = "EPSG:5472",
+             cref1 = "EPSG:4326")
 
 # ------------- #
 # Run plot_cv() #
@@ -271,6 +272,8 @@ spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(4, 2, 3, 1
 test3 <- perlrren(obs_ppp = obs_locs,
                   covariates = ims,
                   radii = c(10,100,500),
+                  verbose = TRUE,
+                  parallel = TRUE,
                   n_sim = 100)
                  
 # ------------------ #
@@ -278,8 +281,8 @@ test3 <- perlrren(obs_ppp = obs_locs,
 # ------------------ #
 
 plot_perturb(test3,
-             cref0 = "+init=epsg:5472",
-             cref1 = "+init=epsg:4326",
+             cref0 = "EPSG:5472",
+             cref1 = "EPSG:4326",
              cov_labs = c("elev", "grad"))
 
 ```

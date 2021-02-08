@@ -88,7 +88,7 @@ test_that("plot_predict throws error with invalid arguments", {
     plot_predict(input = NULL,
                  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
                  alpha = 0.05,
-                 cref0 = "+init=epsg:5472",
+                 cref0 = "EPSG:5472",
                  cref1 = NULL)
     )
   
@@ -97,7 +97,7 @@ test_that("plot_predict throws error with invalid arguments", {
     plot_predict(input = test_lrren1,
                  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
                  alpha = 0.05,
-                 cref0 = "+init=epsg:5472",
+                 cref0 = "EPSG:5472",
                  cref1 = NULL)
   )
   
@@ -106,7 +106,7 @@ test_that("plot_predict throws error with invalid arguments", {
     plot_predict(input = test_lrren,
                  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
                  alpha = 0,
-                 cref0 = "+init=epsg:5472",
+                 cref0 = "EPSG:5472",
                  cref1 = NULL)
   )
   
@@ -115,7 +115,7 @@ test_that("plot_predict throws error with invalid arguments", {
     plot_predict(input = test_lrren,
                  plot_cols = c("#8b3a3a", "#cccccc", "#ffff00"),
                  alpha = 0.05,
-                 cref0 = "+init=epsg:5472",
+                 cref0 = "EPSG:5472",
                  cref1 = NULL)
   )
 }
@@ -125,11 +125,11 @@ test_that("plot_predict works", {
   skip_on_cran()
   
   # Full run
-  expect_silent(
+  expect_warning(
     plot_predict(input = test_lrren,
                  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
                  alpha = 0.05,
-                 cref0 = "+init=epsg:5472",
+                 cref0 = "EPSG:5472",
                  cref1 = NULL)
   )
   
@@ -143,12 +143,12 @@ test_that("plot_predict works", {
   )
   
   # With spatial transformation
-  expect_silent(
+  expect_warning(
     plot_predict(input = test_lrren,
                  plot_cols = c("#8b3a3a", "#cccccc", "#0000cd", "#ffff00"),
                  alpha = 0.05,
-                 cref0 = "+init=epsg:5472",
-                 cref1 = "+init=epsg:4326")
+                 cref0 = "EPSG:5472",
+                 cref1 = "EPSG:4326")
   )
 }
 )

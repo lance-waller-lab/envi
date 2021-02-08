@@ -17,7 +17,7 @@
 #' 
 #' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat.geom]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
 #' 
-#' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link[foreach]{foreach}} function. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
+#' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
 #' 
 #' For more information about the spatial perturbation, please refer to the \code{\link[spatstat.geom]{rjitter}} function documentation.
 #' 
@@ -53,13 +53,14 @@
 #' \item{\code{pval_prop}}{Values for the proportion of iterations were statistically significant surface.}
 #' }
 #' 
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doFuture registerDoFuture
+#' @importFrom doRNG %dorng%
 #' @importFrom foreach %do% %dopar% foreach
-#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom future multisession plan
+#' @importFrom iterators icount
 #' @importFrom raster crs
 #' @importFrom spatstat.geom as.solist im.apply marks owin ppp rjitter superimpose
 #' @importFrom stats median sd
-#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 #' 
 #' @examples
@@ -110,7 +111,7 @@ perlrren <- function(obs_ppp,
                      alpha = 0.05,
                      p_correct = "none",
                      parallel = FALSE,
-                     n_core = NULL,
+                     n_core = 2,
                      verbose = FALSE,
                      ...) {
   
@@ -135,33 +136,25 @@ perlrren <- function(obs_ppp,
   
   match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
   
-  ### Progress bar
   if (verbose == TRUE) {
     message("Randomly perturbing the spatial coordinates and estimating ecological niche")
-    if(parallel == FALSE) { 
-      pb <- utils::txtProgressBar(min = 0, max = n_sim, style = 3) 
-    }
   }
   
   ### Set function used in foreach
   if (parallel == TRUE) {
-    if (is.null(n_core)) { n_core <- parallel::detectCores() - 1 }
-    cl <- parallel::makeCluster(n_core)
-    doParallel::registerDoParallel(cl)
-    `%fun%` <- foreach::`%dopar%`
+    doFuture::registerDoFuture()
+    future::plan(multisession, workers = n_core)
+    `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
   
   out_par <- foreach::foreach(k = 1:n_sim,
+                              kk = iterators::icount(),
                               .combine = comb,
                               .multicombine = TRUE,
-                              .packages = c("envi", "spatstat.geom", "utils"),
                               .init = list(list(), list(), list(), list(), list())
   ) %fun% {
     
-    if (verbose == TRUE & parallel == FALSE) {
-      utils::setTxtProgressBar(pb, k)
-      if (k == n_sim) cat("\n")
-      }
+    if (verbose == TRUE) { progBar(kk, n_sim) }
     
     x <- spatstat.geom::split.ppp(obs_ppp, f = "levels")
     z <- vector("list", length(x))
@@ -215,11 +208,6 @@ perlrren <- function(obs_ppp,
                         "sig_pval" = sig_pval)
   }
   
-  # Stop clusters, if parallel
-  if (parallel == TRUE) {
-    parallel::stopCluster(cl)
-  }
-  
   # Post-statistics
   ## mean of log relative risk
   lrr_mean <- spatstat.geom::im.apply(out_par[[1]],
@@ -255,7 +243,7 @@ perlrren <- function(obs_ppp,
     return(output)
   } else {
     # Project relative risk surface into geographic space
-    if (verbose == TRUE) { message("Predicting area of interest") }
+    if (verbose == TRUE) { message("\nPredicting area of interest") }
     window_poly <- out_par[[3]][[1]]
     wind <- spatstat.geom::owin(poly = list(x = rev(window_poly[ , 1]),
                                             y = rev(window_poly[ , 2])))

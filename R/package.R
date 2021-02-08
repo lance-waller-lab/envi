@@ -30,7 +30,7 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is performed using parallelization using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 
@@ -41,20 +41,21 @@ NULL
 
 #' @importFrom concaveman concaveman
 #' @importFrom cvAUC ci.cvAUC cvAUC
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doFuture registerDoFuture
+#' @importFrom doRNG %dorng%
 #' @importFrom fields image.plot
 #' @importFrom foreach %do% %dopar% foreach
+#' @importFrom future multisession plan
 #' @importFrom graphics abline layout legend lines mtext par plot plot.new title
 #' @importFrom grDevices chull colorRampPalette
-#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom iterators icount
 #' @importFrom pls cvsegments
 #' @importFrom raster crs cut extract image projectRaster raster rasterToPoints reclassify values
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
-#' @importFrom sp bbox coordinates gridded Polygon Polygons SpatialPolygons
+#' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
 #' @importFrom spatstat.core rpoispp
 #' @importFrom spatstat.geom as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
 #' @importFrom stats median na.omit sd
-#' @importFrom utils packageDescription setTxtProgressBar txtProgressBar 
 #' @import maptools
 NULL
