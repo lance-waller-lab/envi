@@ -141,7 +141,7 @@ We observe two areas of positive log relative risk and the center of these areas
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r plot_predict}
-plot_predict(test_lrren, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326",
+plot_predict(test_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
              lower_lrr = -1,
              upper_lrr = 1)
 ```
@@ -317,7 +317,7 @@ plot_obs(pca_lrren,
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and we limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r pca_plot_predict}
-plot_predict(pca_lrren, cref0 = "+init=epsg:32632", cref1 = "+init=epsg:4326",
+plot_predict(pca_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
              lower_lrr = -1,
              upper_lrr = 1)
 ```
@@ -405,8 +405,8 @@ We display the summary statistics from the sensitivity analysis with the `plot_p
 ```{r plot_perturb, fig.keep = c(4,8)}
 plot_perturb(test_perlrren,
              cov_labs = c("Component 1", "Component 2"),
-             cref0 = "+init=epsg:32632",
-             cref1 = "+init=epsg:4326",
+             cref0 = "EPSG:32632",
+             cref1 = "EPSG:4326",
              lower_lrr = -1,
              upper_lrr = 1)
 ```
