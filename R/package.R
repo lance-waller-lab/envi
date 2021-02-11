@@ -54,8 +54,10 @@ NULL
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
-#' @importFrom spatstat.core rpoispp
-#' @importFrom spatstat.geom as.solist im.apply marks owin pixellate ppp rjitter setmarks superimpose
 #' @importFrom stats median na.omit sd
 #' @import maptools
+#' @import spatstat.geom
+#' @import spatstat.core
+#' @import spatstat.linnet
+#' @import spatstat
 NULL

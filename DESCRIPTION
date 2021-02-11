@@ -1,8 +1,8 @@
 Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
-Version: 0.1.8.9000
-Date: 2021-02-07
+Version: 0.1.8
+Date: 2021-02-11
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -31,7 +31,12 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Depends: R (>= 3.5.0)
+Depends:
+    R (>= 3.5.0),
+    spatstat.geom,
+    spatstat.core,
+    spatstat.linnet,
+    spatstat (>= 2.0-0)
 Imports: 
     concaveman,
     cvAUC,
@@ -50,8 +55,6 @@ Imports:
     ROCR,
     sp,
     sparr,
-    spatstat.geom,
-    spatstat.core,
     stats
 Suggests: 
     R.rsp,
