@@ -296,6 +296,33 @@ test_that("lrren works", {
           verbose = FALSE)
   )
 
+  # Estimate and predict
+  expect_named(
+    lrren(obs_locs = obs_locs,
+          predict = TRUE,
+          predict_locs = predict_locs,
+          conserve = TRUE,
+          cv = FALSE,
+          kfold = 10,
+          balance = FALSE,
+          parallel = FALSE,
+          n_core = NULL,
+          poly_buffer = NULL,
+          obs_window = NULL,
+          verbose = FALSE)
+  )
+
+}
+)
+
+## WORKAROUND: Avoid R bug 18119 [1] that is trigger when for instance the
+## 'tcltk' package is loaded on macOS, or when running in the RStudio Console
+## [1] https://bugs.r-project.org/bugzilla/show_bug.cgi?id=18119
+if (getRversion() >= "4.0.0" && getRversion() <= "4.1.0") {
+  options(parallelly.makeNodePSOCK.setup_strategy = "sequential")
+}
+
+test_that("parallel processing with future package functions properly", {
   # Estimate and cross-validation
   ## Unbalanced sampling
   ## Parallel (n = 2 cores)
@@ -313,22 +340,5 @@ test_that("lrren works", {
           obs_window = NULL,
           verbose = FALSE)
   )
-
-  # Estimate and predict
-  expect_named(
-    lrren(obs_locs = obs_locs,
-          predict = TRUE,
-          predict_locs = predict_locs,
-          conserve = TRUE,
-          cv = FALSE,
-          kfold = 10,
-          balance = FALSE,
-          parallel = FALSE,
-          n_core = NULL,
-          poly_buffer = NULL,
-          obs_window = NULL,
-          verbose = FALSE)
-  )
-
 }
 )

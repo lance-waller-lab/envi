@@ -44,7 +44,7 @@ NULL
 #' @importFrom doFuture registerDoFuture
 #' @importFrom doRNG %dorng%
 #' @importFrom fields image.plot
-#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom foreach %do% %dopar% foreach setDoPar
 #' @importFrom future multisession plan
 #' @importFrom graphics abline layout legend lines mtext par plot plot.new title
 #' @importFrom grDevices chull colorRampPalette
