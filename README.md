@@ -8,6 +8,8 @@ version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.
 [![CRAN RStudio mirror
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
 ![license](https://img.shields.io/badge/license-apache-yellow)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347827.svg)](https://doi.org/10.5281/zenodo.5347827)
+
 
 <!-- badges: end -->
 
