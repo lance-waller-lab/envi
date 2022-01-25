@@ -58,7 +58,7 @@ if (interactive()) {
   spatstat.geom::marks(presence)$grad <- grad[presence]
 
 # (Pseudo-)Absence data
-  absence <- spatstat.core::rpoispp(0.008, win = elev)
+  absence <- spatstat.random::rpoispp(0.008, win = elev)
   spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                               "lon" = absence$x,
                                               "lat" = absence$y)

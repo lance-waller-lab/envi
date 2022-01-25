@@ -22,6 +22,7 @@
 #' @importFrom raster crs raster projectRaster
 #' @importFrom sp CRS
 #' @importFrom spatstat.geom pixellate
+#' @importFrom spatstat.random rpoispp
 #' 
 #' @export
 #' 
@@ -43,7 +44,7 @@
 #'                                               "lat" = presence$y)
 #'                                           
 #' # (Pseudo-)Absence data
-#'   absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+#'   absence <- spatstat.random::rpoispp(0.008, win = ims[[1]])
 #'   spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
 #'                                               "lon" = absence$x,
 #'                                               "lat" = absence$y)

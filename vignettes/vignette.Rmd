@@ -64,7 +64,7 @@ spatstat.geom::marks(presence)$waterdist <- waterdist[presence]
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "(pseudo-)absence" locations. 
 
 ```{r absence}
-absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
+absence <- spatstat.random::rpoispp(0.00004, win = slopeangle)
 spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
@@ -270,7 +270,7 @@ spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
 spatstat.geom::marks(presence)$pc1 <- pc1[presence]
 spatstat.geom::marks(presence)$pc2 <- pc2[presence]
 
-absence <- spatstat.core::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
+absence <- spatstat.random::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
 spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)

@@ -77,7 +77,7 @@ spatstat.core::marks(bei)$grad <- grad[bei]
 
 # (Pseudo-)Absence locations
 set.seed(1234) # for reproducibility
-absence <- spatstat.core::rpoispp(0.008, win = elev)
+absence <- spatstat.random::rpoispp(0.008, win = elev)
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
@@ -144,7 +144,7 @@ spatstat.core::marks(gorillas)$waterdist <- waterdist[gorillas]
 
 # Absence
 set.seed(1234)
-absence <- spatstat.core::rpoispp(0.00004, win = slopeangle)
+absence <- spatstat.random::rpoispp(0.00004, win = slopeangle)
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                        "lon" = absence$x,
                                        "lat" = absence$y)
@@ -341,7 +341,7 @@ spatstat.data::bei.extra
 set.seed(1234)
 bei <- spatstat.data::bei
 spatstat.core::marks(bei)$group <- rep(1, bei$n)
-absence <- spatstat.core::rpoispp(0.01, win = bei)
+absence <- spatstat.random::rpoispp(0.01, win = bei)
 spatstat.core::marks(absence)$group <- rep(0, absence$n)
 obs_locs <- spatstat.core::superimpose(bei, absence)
 
@@ -377,7 +377,7 @@ spatstat.core::marks(presence) <- data.frame("presence" = rep(1, bei$n),
                                              "lat" = bei$y)
 
 # (Pseudo-)Absence locations
-absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+absence <- spatstat.random::rpoispp(0.008, win = ims[[1]])
 spatstat.core::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)
