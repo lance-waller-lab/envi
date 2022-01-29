@@ -31,7 +31,7 @@ spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
                                              "lat" = presence$y)
 
 # (Pseudo-)Absence locations
-absence <- spatstat.core::rpoispp(0.008, win = ims[[1]])
+absence <- spatstat.random::rpoispp(0.008, win = ims[[1]])
 spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
                                             "lon" = absence$x,
                                             "lat" = absence$y)

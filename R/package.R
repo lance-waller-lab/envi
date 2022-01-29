@@ -56,8 +56,4 @@ NULL
 #' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
 #' @importFrom stats median na.omit sd
 #' @import maptools
-#' @import spatstat.geom
-#' @import spatstat.core
-#' @import spatstat.linnet
-#' @import spatstat
 NULL
