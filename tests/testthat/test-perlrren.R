@@ -10,7 +10,7 @@ library(envi)
 library(raster)
 library(spatstat.data)
 library(spatstat.geom)
-library(spatstat.core)
+library(spatstat.random)
 set.seed(1234)
 
 # -------------- #

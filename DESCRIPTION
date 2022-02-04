@@ -1,8 +1,8 @@
 Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
-Version: 0.1.10
-Date: 2021-08-02
+Version: 0.1.11
+Date: 2022-02-04
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -29,7 +29,7 @@ Description: Estimates an ecological niche using occurrence data, covariates, an
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends:
     R (>= 3.5.0)
 Imports: 
@@ -43,7 +43,6 @@ Imports:
     graphics,
     grDevices,
     iterators,
-    maptools,
     pls,
     raster,
     rgeos,
@@ -56,7 +55,6 @@ Imports:
 Suggests: 
     R.rsp,
     spatstat.data,
-    spatstat.core,
     spelling,
     testthat
 VignetteBuilder: R.rsp

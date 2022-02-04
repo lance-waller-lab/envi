@@ -88,7 +88,7 @@ plot_cv <- function(input, alpha = 0.05) {
   graphics::abline(0, 1, col = "black", lty = 2)
   graphics::plot(out_cv_rr$perf, col = "red", avg = "vertical", add = TRUE, lwd = 2) #Plot CV AUC
   graphics::title(paste("Area Under the ROC Curve\nAUC = ",
-                        round(out_cv_rr$cvAUC, digits = 3), " (95% CI: ",
+                        round(out_cv_rr$cvAUC, digits = 3), " (", floor((1-alpha)*100), "% CI: ",
                         round(out_ci_rr$ci[1], digits = 3), " - ",
                         round(out_ci_rr$ci[2], digits = 3), ")", sep = ""),
                   cex.main = 1.1)

@@ -18,7 +18,6 @@
 #' @importFrom graphics par
 #' @importFrom raster crs cut image projectRaster raster reclassify values 
 #' @importFrom sp coordinates CRS gridded
-#' @import maptools
 #' @export
 #'
 #' @examples

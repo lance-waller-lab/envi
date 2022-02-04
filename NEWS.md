@@ -1,12 +1,22 @@
 # envi (development version)
 
+# envi v0.1.11
+* Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
+  * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
+  * `spatstat.geom` and `spatstat.random` are now Imports
+  * `spatstat.data` is now Suggests.
+  * [See the GitHub merge pull request](https://github.com/Waller-SUSAN/envi/pull/2/commits/34b67d8a66151f609cafe4a72de39e382abe7f07).
+* `maptools` is no longer Imports
+* Fixed annotation typos in the `perlrren()`, `pval_correct()`, `lrren()` functions
+* Fixed bug in `plot_cv()` function that will specify the size of the confidence interval in the subtitle based on the chosen alpha level
+
 # envi v0.1.10
-* Addressed ERROR on R-devel CRAN environments by setting `parallelly.makeNodePSOCK.setup_strategy = sequential` for all CRAN tests as suggested by the maintainer for the `future` and `parallelly` packages who is actively working on a solution <https://github.com/HenrikBengtsson/parallelly/issues/65>
+* Addressed ERROR on R-devel CRAN environments by setting `parallelly.makeNodePSOCK.setup_strategy = sequential` for all CRAN tests as suggested by the maintainer for the `future` and `parallelly` packages who is actively working on a solution. [See the GitHub issue](https://github.com/HenrikBengtsson/parallelly/issues/65).
 
 # envi v0.1.9
 * Removed `LazyData: true` from 'DESCRIPTION' file because the package has no data accessed via a `data()` command and has no `data/` directory (in response to CRAN NOTE: 'LazyData' is specified without a 'data' directory)
 * Following advice from `future` package maintainer, now `spatial_power()` and `jitter_power()` functions reset future strategy when exiting
-* Addressed ERROR in MacOS environments on rhub by setting the `parallelly.makeNodePSOCK.setup_strategy = sequential` for MacOS environments running `tcltk` until `parallelly` (>=1.26.1-9002) is on CRAN. This workaround was suggested by the `parallelly` maintainer <https://github.com/HenrikBengtsson/parallelly/issues/62#issuecomment-880665390>
+* Addressed ERROR in MacOS environments on rhub by setting the `parallelly.makeNodePSOCK.setup_strategy = sequential` for MacOS environments running `tcltk` until `parallelly` (>=1.26.1-9002) is on CRAN. This workaround was suggested by the `parallelly` maintainer. [See the GitHub issue](https://github.com/HenrikBengtsson/parallelly/issues/62#issuecomment-880665390).
 
 # envi v0.1.8
 * Updated `spatstat` package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). Now `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>= 2.0-0)` are in Depends

@@ -4,7 +4,7 @@
 #'
 #' @details For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
 #' 
-#' This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics.
+#' This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics. Various options for the correction of multiple testing are available. 
 #' 
 #' Key content of the 'envi' package include:\cr
 #' 
@@ -55,5 +55,6 @@ NULL
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
 #' @importFrom stats median na.omit sd
-#' @import maptools
+#' @importFrom spatstat.geom as.solist im.apply marks owin pixellate plot.ppp ppp rjitter setmarks superimpose
+#' @importFrom spatstat.random rpoispp
 NULL
