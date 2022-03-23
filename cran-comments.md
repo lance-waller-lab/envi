@@ -1,14 +1,10 @@
-## This is the eleventh resubmission
+## This is the twelfth resubmission
 
 * Updates since previous submission:
-  * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
-    * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
-    * `spatstat.geom` and `spatstat.random` are now Imports
-    * `spatstat.data` is now Suggests.
-    * [See the GitHub merge pull request](https://github.com/Waller-SUSAN/envi/pull/2/commits/34b67d8a66151f609cafe4a72de39e382abe7f07).
-  * `maptools` is no longer Imports
-  * Fixed annotation typos in the `perlrren()`, `pval_correct()`, `lrren()` functions
-  * Fixed bug in `plot_cv()` function that will specify the size of the confidence interval in the subtitle based on the chosen alpha level.
+  * Fixed bug in `perlrren()` function that will now keep the predicted values even if NA
+  * Fixed bug in `plot_perturb()` function that will now project rasters using `method = "bilinear"` for continuous values
+  * Streamlined "test-perlrren.R" by removing duplicate tests for "incorrectly specified n_sim"
+  * Fixed bug in "test-plot_cv.R" by resetting the graphics within an error check to clear a warning between tests
   
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
 

@@ -102,6 +102,7 @@ test_that("plot_cv throws error with invalid arguments", {
             alpha = 0.05)
     )
   
+  dev.off() # reset graphics
   # plot_cv with lrren output where cv = FALSE
   expect_error(
     plot_cv(input = test_lrren1, 

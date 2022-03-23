@@ -94,22 +94,6 @@ test_that("perlrren throws error with invalid arguments", {
              n_sim = 10)
   )
   
-  # Incorrectly specified n_sim
-  expect_error(
-    perlrren(obs_ppp = obs_locs,
-             covariates = ims,
-             radii = c(10, 100, 500),
-             n_sim = 0)
-  )
-  
-  # Incorrectly specified n_sim
-  expect_error(
-    perlrren(obs_ppp = obs_locs,
-             covariates = ims,
-             radii = c(10, 100, 500),
-             n_sim = 0)
-  )
-  
   # Incorrectly specified alpha
   expect_error(
     perlrren(obs_ppp = obs_locs,

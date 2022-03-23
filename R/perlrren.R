@@ -256,10 +256,10 @@ perlrren <- function(obs_ppp,
                                 check = FALSE) 
     # points along polygon border will be lost
    
-    spatstat.geom::marks(xxxxx)[ , 5] <- lrr_mean[xxxxx]
-    spatstat.geom::marks(xxxxx)[ , 6] <- lrr_sd[xxxxx]
-    spatstat.geom::marks(xxxxx)[ , 7] <- pval_mean[xxxxx]
-    spatstat.geom::marks(xxxxx)[ , 8] <- pval_prop[xxxxx]
+    spatstat.geom::marks(xxxxx)[ , 5] <- lrr_mean[xxxxx, drop = FALSE]
+    spatstat.geom::marks(xxxxx)[ , 6] <- lrr_sd[xxxxx, drop = FALSE]
+    spatstat.geom::marks(xxxxx)[ , 7] <- pval_mean[xxxxx, drop = FALSE]
+    spatstat.geom::marks(xxxxx)[ , 8] <- pval_prop[xxxxx, drop = FALSE]
     names(spatstat.geom::marks(xxxxx))[5:8] <- c("lrr_mean",
                                                  "lrr_sd",
                                                  "pval_mean",

@@ -1,5 +1,11 @@
 # envi (development version)
 
+# envi v0.1.12
+* Fixed bug in `perlrren()` function that will now keep the predicted values even if NA
+* Fixed bug in `plot_perturb()` function that will now project rasters using `method = "bilinear"` for continuous values
+* Streamlined "test-perlrren.R" by removing duplicate tests for "incorrectly specified n_sim"
+* Fixed bug in "test-plot_cv.R" by resetting the graphics within an error check to clear a warning between tests
+
 # envi v0.1.11
 * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
   * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
