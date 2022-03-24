@@ -119,8 +119,8 @@ if (interactive()) {
 # Presence data
   presence <- spatstat.data::bei
   spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                          "lon" = presence$x,
-                                          "lat" = presence$y)
+                                               "lon" = presence$x,
+                                               "lat" = presence$y)
   spatstat.geom::marks(presence)$elev <- elev[presence]
   spatstat.geom::marks(presence)$grad <- grad[presence]
 

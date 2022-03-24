@@ -101,8 +101,8 @@ if (interactive()) {
 # Presence data
   presence <- spatstat.data::bei
   spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                              "lon" = presence$x,
-                                              "lat" = presence$y)
+                                               "lon" = presence$x,
+                                               "lat" = presence$y)
                                           
 # (Pseudo-)Absence data
   absence <- spatstat.random::rpoispp(0.008, win = ims[[1]])

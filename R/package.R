@@ -49,12 +49,12 @@ NULL
 #' @importFrom graphics abline layout legend lines mtext par plot plot.new title
 #' @importFrom grDevices chull colorRampPalette
 #' @importFrom iterators icount
+#' @importFrom methods is
 #' @importFrom pls cvsegments
 #' @importFrom raster crs cut extract image projectRaster raster rasterToPoints reclassify values
 #' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
 #' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
-#' @importFrom stats median na.omit sd
 #' @importFrom spatstat.geom as.solist im.apply marks owin pixellate plot.ppp ppp rjitter setmarks superimpose
-#' @importFrom spatstat.random rpoispp
+#' @importFrom stats median na.omit sd
 NULL

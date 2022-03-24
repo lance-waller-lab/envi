@@ -1,5 +1,11 @@
 # envi (development version)
 
+# envi v0.1.13
+* In the `div_plot()` and `seq_plot()` internal functions, replaced `if (class(input) == "im")` with `if (methods::is(input, "im"))`
+* Added `methods` package to Imports
+* Re-added `utils` package to Suggests because "zzz.R" calls the `packageDescription()` function
+* Moved `spatstat.random` package from Imports to Suggests because the `rpoispp()` function is only used for tests
+
 # envi v0.1.12
 * Fixed bug in `perlrren()` function that will now keep the predicted values even if NA
 * Fixed bug in `plot_perturb()` function that will now project rasters using `method = "bilinear"` for continuous values

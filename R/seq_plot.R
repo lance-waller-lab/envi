@@ -18,6 +18,7 @@
 #' }
 #' 
 #' @importFrom grDevices colorRampPalette
+#' @importFrom methods is
 #' 
 #' @keywords internal
 #' 
@@ -27,7 +28,7 @@ seq_plot <- function(input,
                      digits = 1) {
   
   # Inputs
-  if (class(input) == "im") {
+  if (methods::is(input, "im")) {
     out <- raster::raster(input)
   } else { out <- input }
   

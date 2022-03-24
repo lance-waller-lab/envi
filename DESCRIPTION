@@ -1,7 +1,7 @@
 Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
-Version: 0.1.12
+Version: 0.1.13
 Date: 2022-03-23
 Authors@R: 
     c(person(given = "Ian D.",
@@ -43,6 +43,7 @@ Imports:
     graphics,
     grDevices,
     iterators,
+    methods,
     pls,
     raster,
     rgeos,
@@ -50,13 +51,14 @@ Imports:
     sp,
     sparr,
     spatstat.geom,
-    spatstat.random,
     stats
 Suggests: 
     R.rsp,
     spatstat.data,
+    spatstat.random,
     spelling,
-    testthat
+    testthat,
+    utils
 VignetteBuilder: R.rsp
 Language: en-US
 URL: https://github.com/Waller-SUSAN/envi

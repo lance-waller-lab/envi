@@ -22,7 +22,6 @@
 #' @importFrom raster crs raster projectRaster
 #' @importFrom sp CRS
 #' @importFrom spatstat.geom pixellate
-#' @importFrom spatstat.random rpoispp
 #' 
 #' @export
 #' 
