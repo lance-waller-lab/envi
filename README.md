@@ -3,15 +3,15 @@ envi: Environmental Interpolation using Spatial Kernel Density Estimation <img s
 
 <!-- badges: start -->
 
-[![CRAN
-version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
-[![CRAN RStudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
-![license](https://img.shields.io/badge/license-apache-yellow)
+[![CRAN status](http://www.r-pkg.org/badges/version/envi)](https://cran.r-project.org/package=envi)
+[![CRAN version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![GitHub last commit](https://img.shields.io/github/last-commit/Waller-SUSAN/envi)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347827.svg)](https://doi.org/10.5281/zenodo.5347827)
-
-
 <!-- badges: end -->
+
+**Date repository last updated**: August 08, 2022
 
 <h2 id="overview">
 
@@ -89,11 +89,11 @@ Authors
 
 </h2>
 
-* **Ian D. Buller** - *Environmental Health Sciences, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/idblr)
+* **Ian D. Buller** - *Environmental Health Sciences, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
 
 See also the list of [contributors](https://github.com/Waller-SUSAN/envi/graphs/contributors) who participated in this package, including:
 
-* **Lance A. Waller** - *Biostatistics and Bioinformatics, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/lance-waller)
+* **Lance A. Waller** - *Biostatistics and Bioinformatics, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/lance-waller) - [ORCID](https://orcid.org/0000-0001-5002-8886)
 
 ## Usage
 
@@ -183,16 +183,12 @@ envi::plot_predict(test1,
 envi::plot_cv(test1)
 
 ```
+
 ![](man/figures/plot_obs1.png)
-
 ![](man/figures/plot_obs2.png)
-
 ![](man/figures/plot_obs3.png)
-
 ![](man/figures/plot_predict1.png)
-
 ![](man/figures/plot_predict2.png)
-
 ![](man/figures/plot_cv1.png)
 
 ```r 
@@ -217,7 +213,6 @@ envi::plot_predict(test2,
 ```
 
 ![](man/figures/plot_obs4.png)
-
 ![](man/figures/plot_predict3.png)
 
 ### For the perlrren() function
@@ -292,17 +287,24 @@ envi::plot_perturb(test3,
 ```
 
 ![](man/figures/plot_perturb1.png)
-
 ![](man/figures/plot_perturb2.png)
-
 ![](man/figures/plot_perturb3.png)
-
 ![](man/figures/plot_perturb4.png)
-
 ![](man/figures/plot_perturb5.png)
-
 ![](man/figures/plot_perturb6.png)
-
 ![](man/figures/plot_perturb7.png)
-
 ![](man/figures/plot_perturb8.png)
+
+### Funding
+
+This package was developed while the author was a doctoral student at in the [Environmental Health Sciences doctoral program](https://www.sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu).
+
+### Acknowledgments
+
+When citing this package for publication, please follow:
+
+    citation("envi")
+
+### Questions? Feedback?
+
+For questions about the package please contact the maintainer [Dr. Ian D. Buller](mailto:ian.buller@alumni.emory.edu) or [submit a new issue](https://github.com/Waller-SUSAN/envi/issues).
