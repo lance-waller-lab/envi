@@ -2,16 +2,15 @@ envi: Environmental Interpolation using Spatial Kernel Density Estimation <img s
 ===================================================
 
 <!-- badges: start -->
-
 [![CRAN status](http://www.r-pkg.org/badges/version/envi)](https://cran.r-project.org/package=envi)
 [![CRAN version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![GitHub last commit](https://img.shields.io/github/last-commit/Waller-SUSAN/envi)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347827.svg)](https://doi.org/10.5281/zenodo.5347827)
+![GitHub last commit](https://img.shields.io/github/last-commit/lance-waller-lab/envi)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347826.svg)](https://doi.org/10.5281/zenodo.5347826)
 <!-- badges: end -->
 
-**Date repository last updated**: August 08, 2022
+**Date repository last updated**: August 25, 2022
 
 <h2 id="overview">
 
@@ -19,7 +18,7 @@ Overview
 
 </h2>
 
-The `envi` package is a suite of `R` functions to estimate the ecological niche of a species and predict the spatial distribution of the ecological niche -- a version of environmental interpolation -- with spatial kernel density estimation techniques. A two group comparison (e.g., presence and absence locations of a single species) is conducted using the spatial relative risk function that is estimated using the [sparr](https://CRAN.R-project.org/package=sparr) package. Internal cross-validation and basic visualization are also supported. 
+The `envi` package is a suite of `R` functions to estimate the ecological niche of a species and predict the spatial distribution of the ecological niche -- a version of environmental interpolation -- with spatial kernel density estimation techniques. A two-group comparison (e.g., presence and absence locations of a single species) is conducted using the spatial relative risk function that is estimated using the [sparr](https://CRAN.R-project.org/package=sparr) package. Internal cross-validation and basic visualization are also supported. 
 
 <h2 id="install">
 
@@ -33,7 +32,7 @@ To install the release version from CRAN:
 
 To install the development version from GitHub:
 
-    devtools::install_github("Waller-SUSAN/envi")
+    devtools::install_github("lance-waller-lab/envi")
 
 <h2 id="available-functions">
 
@@ -69,7 +68,7 @@ Available functions
 <td>Display multiple plots of internal k-fold cross-validation diagnostics from <code>lrren</code> output.</td>
 </tr>
 <td><code>plot_perturb</code></td>
-<td>Display multiple plots of output from <code>perlrren</code> including prediced spatial distribution of the summary statistics.</td>
+<td>Display multiple plots of output from <code>perlrren</code> including predicted spatial distribution of the summary statistics.</td>
 </tr>
 <td><code>div_plot</code></td>
 <td>Called within <code>plot_obs</code>, <code>plot_predict</code>, and <code>plot_perturb</code>, provides functionality for basic visualization of surfaces with diverging color palettes.</td>
@@ -91,7 +90,7 @@ Authors
 
 * **Ian D. Buller** - *Environmental Health Sciences, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
 
-See also the list of [contributors](https://github.com/Waller-SUSAN/envi/graphs/contributors) who participated in this package, including:
+See also the list of [contributors](https://github.com/lance-waller-lab/envi/graphs/contributors) who participated in this package, including:
 
 * **Lance A. Waller** - *Biostatistics and Bioinformatics, Emory University, Atlanta, Georgia.* - [GitHub](https://github.com/lance-waller) - [ORCID](https://orcid.org/0000-0001-5002-8886)
 
@@ -297,7 +296,7 @@ envi::plot_perturb(test3,
 
 ### Funding
 
-This package was developed while the author was a doctoral student at in the [Environmental Health Sciences doctoral program](https://www.sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu).
+This package was developed while the author was a doctoral student in the [Environmental Health Sciences doctoral program](https://www.sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu/home/index.html).
 
 ### Acknowledgments
 
@@ -307,4 +306,4 @@ When citing this package for publication, please follow:
 
 ### Questions? Feedback?
 
-For questions about the package please contact the maintainer [Dr. Ian D. Buller](mailto:ian.buller@alumni.emory.edu) or [submit a new issue](https://github.com/Waller-SUSAN/envi/issues).
+For questions about the package, please contact the maintainer [Dr. Ian D. Buller](mailto:ian.buller@alumni.emory.edu) or [submit a new issue](https://github.com/lance-waller-lab/envi/issues).

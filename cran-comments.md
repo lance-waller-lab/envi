@@ -1,21 +1,20 @@
-## This is the thirteenth resubmission
+## This is the fourteenth resubmission
 
-* Actions taken regarding feedback from CRAN teams' auto-check service:
-  * In the `div_plot()` and `seq_plot()` internal functions, replaced `if (class(input) == "im")` with `if (methods::is(input, "im"))`
-  * Added `methods` package to Imports
-  
 * Updates since previous submission:
-  * Re-added `utils` package to Suggests because "zzz.R" calls the `packageDescription()` function
-  * Moved `spatstat.random` package from Imports to Suggests because the `rpoispp()` function is only used for tests
+  * Updated package URL and BugReports to renamed GitHub account "lance-waller-lab" (previously "Waller-SUSAN")
+  * Replaced `methods::is()` with `inherits()` and `methods` is no longer Imports
+  * Added `maptools` and `RStoolbox` to Suggests (used in the package vignette)
+  * Added CITATION file
+  * Fixed typos in documentation throughout
   
-* Documentation for "man/envi-packge", man/pval_correct.Rd", and DESCRIPTION references the following DOIs, which throws a NOTE but are valid URLs:
+* Documentation for "man/envi-package", man/pval_correct.Rd", and DESCRIPTION references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>
   * <https://doi.org/10.1002/sim.4780101112>
   * <https://doi.org/10.1002/sim.7577>
   * <https://doi.org/10.1111/j.2517-6161.1995.tb02031.x>
 
 ## Test environments
-* local OS X install, R 4.1.2
+* local OS X install, R 4.2.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

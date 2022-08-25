@@ -9,9 +9,9 @@
 #' @param cov_labs Character string of length two (2) specifying the x- and y-axis labels in plots of the ecological niche in covariate space. The default values are generic \code{c("V1", "V2")}. 
 #' @param cref0 Character. The Coordinate Reference System (CRS) for the x- and y-coordinates in geographic space. The default is WGS84 \code{"EPSG:4326"}.
 #' @param cref1 Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.
-#' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface. 
-#' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.
-#' @param upper_sd Optional, numeric. Upper cut-off value for the standard deviation of log relative risk value in the color key. The default is no limit and the color key will include the maximum value of the standard deviation surface.
+#' @param lower_lrr Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit, and the color key will include the minimum value of the log relative risk surface. 
+#' @param upper_lrr Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit, and the color key will include the maximum value of the log relative risk surface.
+#' @param upper_sd Optional, numeric. Upper cut-off value for the standard deviation of log relative risk value in the color key. The default is no limit, and the color key will include the maximum value of the standard deviation surface.
 #' @param digits Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).
 #' @param ... Arguments passed to \code{\link[fields]{image.plot}} for additional graphical features.
 #'

@@ -34,11 +34,11 @@ plot_perturb(
 
 \item{cref1}{Optional, character. The Coordinate Reference System (CRS) to spatially project the x- and y-coordinates in geographic space.}
 
-\item{lower_lrr}{Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface.}
+\item{lower_lrr}{Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit, and the color key will include the minimum value of the log relative risk surface.}
 
-\item{upper_lrr}{Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.}
+\item{upper_lrr}{Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit, and the color key will include the maximum value of the log relative risk surface.}
 
-\item{upper_sd}{Optional, numeric. Upper cut-off value for the standard deviation of log relative risk value in the color key. The default is no limit and the color key will include the maximum value of the standard deviation surface.}
+\item{upper_sd}{Optional, numeric. Upper cut-off value for the standard deviation of log relative risk value in the color key. The default is no limit, and the color key will include the maximum value of the standard deviation surface.}
 
 \item{digits}{Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).}
 

@@ -9,7 +9,7 @@
 Estimates an ecological niche model using occurrence data, covariates, and kernel density-based estimation methods.
 }
 \details{
-For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
+For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}. More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
 
 This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics. Various options for the correction of multiple testing are available.
 
@@ -31,7 +31,7 @@ Key content of the 'envi' package include:\cr
 
 \code{\link{plot_cv}} Visualizes the \code{\link{lrren}} output, specifically two prediction diagnostics (area under the receiver operating characteristic curve and precision-recall curve).
 
-\code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. Also has functionality to predict the spatial distribution of the summary statistics.
+\code{\link{plot_perturb}} Visualizes the \code{\link{perlrren}} output, specifically four summary statistics of the iterations, including mean log relative risk, standard deviation of the log relative risk, mean p-value, and proportion of iterations the p-value was significant based on an alpha-level threshold. It also can predict the spatial distribution of the summary statistics.
 }
 \section{Dependencies}{
  The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.

@@ -21,9 +21,9 @@ plot_obs(
 
 \item{alpha}{Optional, numeric. The two-tailed alpha level for significance threshold (default is the \code{p_critical} value imported from \code{input}).}
 
-\item{lower_lrr}{Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit and the color key will include the minimum value of the log relative risk surface.}
+\item{lower_lrr}{Optional, numeric. Lower cut-off value for the log relative risk value in the color key (typically a negative value). The default is no limit, and the color key will include the minimum value of the log relative risk surface.}
 
-\item{upper_lrr}{Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit and the color key will include the maximum value of the log relative risk surface.}
+\item{upper_lrr}{Optional, numeric. Upper cut-off value for the log relative risk value in the color key (typically a positive value). The default is no limit, and the color key will include the maximum value of the log relative risk surface.}
 
 \item{digits}{Optional, integer. The number of significant digits for the color key labels using the \code{\link[base]{round}} function (default is 1).}
 

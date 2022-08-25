@@ -1,5 +1,12 @@
 # envi (development version)
 
+# envi v0.1.14
+* Updated package URL and BugReports to renamed GitHub account "lance-waller-lab" (previously "Waller-SUSAN")
+* Replaced `methods::is()` with `inherits()` and `methods` is no longer Imports
+* Added `maptools` and `RStoolbox` to Suggests (used in the package vignette)
+* Added CITATION file
+* Fixed typos in documentation throughout
+
 # envi v0.1.13
 * In the `div_plot()` and `seq_plot()` internal functions, replaced `if (class(input) == "im")` with `if (methods::is(input, "im"))`
 * Added `methods` package to Imports
@@ -17,7 +24,7 @@
   * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
   * `spatstat.geom` and `spatstat.random` are now Imports
   * `spatstat.data` is now Suggests.
-  * [See the GitHub merge pull request](https://github.com/Waller-SUSAN/envi/pull/2/commits/34b67d8a66151f609cafe4a72de39e382abe7f07).
+  * [See the GitHub merge pull request](https://github.com/lance-waller-lab/envi/pull/2/commits/34b67d8a66151f609cafe4a72de39e382abe7f07).
 * `maptools` is no longer Imports
 * Fixed annotation typos in the `perlrren()`, `pval_correct()`, `lrren()` functions
 * Fixed bug in `plot_cv()` function that will specify the size of the confidence interval in the subtitle based on the chosen alpha level

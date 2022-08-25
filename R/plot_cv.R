@@ -3,9 +3,9 @@
 #' Create multiple plots of output from the \code{\link{lrren}} function, specifically for the internal k-fold cross-validation diagnostics.
 #' 
 #' @param input An object of class 'list' from the \code{\link{lrren}} function.
-#' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
+#' @param alpha Numeric. The two-tailed alpha level for the significance threshold (default is 0.05).
 #' 
-#' @return This function produces two plots: 1) area under the receiver operating characteristic curve, and 2) precision-recall curve. Each plot shows predictions for the log relative risk surface. The red-colored lines are the average curves. 
+#' @return This function produces two plots: 1) area under the receiver operating characteristic curve and 2) precision-recall curve. Each plot shows predictions for the log relative risk surface. The red-colored lines are the average curves. 
 #' 
 #' @importFrom cvAUC ci.cvAUC cvAUC
 #' @importFrom fields image.plot

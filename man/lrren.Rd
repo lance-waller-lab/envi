@@ -31,21 +31,21 @@ lrren(
 
 \item{conserve}{Logical. If TRUE (the default), the ecological niche will be estimated within a concave hull around the locations in \code{obs_locs}. If FALSE, the ecological niche will be estimated within a concave hull around the locations in \code{predict_locs}.}
 
-\item{alpha}{Numeric. The two-tailed alpha level for significance threshold (default is 0.05).}
+\item{alpha}{Numeric. The two-tailed alpha level for the significance threshold (the default is 0.05).}
 
 \item{p_correct}{Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "Sidak"}, and a Bonferroni correction \code{p_correct = "Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.}
 
 \item{cv}{Logical. If TRUE, will calculate prediction diagnostics using internal k-fold cross-validation. If FALSE (the default), will not.}
 
-\item{kfold}{Integer. Specify the number of folds using in the internal cross-validation. Default is 10.}
+\item{kfold}{Integer. Specify the number of folds used in the internal cross-validation. The default is 10.}
 
 \item{balance}{Logical. If TRUE, the prevalence within each k-fold will be 0.50 by undersampling absence locations (assumes absence data are more frequent). If FALSE (the default), the prevalence within each k-fold will match the prevalence in \code{obs_locs}.}
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
 
-\item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
+\item{n_core}{Optional. Integer specifying the number of CPU cores on the current host for parallelization (the default is 2 cores).}
 
-\item{poly_buffer}{Optional. Specify a custom distance (in same units as covariates) to add to window within which the ecological niche is estimated. The default is 1/100th of the smallest range among the two covariates.}
+\item{poly_buffer}{Optional. Specify a custom distance (in the same units as covariates) to add to the window within which the ecological niche is estimated. The default is 1/100th of the smallest range among the two covariates.}
 
 \item{obs_window}{Optional. Specify a custom window of class 'owin' within which to estimate the ecological niche. The default computes a concave hull around the data specified in \code{conserve}.}
 
@@ -90,13 +90,13 @@ If \code{cv = TRUE}, the returned object of class 'list' has an additional named
 Estimate the ecological niche of a single species with presence/absence data and two covariates. Predict the ecological niche in geographic space.
 }
 \details{
-This function estimates the ecological niche of a single species (presence/absence data), or the presence of one species relative to another, using two covariates, will predict the ecological niche into a geographic area, and prepare k-fold cross-validation data sets for prediction diagnostics.
+This function estimates the ecological niche of a single species (presence/absence data), or the presence of one species relative to another, using two covariates, will predict the ecological niche into a geographic area and prepare k-fold cross-validation data sets for prediction diagnostics.
 
 The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces \code{risk(tolerate == TRUE)} in order to calculate asymptotic p-values. The estimated ecological niche can be visualized using the \code{\link{plot_obs}} function.
 
 If \code{predict = TRUE}, this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 
-If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be frequency of presence locations divided by number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be frequency of all observed locations divided by number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be the frequency of presence locations divided by the number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be the frequency of all observed locations divided by the number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 
 The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 

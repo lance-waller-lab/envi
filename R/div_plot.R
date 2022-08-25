@@ -20,7 +20,6 @@
 #' }
 #' 
 #' @importFrom grDevices colorRampPalette
-#' @importFrom methods is
 #' @importFrom raster raster
 #'
 #' @keywords internal
@@ -33,7 +32,7 @@ div_plot <- function(input,
                      digits = 1) {
 
   # Inputs
-  if (methods::is(input, "im")) {
+  if (inherits(input, "im")) {
     out <- raster::raster(input)
   } else { out <- input }
 

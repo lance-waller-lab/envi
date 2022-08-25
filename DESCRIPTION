@@ -1,8 +1,8 @@
 Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
-Version: 0.1.13
-Date: 2022-03-23
+Version: 0.1.14
+Date: 2022-08-25
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -15,21 +15,20 @@ Authors@R:
              email = "lwaller@emory.edu",
              comment = c(ORCID = "0000-0001-5002-8886")),
       person(given = "Emory University",
-             role = "cph")
-             )
+             role = "cph"))
 Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
 Description: Estimates an ecological niche using occurrence data, covariates, and kernel
         density-based estimation methods. For a single species with presence and absence data,
         the 'envi' package uses the spatial relative risk function that is estimated using the
         'sparr' package. Details about the 'sparr' package methods can be found in the tutorial:
         Davies et al. (2018) <doi:10.1002/sim.7577>. Details about kernel density estimation can
-        be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>.  More information about
+        be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>. More information about
         relative risk functions using kernel density estimation can be found in J. F. Bithell
         (1991) <doi:10.1002/sim.4780101112>.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Depends:
     R (>= 3.5.0)
 Imports: 
@@ -43,7 +42,6 @@ Imports:
     graphics,
     grDevices,
     iterators,
-    methods,
     pls,
     raster,
     rgeos,
@@ -53,7 +51,9 @@ Imports:
     spatstat.geom,
     stats
 Suggests: 
+    maptools,
     R.rsp,
+    RStoolbox,
     spatstat.data,
     spatstat.random,
     spelling,
@@ -61,5 +61,5 @@ Suggests:
     utils
 VignetteBuilder: R.rsp
 Language: en-US
-URL: https://github.com/Waller-SUSAN/envi
-BugReports: https://github.com/Waller-SUSAN/envi/issues
+URL: https://github.com/lance-waller-lab/envi
+BugReports: https://github.com/lance-waller-lab/envi/issues

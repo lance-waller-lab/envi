@@ -17,12 +17,12 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FAL
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("envi", "raster", "RStoolbox", "spatstat.data", "spatstat.geom", "spatstat.core")
+loadedPackages <- c("envi", "maptools", "raster", "RStoolbox", "spatstat.data", "spatstat.geom", "spatstat.random")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
 
-We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://CRAN.R-project.org/package=spatstat.data). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot-spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot-spots of nesting within the covariate information (i.e., the gorilla ecological niche) and then predict where these hot-spots are located within the park.
+We use the `gorillas` data and the accompanying covariate data in `gorillas.extra` from the `spatstat.data` package [on CRAN](https://CRAN.R-project.org/package=spatstat.data). These data are locations of nesting sites of gorillas in the Kagwene Gorilla Sanctuary in Cameroon. A detailed description and analysis of the data are reported in [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The authors used a kernel density-based smoothing technique to detect hot spots of nesting in the park. Here, we use another kernel density-based smoothing technique to detect hot spots of nesting within the covariate information (i.e., the gorilla ecological niche) and then predict where these hot spots are located within the park.
 
 ### Data preparation for lrren
 
@@ -113,7 +113,7 @@ rm(waterdist_raster, slopeangle_raster) # conserve memory
 
 ### lrren with two covariates
 
-Run the `lrren` function within the `envi` package. We use the default settings except we want to predict the ecological niche within the study area (`predict = TRUE`), we conduct k-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`).
+Run the `lrren` function within the `envi` package. We use the default settings, except we want to predict the ecological niche within the study area (`predict = TRUE`), so we conduct k-fold cross-validation model fit diagnostics (`cv = TRUE`) by undersampling absence locations to balance the prevalence (0.5) within all testing data sets (`balance = TRUE`).
 
 ```{r lrren}
 start_time <- Sys.time() # record start time
@@ -126,9 +126,9 @@ end_time <- Sys.time() # record end time
 lrren_time <- end_time - start_time # calculate duration of lrren() example
 ```
 
-A single run of the `lrren` function took approximately `r round(lrren_time, digits = 1)` seconds on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory.
+A single run of the `lrren` function took approximately `r round(lrren_time, digits = 1)` seconds on a machine with the features listed at the end of the vignette.
 
-We display the estimated ecological niche within a space of Covariate 1 by Covariate 2 using the `plot_obs` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. As expected, extreme values of the log relative risk surface are located near the edges of the surface, however these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1).
+We display the estimated ecological niche within a space of Covariate 1 by Covariate 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. As expected, extreme values of the log relative risk surface are located near the edges of the surface; however, these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1).
 
 ```{r plot_obs_limited}
 plot_obs(test_lrren,
@@ -136,9 +136,9 @@ plot_obs(test_lrren,
          upper_lrr = 1)
 ```
 
-We observe two areas of positive log relative risk and the center of these areas are statistically significant, suggesting two ecological niches of gorilla nesting sites compared to pseudo-absence points drawn randomly from within the park (based on only two covariates, slope gradient and distance from water). One niche is a combination of flat to moderate (about 10 - 30 degrees) slope gradient and moderate to far (about 200 - 400 meters) distance from water, which may correspond to top of ridges. The second niche is a combination of moderate (30 - 40 degrees) slope gradient and moderate (about 100 - 200 meters) distance from water, which may correspond to within valleys. 
+We observe two areas of positive log relative risk, and the center of these areas are statistically significant, suggesting two ecological niches of gorilla nesting sites compared to pseudo-absence points drawn randomly from within the park (based on only two covariates, slope gradient and distance from water). One niche is a combination of flat to moderate (about 10 - 30 degrees) slope gradient and moderate to far (about 200 - 400 meters) distance from water, which may correspond to the top of ridges. The second niche is a combination of moderate (30 - 40 degrees) slope gradient and moderate (about 100 - 200 meters) distance from water, which may correspond to within valleys. 
 
-We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk prediction to (-1, 1). 
+We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r plot_predict}
 plot_predict(test_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
@@ -146,11 +146,11 @@ plot_predict(test_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
              upper_lrr = 1)
 ```
 
-The two estimated ecological niches are located in many small regions throughout the the park reflected by the large spatial heterogeneity in the two covariates. For example, the tops of ridges are the farthest distance from water and are located in many areas throughout the park. Importantly, gorilla nesting sites were not observed in many of these areas, but this prediction represent areas with combinations of covariates that match (or are similar) to the combinations occurring at observed locations.
+The two estimated ecological niches are located in many small regions throughout the park, reflected by the large spatial heterogeneity in the two covariates. For example, the tops of ridges are the farthest distance from water and are located in many areas throughout the park. Importantly, gorilla nesting sites were not observed in many of these areas, but this prediction represents areas with combinations of covariates that match (or are similar) to the combinations occurring at observed locations.
 
-This is an example of a scale mismatch. The scale of gorilla nesting site presence is a broad, elliptical-shaped area in the northwest region of the park. A spatial interpolation of the gorilla nesting sites (i.e., not considering covariate information) can be seen in Figure 5a within the original study by [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The two covariates (slope gradient and distance from water) vary considerably within this area and we observe a full range of covariate values within the larger gorilla presence area. Our approach is a version of environmental interpolation and considers covariate information when predicting the spatial distribution of gorilla nesting sites. When the gorilla nesting sites are arranged in covariate space the smoothing bandwidth of our kernel-density based approach creates a smoother relative risk surface than the covariate surfaces themselves because the gorilla nesting sites are clustering in particular combinations of the two covariates (i.e., ecological niche) that are scattered throughout the park in geographic space. 
+This is an example of a scale mismatch. The scale of the gorilla nesting site presence is a broad, elliptical-shaped area in the northwest region of the park. Spatial interpolation of the gorilla nesting sites (i.e., not considering covariate information) can be seen in Figure 5a within the original study by [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1). The two covariates (slope gradient and distance from water) vary considerably within this area, and we observe a full range of covariate values within the larger gorilla presence area. Our approach is a version of environmental interpolation and considers covariate information when predicting the spatial distribution of gorilla nesting sites. When the gorilla nesting sites are arranged in covariate space, the smoothing bandwidth of our kernel density-based approach creates a smoother relative risk surface than the covariate surfaces themselves because the gorilla nesting sites are clustering in particular combinations of the two covariates (i.e., ecological niche) that are scattered throughout the park in geographic space. 
 
-We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and our prevalence is fairly balanced at `r presence$n/(presence$n + absence$n)`.
+We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`) and our prevalence is fairly balanced at `r presence$n/(presence$n + absence$n)`.
 
 ```{r plot_cv}
 plot_cv(test_lrren)
@@ -174,7 +174,7 @@ The choice in covariates is critical for ecological niche models and especially 
 6. Vegetation type
 7. Distance from water
 
-We can use the `rasterPCA` function within the `RStoolbox` package to conduct a PCA of multiple spatial data layers. We start by centering and scaling the numeric-valued layers. We also center the factor-valued layer 'aspect' at "North" and we group flatter slope types together in the factor-valued layer 'slope type.'
+We can use the `rasterPCA` function within the `RStoolbox` package to conduct a PCA of multiple spatial data layers. We start by centering and scaling the numeric-valued layers. We also center the factor-valued layer 'aspect' at "North" and we group flatter slope types together in the factor-valued layer 'slope type.' NOTE: Using categorical (discrete) variables in PCA is requires more consideration than demonstrated in this vignette (see: [Kolenikov & Angeles (2009)](https://doi.org/10.1111/j.1475-4991.2008.00309.x) for more details).
 
 ```{r pca}
 aspect <- spatstat.data::gorillas.extra$aspect # class factor
@@ -203,7 +203,7 @@ waterdist <- raster::raster(waterdist)
 raster::values(aspect) <- factor(values(aspect),
                                  levels = c("5", "6", "7", "8", "1", "2", "3", "4"))
 
-# Reorder slopetypes to order flatter types next to each other
+# Reorder slope types to order flatter types next to each other
 raster::values(slopetype) <- factor(values(slopetype),
                                  levels = c("1", "6", "3", "2", "4", "5"))
 
@@ -234,7 +234,7 @@ The first two components of the PCA explain over 57% of the variation across the
 pca_park$model$loadings # PCA loadings
 ```
 
-The loading of the first component is almost entirely the centered 'aspect' variable. Te loading of the second component is a combination of 'vegetation type,' centered 'slope type,' centered 'elevation', and centered 'distance from water.'
+The loadings of the first component is almost entirely the centered 'aspect' variable. The loadings of the second component is a combination of 'vegetation type,' centered 'slope type,' centered 'elevation,' and centered 'distance from water.'
 
 ```{r bands}
 # Extract Bands from PCA
@@ -257,7 +257,7 @@ spatstat.geom::plot.im(pc2,
 rm(pca_park) # conserve memory
 ```
 
-For the first component (centered aspect), we can observe northern (i.e., North, North East, North West) aspects are primarily located in the northern section of the park. For the second component (combination), we can see a large cluster of middle loading values (between -2 and 0) in the center of the park surrounded by high loading values (> 0) and few smaller clusters of low loading values (< -2) within the large middle loading value cluster.
+For the first component (centered aspect), we can observe northern (i.e., North, North East, North West) aspects are primarily located in the northern section of the park. For the second component (combination), we can see a large cluster of middle loading values (between -2 and 0) in the center of the park surrounded by high loading values (> 0) and a few smaller clusters of low loading values (< -2) within the large middle loading value cluster.
 
 We prepare inputs for a new `lrren` run similar to the first example above. For consistency, we also reset the random number generator to select similar pseudo-absence locations as the example above. 
 
@@ -304,9 +304,9 @@ end_time <- Sys.time() # record end time
 pca_time <- end_time - start_time # calculate duration of lrren() example
 ```
 
-A single run of the `lrren` function took approximately `r round(pca_time, digits = 1)` seconds on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory.
+A single run of the `lrren` function took approximately `r round(pca_time, digits = 1)` seconds on a machine with the features listed at the end of the vignette.
 
-We display the estimated ecological niche within a space of Principal Component 1 by Principal Component 2 using the `plot_obs` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk surface to (-1, 1). 
+We display the estimated ecological niche within a space of Principal Component 1 by Principal Component 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk surface to (-1, 1). 
 
 ```{r pca_plot_obs}
 plot_obs(pca_lrren,
@@ -314,7 +314,7 @@ plot_obs(pca_lrren,
          upper_lrr = 1)
 ```
 
-We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha-level (`alpha = 0.05`) and we limit the color key for the log relative risk prediction to (-1, 1). 
+We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`), and we limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r pca_plot_predict}
 plot_predict(pca_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
@@ -322,7 +322,7 @@ plot_predict(pca_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
              upper_lrr = 1)
 ```
 
-We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha-level (`alpha = 0.05`).
+We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`).
 
 ```{r pca_plot_cv}
 plot_cv(pca_lrren)
@@ -332,15 +332,15 @@ plot_cv(pca_lrren)
 rm(pca_lrren, obs_locs, predict_locs) # conserve memory
 ```
 
-Based on only the first two components of the Principal Component Analysis of seven covariates, we detected one ecological niche of gorillas compared to pseudo-absence points drawn randomly from within the park. Presence and absences appear more separated by Principal Component 2 (loading values between -4 and -1) than Principal Component 1. This is reflected in geographic space where the gorilla niche is located in an area similar to the large cluster of middle loading values of Principal Component 2, which is located in central northwestern section of the park. The log relative risk estimate accurately predicted about 73% of the gorilla nesting sites, which is markedly improved from our first example above (60%). 
+Based on only the first two components of the Principal Component Analysis of seven covariates, we detected one ecological niche of gorillas compared to pseudo-absence points drawn randomly from within the park. Presence and absences appear separated more by Principal Component 2 (loading values between -4 and -1) than Principal Component 1. This is reflected in geographic space where the gorilla niche is located in an area similar to the large cluster of middle loading values of Principal Component 2, which is located in the central, northwestern section of the park. The log relative risk estimate accurately predicted about 73% of the gorilla nesting sites, which is markedly improved from our first example above (60%). 
 
-The two components captured about 57% of the variation across the seven covariates, which may not be important in separating presence locations from absence locations within covariate space. Further studies can assess different combinations of principal components (e.g., Principal Component 2 and Principal Component 3) or including another yet unavailable covariate that may be ecologically important for gorillas. 
+The two components captured about 57% of the variation across the seven covariates, which may not be important in separating presence locations from absence locations within covariate space. Further studies can assess different combinations of principal components (e.g., Principal Component 2 and Principal Component 3) or include another yet unavailable covariate that may be ecologically important for gorillas. 
 
-The original study by [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1) used kernel density estimation techniques in geographic space (see: Figure 5a in reference). Our method applies a kernel density estimation technique in covariate space and shows results similar to the inhomogeneous spatial point process model results of the original study (see: Figure 10a in reference), which incorporates the same covariate information to predict the spatial distribution of gorilla nesting sites. Our approach predicted more nesting sites in the western section of the park than the original study. 
+The original study by [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1) used kernel density estimation techniques in geographic space (see: Figure 5a in reference). Our method applies a kernel density estimation technique in covariate space and shows results similar to the inhomogeneous spatial point process model results of the original study (see: Figure 10a in reference), which incorporates the same covariate information to predict the spatial distribution of gorilla nesting sites. Our approach predicted more nesting sites in the western section of the park than in the original study. 
 
 ### Sensitivity Analysis
 
-Now we perform a sensitivity analysis of our ecological niche model. For example, let us assume the investigators observed nesting sites at a distance and there is some spatial uncertainty in the exact coordinates of the nesting sites. Let us also assume there is more uncertainty about where the nesting sites of the 'major' gorilla group were located (within 100 meters) than the 'minor' gorilla group (within 50 meters). We can examine the influence of this type of uncertainty on our estimated ecological niche model and its predicted spatial distribution in the park. We assume there is no spatial uncertainty in the spatial location of pseudo-absence points (0.1 meter). The three groups must be categorized within a new feature named `levels` within the observation data.
+Now we perform a sensitivity analysis of our ecological niche model. For example, let us assume the investigators observed nesting sites at a distance, and there is some spatial uncertainty in the exact coordinates of the nesting sites. Let us also assume there is more uncertainty about where the nesting sites of the 'major' gorilla group were located (within 100 meters) than the 'minor' gorilla group (within 50 meters). We can examine the influence of this type of uncertainty on our estimated ecological niche model and its predicted spatial distribution in the park. We assume there is no spatial uncertainty in the spatial location of pseudo-absence points (0.1 meters). The three groups must be categorized within a new feature named `levels` within the observation data.
 
 We start by preparing the observation data. Here, the data must be a marked planar point pattern of class 'ppp'.
 
@@ -398,9 +398,9 @@ perlrren_time <- end_time - start_time # calculate duration of perlrren() exampl
 rm(obs_locs, ims) # conserve memory
 ```
 
-A single (non-parallel) run of the `perlrren` function with `r n_sim` iterations took approximately `r round(perlrren_time, digits = 1)` minutes on a Macbook Pro macOS Mojave v. 10.14.6 with a 2.7 GHz Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 of memory. In practice, a larger number of simulated iterations would be recommended (e.g., n = 10,000). 
+A single (non-parallel) run of the `perlrren` function with `r n_sim` iterations took approximately `r round(perlrren_time, digits = 1)` minutes on a machine with the features listed at the end of the vignette. In practice, a larger number of simulated iterations would be recommended (e.g., n = 10,000). 
 
-We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the default settings except we limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). We only display the plots pertaining to the proportion of iterations with a significant p-value, both in covariate space and predicted into geographic space (i.e., the park).
+We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the default settings, except we limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). We only display the plots pertaining to the proportion of iterations with a significant p-value, both in covariate space and predicted into geographic space (i.e., the park).
 
 ```{r plot_perturb, fig.keep = c(4,8)}
 plot_perturb(test_perlrren,
@@ -415,4 +415,8 @@ plot_perturb(test_perlrren,
 rm(test_perlrren) # conserve memory
 ```
 
-The uncertainty in the spatial coordinates of gorilla nesting sites greatly influences the estimate ecological niche of gorillas (based on the two principal components) compared to pseudo-absence points drawn randomly from within the park. The significant hot-spot (i.e., ecological niche) within the covariate space diminished in size when adding this type of spatial uncertainty to the model. The geographic location of areas the model is unable to distinguish as suitable or unsuitable for gorilla nesting locations is in the center of the park, or the southern edge of the secondary forest with a southern facing aspect. 
+The uncertainty in the spatial coordinates of gorilla nesting sites greatly influences the estimated ecological niche of gorillas (based on the two principal components) compared to pseudo-absence points drawn randomly from within the park. The significant hot spot (i.e., ecological niche) within the covariate space diminished in size when adding this type of spatial uncertainty to the model. The geographic location of areas the model cannot distinguish as suitable or unsuitable for gorilla nesting locations is in the center of the park or the southern edge of the secondary forest with a southern facing aspect. 
+
+```{r system}
+sessionInfo()
+```

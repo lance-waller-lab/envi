@@ -8,14 +8,14 @@
 #' @param predict_locs Input data frame of prediction locations with 4 features (columns): 1) longitude, 2) latitude, 3) covariate 1 as x-coordinate, 4) covariate 2 as y-coordinate. If unspecified (the default), automatically computed from an 'im' object within \code{covariates}.
 #' @param radii Vector of length equal to the number of levels of ordinal ID in \code{obs_ppp}. Specifies the radii of the spatial perturbation at each level in units equivalent to the coordinate reference system of \code{obs_ppp}.
 #' @param n_sim Integer, specifying the number of simulation iterations to perform.
-#' @param alpha Numeric. The two-tailed alpha level for significance threshold (default is 0.05).
+#' @param alpha Numeric. The two-tailed alpha level for the significance threshold (default is 0.05).
 #' @param p_correct Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "Sidak"}, and a Bonferroni correction \code{p_correct = "Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
-#' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
+#' @param n_core Optional. Integer specifying the number of CPU cores on the current host for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link{lrren}}.
 #' 
-#' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat.geom]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
+#' @details This function performs a sensitivity analysis of an ecological niche model of a single species (presence/absence data), or the presence of one species relative to another, that uses two covariates. The observation locations (presence and absence data) are randomly spatially perturbed (i.e., "jittered") uniformly within a circular disc of a specified radius centered at their recorded location using the \code{\link[spatstat.geom]{rjitter}} function. This method simulates the spatial uncertainty of observations, how that may affect the covariate values at each observation (i.e., misclassification error), and the estimated ecological niche based on the two specified covariates. Observations can be grouped into categories of the uncertainty of class 'factor' and can vary by degrees of uncertainty specified using the \code{radii} argument. 
 #' 
 #' The function iteratively estimates the ecological niche using the \code{\link{lrren}} function and computes four summary statistics at every grid cell (i.e., knot) of the estimated surface: 1) mean of the log relative risk, 2) standard deviation of the log relative risk, 3) mean of the asymptotically normal p-value, and 4) proportion of iterations were statistically significant based on a two-tailed alpha-level threshold (argument \code{alpha}). The process can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. The computed surfaces can be visualized using the \code{\link{plot_perturb}} function. If \code{predict = TRUE}, this function will predict the four summary statistics at every location specified with \code{predict_locs} and can also be visualized using the \code{\link{plot_perturb}} function. 
 #' 
@@ -27,7 +27,7 @@
 #' 
 #' \describe{
 #' \item{\code{sim}}{An object of class 'list' for the summary statistics of the iterative ecological niche.}
-#' \item{\code{predict}}{An object of class 'ppp' a marked point pattern with summary statistics for the iterative ecological niche in geographic space.}
+#' \item{\code{predict}}{An object of class 'ppp', a marked point pattern with summary statistics for the iterative ecological niche in geographic space.}
 #' }
 #' 
 #' The returned \code{sim} is a named list with the following components:
