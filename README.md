@@ -10,7 +10,7 @@ envi: Environmental Interpolation using Spatial Kernel Density Estimation <img s
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347826.svg)](https://doi.org/10.5281/zenodo.5347826)
 <!-- badges: end -->
 
-**Date repository last updated**: August 25, 2022
+**Date repository last updated**: August 30, 2022
 
 <h2 id="overview">
 

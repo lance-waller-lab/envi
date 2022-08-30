@@ -1,5 +1,10 @@
 # envi (development version)
 
+# envi v0.1.15
+* Uwe Ligges suggested (2022-08-26) that some parallel cluster is not cleanly closed in the tests
+* Added `future::plan(future::multisession)` in tests to remove the files in temp directory
+* Added links to `sparr` package in 'package.R'
+
 # envi v0.1.14
 * Updated package URL and BugReports to renamed GitHub account "lance-waller-lab" (previously "Waller-SUSAN")
 * Replaced `methods::is()` with `inherits()` and `methods` is no longer Imports

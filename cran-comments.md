@@ -1,17 +1,16 @@
-## This is the fourteenth resubmission
+## This is the fifteenth resubmission
 
 * Updates since previous submission:
-  * Updated package URL and BugReports to renamed GitHub account "lance-waller-lab" (previously "Waller-SUSAN")
-  * Replaced `methods::is()` with `inherits()` and `methods` is no longer Imports
-  * Added `maptools` and `RStoolbox` to Suggests (used in the package vignette)
-  * Added CITATION file
-  * Fixed typos in documentation throughout
+  * Uwe Ligges suggested (2022-08-26) that some parallel cluster is not cleanly closed in the tests
+  * Added `future::plan(future::multisession)` in tests to remove the files in temp directory
+  * Added links to `sparr` package in 'package.R'
   
-* Documentation for "man/envi-package", man/pval_correct.Rd", and DESCRIPTION references the following DOIs, which throws a NOTE but are valid URLs:
+* Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>
   * <https://doi.org/10.1002/sim.4780101112>
   * <https://doi.org/10.1002/sim.7577>
   * <https://doi.org/10.1111/j.2517-6161.1995.tb02031.x>
+  * <https://doi.org/10.1111/j.1475-4991.2008.00309.x>
 
 ## Test environments
 * local OS X install, R 4.2.1
