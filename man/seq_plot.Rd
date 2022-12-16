@@ -2,12 +2,12 @@
 % Please edit documentation in R/seq_plot.R
 \name{seq_plot}
 \alias{seq_plot}
-\title{Prepare an 'im' or 'raster' object for plotting with sequential color palette}
+\title{Prepare an 'im' or 'SpatRaster' object for plotting with sequential color palette}
 \usage{
 seq_plot(input, cols, thresh_up = NULL, digits = 1)
 }
 \arguments{
-\item{input}{An object of class 'im' or 'RasterLayer' from the \code{\link{perlrren}} function.}
+\item{input}{An object of class 'im' or 'SpatRaster' from the \code{\link{perlrren}} function.}
 
 \item{thresh_up}{Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.}
 
@@ -27,6 +27,6 @@ An object of class 'list'. This is a named list with the following components:
 }
 }
 \description{
-Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_perturb}} function.
+Internal function to convert 'im' object or 'SpatRaster' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_perturb}} function.
 }
 \keyword{internal}

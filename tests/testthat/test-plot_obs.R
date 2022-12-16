@@ -7,10 +7,10 @@ context("plot_obs")
 # Generate testing data
 ## Environmental Covariates
 library(envi)
-library(raster)
 library(spatstat.data)
 library(spatstat.geom)
 library(spatstat.random)
+library(terra)
 set.seed(1234)
 
 # -------------- #
@@ -23,8 +23,8 @@ elev <- spatstat.data::bei.extra$elev
 grad <- spatstat.data::bei.extra$grad
 elev$v <- scale(elev)
 grad$v <- scale(grad)
-elev_raster <- raster::raster(elev)
-grad_raster <- raster::raster(grad)
+elev_raster <- terra::rast(elev)
+grad_raster <- terra::rast(grad)
 
 ## Presence Locations
 presence <- spatstat.data::bei
@@ -50,8 +50,11 @@ obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
 # Prediction Data
-predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
+predict_xy <- terra::crds(elev_raster)
+predict_locs <- as.data.frame(predict_xy)
+colnames(predict_locs) <- c("lon", "lat")
+predict_locs$elev <- terra::extract(elev_raster, predict_xy)[ , 1]
+predict_locs$grad <- terra::extract(grad_raster, predict_xy)[ , 1]
 
 # Run lrren
 test_lrren <- envi::lrren(obs_locs = obs_locs,

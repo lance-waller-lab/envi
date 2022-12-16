@@ -7,7 +7,6 @@ context("perlrren")
 # Generate testing data
 ## Environmental Covariates
 library(envi)
-library(raster)
 library(spatstat.data)
 library(spatstat.geom)
 library(spatstat.random)

@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FAL
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("envi", "maptools", "raster", "RStoolbox", "spatstat.data", "spatstat.geom", "spatstat.random")
+loadedPackages <- c("envi", "RStoolbox", "sf", "spatstat.data", "spatstat.geom", "spatstat.random", "terra")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -43,11 +43,11 @@ slopeangle$v <- scale(slopeangle)
 waterdist$v <- scale(waterdist)
 ```
 
-Convert the covariate data to class `RasterLayer`.
+Convert the covariate data to class `SpatRaster`.
 
 ```{r rasterize}
-slopeangle_raster <- raster::raster(slopeangle)
-waterdist_raster <- raster::raster(waterdist)
+slopeangle_raster <- terra::rast(slopeangle)
+waterdist_raster <- terra::rast(waterdist)
 ```
 
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
@@ -103,8 +103,10 @@ obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 Extract the prediction locations within the study area from one of the covariates.
 
 ```{r predict_locs}
-predict_locs <- data.frame(raster::rasterToPoints(slopeangle_raster))
-predict_locs$layer2 <- raster::extract(waterdist_raster, predict_locs[, 1:2])
+predict_xy <- terra::crds(slopeangle_raster)
+predict_locs <- as.data.frame(predict_xy)
+predict_locs$slopeangle <- terra::extract(slopeangle_raster, predict_xy)[ , 1]
+predict_locs$waterdist <- terra::extract(waterdist_raster, predict_xy)[ , 1]
 ```
 
 ```{r cleanup2, echo = FALSE}
@@ -191,33 +193,24 @@ slopeangle$v <- scale(slopeangle$v)
 waterdist$v <- scale(waterdist$v)
 
 # Create rasters
-aspect <- raster::raster(aspect)
-elevation <- raster::raster(elevation)
-heat <- raster::raster(heat)
-slopeangle <- raster::raster(slopeangle)
-slopetype <- raster::raster(slopetype)
-vegetation <- raster::raster(vegetation)
-waterdist <- raster::raster(waterdist)
+aspect <- terra::rast(aspect)
+elevation <- terra::rast(elevation)
+heat <- terra::rast(heat)
+slopeangle <- terra::rast(slopeangle)
+slopetype <- terra::rast(slopetype)
+vegetation <- terra::rast(vegetation)
+waterdist <- terra::rast(waterdist)
 
 # Reorder aspect to center by "N" instead of "S"
-raster::values(aspect) <- factor(values(aspect),
-                                 levels = c("5", "6", "7", "8", "1", "2", "3", "4"))
+terra::values(aspect) <- factor(terra::values(aspect),
+                                levels = c("5", "6", "7", "8", "1", "2", "3", "4"))
 
 # Reorder slope types to order flatter types next to each other
-raster::values(slopetype) <- factor(values(slopetype),
-                                 levels = c("1", "6", "3", "2", "4", "5"))
+terra::values(slopetype) <- factor(terra::values(slopetype),
+                                   levels = c("1", "6", "3", "2", "4", "5"))
 
-# Save names for RasterLayers
-names(aspect) <- "aspect"
-names(elevation) <- "elevation"
-names(heat) <- "heat"
-names(slopeangle) <- "slopeangle"
-names(slopetype) <- "slopetype"
-names(vegetation) <- "vegetation"
-names(waterdist) <- "waterdist"
-
-# RasterStack
-park <- raster::stack(aspect, elevation, heat, slopeangle, slopetype, vegetation, waterdist)
+# Stack of SpatRasters
+park <- c(aspect, elevation, heat, slopeangle, slopetype, vegetation, waterdist)
 
 # Principal Component Analysis
 pca_park <- RStoolbox::rasterPCA(park)
@@ -228,27 +221,27 @@ summary(pca_park$model) # PCA components
 rm(aspect, elevation, heat, slopeangle, slopetype, vegetation, waterdist, park) # conserve memory
 ```
 
-The first two components of the PCA explain over 57% of the variation across the seven covariates. 
+The first two components of the PCA explain almost 64% of the variation across the seven covariates. 
 
 ```{r loadings}
 pca_park$model$loadings # PCA loadings
 ```
 
-The loadings of the first component is almost entirely the centered 'aspect' variable. The loadings of the second component is a combination of 'vegetation type,' centered 'slope type,' centered 'elevation,' and centered 'distance from water.'
+The loadings of the first component is almost entirely the centered 'aspect' variable. The loadings of the second component is a combination of centered 'elevation,' 'vegetation type,' centered 'distance from water,' and centered 'slope type.'
 
 ```{r bands}
 # Extract Bands from PCA
 pca_bands <- pca_park$map
 pc1 <- pca_bands[[1]] # PC1
 pc2 <- pca_bands[[2]] # PC2
-pc1 <- spatstat.geom::as.im(pc1) # convert to class 'im'
-pc2 <- spatstat.geom::as.im(pc2) # convert to class 'im'
+pc1 <- envi:::as.im.SpatRaster(terra::rast(pc1)) # convert to class 'im'
+pc2 <- envi:::as.im.SpatRaster(terra::rast(pc2)) # convert to class 'im'
 spatstat.geom::plot.im(pc1,
                        main = 'Principal Component 1\nprimarily aspect (centered at "North")',
                        ann = TRUE,
                        axes = TRUE)
 spatstat.geom::plot.im(pc2,
-                       main = 'Principal Component 2\ncombination of vegetation type, slope type,\nelevation, and distance from water',
+                       main = 'Principal Component 2\ncombination of elevation, vegetation type,\ndistance from water, and slope type',
                        ann = TRUE,
                        axes = TRUE)
 ```
@@ -257,7 +250,7 @@ spatstat.geom::plot.im(pc2,
 rm(pca_park) # conserve memory
 ```
 
-For the first component (centered aspect), we can observe northern (i.e., North, North East, North West) aspects are primarily located in the northern section of the park. For the second component (combination), we can see a large cluster of middle loading values (between -2 and 0) in the center of the park surrounded by high loading values (> 0) and a few smaller clusters of low loading values (< -2) within the large middle loading value cluster.
+For the first component (centered aspect), we can observe northern (i.e., North, North East, North West) aspects are primarily located in the northern section of the park. For the second component (combination), we can see a large cluster of middle loading values (between 0 and 2) in the center of the park surrounded by lower loading values (< 0) and a few smaller clusters of high loading values (> 2) and low loading values (< -2) within the large middle loading value cluster.
 
 We prepare inputs for a new `lrren` run similar to the first example above. For consistency, we also reset the random number generator to select similar pseudo-absence locations as the example above. 
 
@@ -283,8 +276,10 @@ obs_locs <- spatstat.geom::marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
-predict_locs <- data.frame(raster::rasterToPoints(pca_bands[[1]]))
-predict_locs$layer2 <- raster::extract(pca_bands[[2]], predict_locs[, 1:2])
+predict_xy <- terra::crds(terra::rast(pca_bands[[1]]))
+predict_locs <- as.data.frame(predict_xy)
+predict_locs$pc1 <- terra::extract(terra::rast(pca_bands[[1]]), predict_xy)[ , 1]
+predict_locs$pc2 <- terra::extract(terra::rast(pca_bands[[2]]), predict_xy)[ , 1]
 ```
 
 ```{r cleanup6, echo = FALSE}
@@ -317,7 +312,9 @@ plot_obs(pca_lrren,
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`), and we limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r pca_plot_predict}
-plot_predict(pca_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
+plot_predict(pca_lrren, 
+             cref0 = "EPSG:32632", 
+             cref1 = "EPSG:4326",
              lower_lrr = -1,
              upper_lrr = 1)
 ```
@@ -332,9 +329,9 @@ plot_cv(pca_lrren)
 rm(pca_lrren, obs_locs, predict_locs) # conserve memory
 ```
 
-Based on only the first two components of the Principal Component Analysis of seven covariates, we detected one ecological niche of gorillas compared to pseudo-absence points drawn randomly from within the park. Presence and absences appear separated more by Principal Component 2 (loading values between -4 and -1) than Principal Component 1. This is reflected in geographic space where the gorilla niche is located in an area similar to the large cluster of middle loading values of Principal Component 2, which is located in the central, northwestern section of the park. The log relative risk estimate accurately predicted about 73% of the gorilla nesting sites, which is markedly improved from our first example above (60%). 
+Based on only the first two components of the Principal Component Analysis of seven covariates, we detected one ecological niche of gorillas compared to pseudo-absence points drawn randomly from within the park. Presence and absences appear separated more by Principal Component 2 (loading values between 1 and 4) than Principal Component 1. This is reflected in geographic space where the gorilla niche is located in an area similar to the large cluster of middle loading values of Principal Component 2, which is located in the central, northwestern section of the park. The log relative risk estimate accurately predicted about 75% of the gorilla nesting sites, which is markedly improved from our first example above (60%). 
 
-The two components captured about 57% of the variation across the seven covariates, which may not be important in separating presence locations from absence locations within covariate space. Further studies can assess different combinations of principal components (e.g., Principal Component 2 and Principal Component 3) or include another yet unavailable covariate that may be ecologically important for gorillas. 
+The two components captured about 64% of the variation across the seven covariates, which may not be important in separating presence locations from absence locations within covariate space. Further studies can assess different combinations of principal components (e.g., Principal Component 2 and Principal Component 3) or include another yet unavailable covariate that may be ecologically important for gorillas. 
 
 The original study by [Funwi-Gabga and Mateu (2012)](https://doi.org/10.1007/s00477-011-0541-1) used kernel density estimation techniques in geographic space (see: Figure 5a in reference). Our method applies a kernel density estimation technique in covariate space and shows results similar to the inhomogeneous spatial point process model results of the original study (see: Figure 10a in reference), which incorporates the same covariate information to predict the spatial distribution of gorilla nesting sites. Our approach predicted more nesting sites in the western section of the park than in the original study. 
 

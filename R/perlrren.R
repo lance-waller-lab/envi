@@ -58,9 +58,9 @@
 #' @importFrom foreach %do% %dopar% foreach setDoPar
 #' @importFrom future multisession plan
 #' @importFrom iterators icount
-#' @importFrom raster crs
 #' @importFrom spatstat.geom as.solist im.apply marks owin ppp rjitter superimpose
 #' @importFrom stats median sd
+#' @importFrom terra crs
 #' @export
 #' 
 #' @examples
@@ -115,10 +115,6 @@ perlrren <- function(obs_ppp,
                      verbose = FALSE,
                      ...) {
   
-  if (!identical(raster::crs(obs_ppp), raster::crs(covariates))) {
-    stop("The arguments 'obs_ppp' and 'covariates' must have the same coordinate reference system")
-  }
-  
   if (is.null(radii)) {
     radii <- rep(0, nlevels(spatstat.geom::marks(obs_ppp)[ , 5]))
     message("The argument 'radii' is unspecified and the observation coordinates are not perturbed")
@@ -143,7 +139,7 @@ perlrren <- function(obs_ppp,
   ### Set function used in foreach
   if (parallel == TRUE) {
     oldplan <- doFuture::registerDoFuture()
-    on.exit(with(oldplan, foreach::setDoPar(fun=fun, data=data, info=info)), add = TRUE)
+    on.exit(with(oldplan, foreach::setDoPar(fun = fun, data = data, info = info)), add = TRUE)
     future::plan(future::multisession, workers = n_core)
     `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
@@ -246,8 +242,8 @@ perlrren <- function(obs_ppp,
     # Project relative risk surface into geographic space
     if (verbose == TRUE) { message("\nPredicting area of interest") }
     window_poly <- out_par[[3]][[1]]
-    wind <- spatstat.geom::owin(poly = list(x = rev(window_poly[ , 1]),
-                                            y = rev(window_poly[ , 2])))
+    wind <- spatstat.geom::owin(poly = list(x = rev(sf::st_coordinates(window_poly)[ , 1]),
+                                            y = rev(sf::st_coordinates(window_poly)[ , 2])))
     
     xxxxx <- spatstat.geom::ppp(x = predict_locs[ , 3],
                                 y = predict_locs[ , 4],

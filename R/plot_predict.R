@@ -16,8 +16,7 @@
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics par
-#' @importFrom raster crs cut image projectRaster raster reclassify values 
-#' @importFrom sp coordinates CRS gridded
+#' @importFrom terra crs image project rast classify values
 #' @export
 #'
 #' @examples
@@ -31,8 +30,8 @@
 #'   grad <- spatstat.data::bei.extra[[2]]
 #'   elev$v <- scale(elev)
 #'   grad$v <- scale(grad)
-#'   elev_raster <- raster::raster(elev)
-#'   grad_raster <- raster::raster(grad)
+#'   elev_raster <- terra::rast(elev)
+#'   grad_raster <- terra::rast(grad)
 #' 
 #' # Presence data
 #'   presence <- spatstat.data::bei
@@ -57,14 +56,15 @@
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #'   
 #' # Prediction Data
-#'   predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-#'   predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
+#'   predict_xy <- terra::crds(elev_raster)
+#'   predict_locs <- as.data.frame(predict_xy)
+#'   predict_locs$elev <- terra::extract(elev_raster, predict_xy)[ , 1]
+#'   predict_locs$grad <- terra::extract(grad_raster, predict_xy)[ , 1]
 #' 
 #' # Run lrren
 #'   test_lrren <- lrren(obs_locs = obs_locs,
 #'                       predict_locs = predict_locs,
-#'                       predict = TRUE,
-#'                       cv = TRUE)
+#'                       predict = TRUE)
 #'                       
 #' # Run plot_predict
 #'   plot_predict(input = test_lrren, cref0 = "EPSG:5472")
@@ -90,59 +90,50 @@ plot_predict <- function(input,
   
   op <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(op))
+  
   # Convert to geospatial rasters
-  predict_risk <-  data.frame("x" = input$out$predict$predict_locs.x,
-                              "y" = input$out$predict$predict_locs.y,
-                              "v" = input$out$predict$rr)
-  naband <- predict_risk # save for next step
-  sp::coordinates(predict_risk) <- ~ x + y # coordinates
-  sp::gridded(predict_risk) <- TRUE # gridded
-  predict_risk_raster <- raster::raster(predict_risk)
-  raster::crs(predict_risk_raster) <- sp::CRS(SRS_string = cref0)
+  ## log relative risk
+  predict_risk <- data.frame("x" = input$out$predict[ , 1],
+                             "y" = input$out$predict[ , 2],
+                             "v" = input$out$predict$rr)
+  predict_risk_raster <- terra::rast(predict_risk)
+  terra::crs(predict_risk_raster) <- cref0
   if (!is.null(cref1)) {
-    predict_risk_raster <- raster::projectRaster(predict_risk_raster,
-                                                 crs = sp::CRS(SRS_string = cref1),
-                                                 method = "ngb",
-                                                 legacy = TRUE)
-  }
-
-  # Create separate layer for NAs (if any)
-  naband$v <- ifelse(is.na(naband$v), 9999, naband$v)
-  sp::coordinates(naband) <- ~ x + y # coordinates
-  sp::gridded(naband) <- TRUE # gridded
-  NA_risk_raster <- raster::raster(naband)
-  raster::crs(NA_risk_raster) <- sp::CRS(SRS_string = cref0)
-  if (!is.null(cref1)) {
-    NA_risk_raster <- raster::projectRaster(NA_risk_raster,
-                                            crs = sp::CRS(SRS_string = cref1),
-                                            method = "ngb",
-                                            legacy = TRUE)
+    predict_risk_raster <- terra::project(predict_risk_raster,
+                                          y = cref1,
+                                          method = "bilinear")
+    
   }
   
-  naband_reclass <- raster::reclassify(NA_risk_raster,
-                                       c(-Inf, 9998, NA,
-                                         9998, Inf, 1))
-  if (all(is.na(raster::values(naband_reclass)))) { naband_reclass <- NULL }
-  
-  # Convert to geospatial raster
-  predict_tol <- data.frame("x" = input$out$predict$predict_locs.x,
-                            "y" = input$out$predict$predict_locs.y,
+  ## p-value
+  predict_tol <- data.frame("x" = input$out$predict[ , 1],
+                            "y" = input$out$predict[ , 2],
                             "v" = input$out$predict$pval)
-  sp::coordinates(predict_tol) <- ~ x + y # coordinates
-  sp::gridded(predict_tol) <- TRUE # gridded
-  predict_tol_raster <- raster::raster(predict_tol)
-  raster::crs(predict_tol_raster) <- sp::CRS(SRS_string = cref0)
+  predict_tol_raster <- terra::rast(predict_tol)
+  terra::crs(predict_tol_raster) <- cref0
   if (!is.null(cref1)) {
-    predict_tol_raster <- raster::projectRaster(predict_tol_raster,
-                                                crs = sp::CRS(SRS_string = cref1),
-                                                method = "ngb",
-                                                legacy = TRUE)
+    predict_tol_raster <- terra::project(predict_tol_raster,
+                                         y = cref1,
+                                         method = "bilinear")
   }
-
-  reclass_tol <- raster::cut(predict_tol_raster,
-                             breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
-                             right = FALSE)
-
+  
+  terra::values(predict_tol_raster) <- cut(terra::values(predict_tol_raster),
+                                           breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
+                                           right = FALSE)
+  
+  ## Separate layer for NAs (if any)
+  naband <- predict_risk
+  naband$v <-  ifelse(is.na(naband$v), 9999, NA)
+  naband_raster <- terra::rast(naband)
+  terra::crs(naband_raster) <- cref0
+  if (!is.null(cref1)) {
+    naband_raster <- terra::project(naband_raster,
+                                         y = cref1,
+                                         method = "near")
+  }
+  
+  if (all(is.na(terra::values(naband_raster)))) { naband_raster <- NULL }
+  
   # Plot 1: log relative risk
   rrp <- div_plot(input = predict_risk_raster,
                   cols = plot_cols[1:3],
@@ -164,12 +155,12 @@ plot_predict <- function(input,
                                             las = 0,
                                             labels = rrp$labels,
                                             cex.axis = 0.67))
-  if (!is.null(naband_reclass)) {
-  raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
+  if (!is.null(naband_raster)) {
+  terra::image(naband_raster, y = 1, col = plot_cols[4], add = TRUE)
   }
 
   # Plot 2: Significant p-values
-  if (all(raster::values(reclass_tol)[!is.na(raster::values(reclass_tol))] == 2)) {
+  if (all(terra::values(predict_tol_raster)[!is.na(terra::values(predict_tol_raster))] == 2)) {
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2
@@ -181,7 +172,7 @@ plot_predict <- function(input,
     labp <- c("presence", "insignificant", "absence")
   }
 
-  p2 <- fields::image.plot(reclass_tol,
+  p2 <- fields::image.plot(predict_tol_raster,
                            breaks = brp,
                            col = pcols,
                            axes = TRUE,
@@ -193,7 +184,7 @@ plot_predict <- function(input,
                                             labels = labp,
                                             las = 0,
                                             cex.axis = 0.67))
-  if (!is.null(naband_reclass)) {
-  raster::image(naband_reclass, col = plot_cols[4], add = TRUE)
+  if (!is.null(naband_raster)) {
+  terra::image(naband_raster, y = 1, col = plot_cols[4], add = TRUE)
   }
 }

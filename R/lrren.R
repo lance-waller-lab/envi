@@ -70,12 +70,11 @@
 #' @importFrom grDevices chull
 #' @importFrom iterators icount
 #' @importFrom pls cvsegments
-#' @importFrom raster extract raster
-#' @importFrom rgeos gBuffer
-#' @importFrom sp bbox coordinates Polygon Polygons SpatialPolygons
+#' @importFrom sf st_bbox st_buffer st_coordinates st_polygon
 #' @importFrom sparr risk
 #' @importFrom spatstat.geom owin ppp
 #' @importFrom stats na.omit
+#' @importFrom terra extract rast values
 #' @export
 #'
 #' @examples
@@ -89,8 +88,8 @@
 #'   grad <- spatstat.data::bei.extra[[2]]
 #'   elev$v <- scale(elev)
 #'   grad$v <- scale(grad)
-#'   elev_raster <- raster::raster(elev)
-#'   grad_raster <- raster::raster(grad)
+#'   elev_raster <- terra::rast(elev)
+#'   grad_raster <- terra::rast(grad)
 #' 
 #' # Presence data
 #'   presence <- spatstat.data::bei
@@ -115,8 +114,10 @@
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #'   
 #' # Prediction Data
-#'   predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-#'   predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
+#'   predict_xy <- terra::crds(elev_raster)
+#'   predict_locs <- as.data.frame(predict_xy)
+#'   predict_locs$elev <- terra::extract(elev_raster, predict_xy)[ , 1]
+#'   predict_locs$grad <- terra::extract(grad_raster, predict_xy)[ , 1]
 #' 
 #' # Run lrren
 #'   test_lrren <- lrren(obs_locs = obs_locs,
@@ -138,7 +139,7 @@ lrren <- function(obs_locs,
                   n_core = 2,
                   poly_buffer = NULL,
                   obs_window = NULL,
-                  verbose = FALSE,
+                  verbose = FALSE, 
                   ...) {
 
   if (verbose == TRUE) { message("Estimating relative risk surfaces\n") }
@@ -148,17 +149,15 @@ lrren <- function(obs_locs,
   # Compute spatial windows
   ## Calculate inner boundary polygon (extent of presence and absence locations in environmental space)
   inner_chull <- concaveman::concaveman(as.matrix(obs_locs[ , 5:6]))
-  inner_chull_pts <- sp::coordinates(inner_chull)
-  inner_chull_pts <- rbind(inner_chull_pts, inner_chull_pts[1, ])
-  inner_chull_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(inner_chull_pts)), 1)))
-
+  inner_chull_poly <- sf::st_polygon(list(inner_chull))
+  
   if (is.null(poly_buffer)) {
-    poly_buffer <- abs(min(diff(sp::bbox(inner_chull_poly)[1, ]), diff(sp::bbox(inner_chull_poly)[2, ])) / 100)
+    poly_buffer <- abs(min(diff(sf::st_bbox(inner_chull_poly)[c(1,3)]), diff(sf::st_bbox(inner_chull_poly)[c(2,4)])) / 100)
   }
 
   # add small buffer around polygon to include boundary points
-  inner_chull_poly_buffer <- rgeos::gBuffer(inner_chull_poly, width = poly_buffer, byid = TRUE)
-  inner_poly <- inner_chull_poly_buffer@polygons[[1]]@Polygons[[1]]@coords
+  inner_chull_poly_buffer <- sf::st_buffer(inner_chull_poly, dist = poly_buffer, byid = TRUE)
+  inner_poly <- sf::st_polygon(list(as.matrix(inner_chull_poly_buffer)))
 
   if (is.null(predict_locs)) {
     outer_chull_poly <- inner_chull_poly_buffer
@@ -166,17 +165,16 @@ lrren <- function(obs_locs,
   } else {
     ## Calculate outer boundary polygon (full extent of geographical extent in environmental space)
     if (nrow(predict_locs) > 5000000) { # convex hull
-      outer_chull <- grDevices::chull(x = stats::na.omit(predict_locs)[ , 3], y = stats::na.omit(predict_locs)[ , 4])
-      outer_chull_pts <- predict_locs[c(outer_chull, outer_chull[1]), 3:4]
+      predict_locs_woNAs <- stats::na.omit(predict_locs)
+      outer_chull <- grDevices::chull(x = predict_locs_woNAs[ , 3], y = predict_locs_woNAs[ , 4])
+      outer_chull_pts <- predict_locs_woNAs[c(outer_chull, outer_chull[1]), 3:4]
     } else { # concave hull
-      outer_chull <- concaveman::concaveman(as.matrix(stats::na.omit(predict_locs)[ , 3:4]))
-      outer_chull_pts <- sp::coordinates(outer_chull)
+      outer_chull_pts <- concaveman::concaveman(as.matrix(stats::na.omit(predict_locs[ , 3:4])))
     }
-    outer_chull_pts <- rbind(outer_chull_pts, outer_chull_pts[1, ])
-    outer_chull_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(outer_chull_pts)), 1)))
-    #add small buffer around polygon to include boundary points
-    outer_chull_poly_buffer <- rgeos::gBuffer(outer_chull_poly, width = poly_buffer, byid = TRUE)
-    outer_poly <- outer_chull_poly_buffer@polygons[[1]]@Polygons[[1]]@coords #extract coordinates of new polygon
+    outer_chull_poly <- sf::st_polygon(list(as.matrix(outer_chull_pts)))
+    # add small buffer around polygon to include boundary points
+    outer_chull_poly_buffer <- sf::st_buffer(outer_chull_poly, dist = poly_buffer, byid = TRUE)
+    outer_poly <- sf::st_polygon(list(as.matrix(outer_chull_poly_buffer)))
   }
   
   if (conserve == FALSE & is.null(predict_locs)) {
@@ -185,8 +183,8 @@ lrren <- function(obs_locs,
   if (conserve == TRUE) { window_poly <- inner_poly } else { window_poly <- outer_poly }
 
   if (is.null(obs_window)) {
-    wind <- spatstat.geom::owin(poly = list(x = rev(window_poly[ , 1]),
-                                            y = rev(window_poly[ , 2])))
+    wind <- spatstat.geom::owin(poly = list(x = rev(sf::st_coordinates(window_poly)[ , 1]),
+                                            y = rev(sf::st_coordinates(window_poly)[ , 2])))
   } else { wind <- obs_window }
 
   # Input Preparation
@@ -207,7 +205,7 @@ lrren <- function(obs_locs,
   obs <- sparr::risk(f = ppp_presence,
                      g = ppp_absence,
                      tolerate = TRUE,
-                     verbose = verbose,
+                     verbose = verbose, 
                      ...)
   bandw <- obs$f$h0
   
@@ -228,17 +226,17 @@ lrren <- function(obs_locs,
       # Project relative risk surface into geographic space
       if (verbose == TRUE) { message("Predicting area of interest") }
 
-    # Convert to semi-continuous raster
-    rr_raster <- raster::raster(obs$rr)
+    # Convert to semi-continuous SpatRaster
+    rr_raster <- terra::rast(obs$rr)
 
-    # Convert to categorical raster
-    pval_raster <- raster::raster(obs$P)
+    # Convert to categorical SpatRaster
+    pval_raster <- terra::rast(obs$P)
 
     # Prediction locations
     extract_points <- cbind(predict_locs[ , 3], predict_locs[ , 4])
     extract_predict <- data.frame("predict_locs" = predict_locs,
-                                  "rr" = raster::extract(rr_raster, extract_points),
-                                  "pval" = raster::extract(pval_raster, extract_points))
+                                  "rr" = terra::extract(rr_raster, extract_points)[ , 1],
+                                  "pval" = terra::extract(pval_raster, extract_points)[ , 1])
 
     output <- list("obs" = obs,
                    "presence" = ppp_presence,
@@ -326,19 +324,19 @@ lrren <- function(obs_locs,
       rand_lrr <- sparr::risk(f = ppp_presence_training,
                               g = ppp_absence_training,
                               tolerate = TRUE,
-                              verbose = FALSE,
+                              verbose = FALSE, 
                               ...)
 
-      ##### Convert to semi-continuous raster
-      rr_raster <- raster::raster(rand_lrr$rr)
-      rr_raster[is.na(rr_raster[])] <- 0 # if NA, assigned null value (log(rr) = 0)
+      ##### Convert to semi-continuous SpatRaster
+      rr_raster <- terra::rast(rand_lrr$rr)
+      rr_raster[is.na(terra::values(rr_raster))] <- 0 # if NA, assigned null value (log(rr) = 0)
 
       ##### Predict testing dataset
       extract_testing <- testing[ , 5:6]
 
       ##### Output for each k-fold
       ###### Record category (semi-continuous) of testing data
-      cv_predictions_rr <- raster::extract(rr_raster, extract_testing)
+      cv_predictions_rr <- terra::extract(rr_raster, extract_testing)[ , 2]
       cv_labels <- testing[ , 4] # Record labels (marks) of testing data
 
       par_results <- list("cv_predictions_rr" = cv_predictions_rr,

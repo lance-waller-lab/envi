@@ -7,10 +7,11 @@ context("lrren")
 # Generate testing data
 ## Environmental Covariates
 library(envi)
-library(raster)
+library(sf)
 library(spatstat.data)
 library(spatstat.geom)
 library(spatstat.random)
+library(terra)
 set.seed(1234)
 
 # -------------- #
@@ -23,8 +24,8 @@ elev <- spatstat.data::bei.extra$elev
 grad <- spatstat.data::bei.extra$grad
 elev$v <- scale(elev)
 grad$v <- scale(grad)
-elev_raster <- raster::raster(elev)
-grad_raster <- raster::raster(grad)
+elev_raster <- terra::rast(elev)
+grad_raster <- terra::rast(grad)
 
 ## Presence Locations
 presence <- spatstat.data::bei
@@ -50,19 +51,18 @@ obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
 # Prediction Data
-predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
+predict_xy <- terra::crds(elev_raster)
+predict_locs <- as.data.frame(predict_xy)
+colnames(predict_locs) <- c("lon", "lat")
+predict_locs$elev <- terra::extract(elev_raster, predict_xy)[ , 1]
+predict_locs$grad <- terra::extract(grad_raster, predict_xy)[ , 1]
 
 # Test custom window
 custom_chull <- grDevices::chull(x = obs_locs[ , 5], y = obs_locs[ , 6])
 custom_chull_pts <- obs_locs[c(custom_chull, custom_chull[1]), 5:6]
-custom_chull_pts <- rbind(custom_chull_pts, custom_chull_pts[1, ])
-custom_chull_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(custom_chull_pts)), 1)))
-#add small buffer around polygon to include boundary points
-custom_poly <- custom_chull_poly@polygons[[1]]@Polygons[[1]]@coords #extract coordinates of new polygon
-custom_owin <- spatstat.geom::owin(poly = list(x = rev(custom_poly[ , 1]),
-                                               y = rev(custom_poly[ , 2])))
-
+custom_poly <- sf::st_polygon(list(as.matrix(custom_chull_pts)))
+custom_owin <- spatstat.geom::owin(poly = list(x = rev(sf::st_coordinates(custom_poly)[ , 1]),
+                                               y = rev(sf::st_coordinates(custom_poly)[ , 2])))
 
 
 test_that("lrren throws error with invalid arguments", {

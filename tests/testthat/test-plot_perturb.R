@@ -7,7 +7,6 @@ context("plot_perturb")
 # Generate testing data
 ## Environmental Covariates
 library(envi)
-library(raster)
 library(spatstat.data)
 library(spatstat.geom)
 library(spatstat.random)
@@ -92,7 +91,7 @@ test_that("plot_obs works", {
   )
   
   # With spatial transformation
-  expect_warning(
+  expect_silent(
     plot_perturb(input = test_perlrren,
                  cref0 = "EPSG:5472",
                  cref1 = "EPSG:4326")

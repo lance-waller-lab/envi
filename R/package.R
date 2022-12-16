@@ -30,7 +30,7 @@
 #' @aliases envi-package envi 
 #' @docType package
 #' 
-#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, and \code{\link{raster}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, \code{\link{sf}}, and \code{\link{terra}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
 #' 
@@ -50,10 +50,9 @@ NULL
 #' @importFrom grDevices chull colorRampPalette
 #' @importFrom iterators icount
 #' @importFrom pls cvsegments
-#' @importFrom raster crs cut extract image projectRaster raster rasterToPoints reclassify values
-#' @importFrom rgeos gBuffer
 #' @importFrom ROCR performance prediction
-#' @importFrom sp bbox coordinates CRS gridded Polygon Polygons SpatialPolygons
+#' @importFrom sf st_bbox st_buffer st_coordinates st_polygon
 #' @importFrom spatstat.geom as.solist im.apply marks owin pixellate plot.ppp ppp rjitter setmarks superimpose
 #' @importFrom stats median na.omit sd
+#' @importFrom terra crds crs image project rast res classify values
 NULL

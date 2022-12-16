@@ -1,9 +1,10 @@
-## This is the fifteenth resubmission
+## This is the sixteenth resubmission
 
 * Updates since previous submission:
-  * Uwe Ligges suggested (2022-08-26) that some parallel cluster is not cleanly closed in the tests
-  * Added `future::plan(future::multisession)` in tests to remove the files in temp directory
-  * Added links to `sparr` package in 'package.R'
+  * Migrated R-spatial dependencies
+  * Replaced `raster`, `rgeos`, and `sp` packages in Imports with `terra` and `sf` because of imminent package retirements
+  * Removed `maptools` from Suggests (replaced with new internal function `as.im.SpatRaster()`)
+  * Updated test, examples, vignette, and documentation throughout
   
 * Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>
@@ -13,7 +14,7 @@
   * <https://doi.org/10.1111/j.1475-4991.2008.00309.x>
 
 ## Test environments
-* local OS X install, R 4.2.1
+* local Windows install, R 4.2.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

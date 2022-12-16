@@ -19,9 +19,8 @@
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics par
-#' @importFrom raster crs raster projectRaster
-#' @importFrom sp CRS
 #' @importFrom spatstat.geom pixellate
+#' @importFrom terra crs project rast
 #' 
 #' @export
 #' 
@@ -179,41 +178,45 @@ plot_perturb <- function(input,
   
   if (predict == TRUE) {
     
-    # Convert 'im' objects to spatially projected 'RasterLayer' objects
+    # Convert 'im' objects to spatially projected 'SpatRaster' objects
     lrr_mean <- spatstat.geom::pixellate(input$predict,
                                          weights = marks(input$predict)$lrr_mean)
-    lrr_mean <- raster::raster(lrr_mean)
-    raster::crs(lrr_mean) <- sp::CRS(SRS_string = cref0)
+    lrr_mean <- terra::rast(lrr_mean)
+    terra::crs(lrr_mean) <- cref0
     if (!is.null(cref1)) {
-      lrr_mean <- raster::projectRaster(lrr_mean,
-                                        crs = sp::CRS(SRS_string = cref1))
+      lrr_mean <- terra::project(lrr_mean,
+                                 y = cref1,
+                                 method = "bilinear")
     }
     
     lrr_sd <- spatstat.geom::pixellate(input$predict,
                                        weights = marks(input$predict)$lrr_sd)
-    lrr_sd <- raster::raster(lrr_sd)
-    raster::crs(lrr_sd) <- sp::CRS(SRS_string = cref0)
+    lrr_sd <- terra::rast(lrr_sd)
+    terra::crs(lrr_sd) <- cref0
     if (!is.null(cref1)) {
-      lrr_sd <- raster::projectRaster(lrr_sd,
-                                      crs = sp::CRS(SRS_string = cref1))
+      lrr_sd <- terra::project(lrr_sd,
+                               y = cref1,
+                               method = "bilinear")
     }
     
     pval_mean <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_mean)
-    pval_mean <- raster::raster(pval_mean)
-    raster::crs(pval_mean) <- sp::CRS(SRS_string = cref0)
+    pval_mean <- terra::rast(pval_mean)
+    terra::crs(pval_mean) <- cref0
     if (!is.null(cref1)) {
-      pval_mean <- raster::projectRaster(pval_mean,
-                                         crs = sp::CRS(SRS_string = cref1))
+      pval_mean <- terra::project(pval_mean,
+                                  y = cref1,
+                                  method = "bilinear")
     }
     
     pval_prop <- spatstat.geom::pixellate(input$predict,
                                           weights = marks(input$predict)$pval_prop)
-    pval_prop <- raster::raster(pval_prop)
-    raster::crs(pval_prop) <- sp::CRS(SRS_string = cref0)
+    pval_prop <- terra::rast(pval_prop)
+    terra::crs(pval_prop) <- cref0
     if (!is.null(cref1)) {
-      pval_prop <- raster::projectRaster(pval_prop,
-                                         crs = sp::CRS(SRS_string = cref1))
+      pval_prop <- terra::project(pval_prop,
+                                  y = cref1,
+                                  method = "bilinear")
     }
     
     # Plot 5: mean log relative risk

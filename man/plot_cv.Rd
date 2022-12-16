@@ -28,8 +28,8 @@ if (interactive()) {
   grad <- spatstat.data::bei.extra[[2]]
   elev$v <- scale(elev)
   grad$v <- scale(grad)
-  elev_raster <- raster::raster(elev)
-  grad_raster <- raster::raster(grad)
+  elev_raster <- terra::rast(elev)
+  grad_raster <- terra::rast(grad)
 
 # Presence data
   presence <- spatstat.data::bei
@@ -53,14 +53,8 @@ if (interactive()) {
   obs_locs$id <- seq(1, nrow(obs_locs), 1)
   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
   
-# Prediction Data
-  predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-  predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
-
 # Run lrren
   test_lrren <- lrren(obs_locs = obs_locs,
-                      predict_locs = predict_locs,
-                      predict = TRUE,
                       cv = TRUE)
                       
 # Run plot_cv                 

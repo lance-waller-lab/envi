@@ -1,8 +1,8 @@
-#' Prepare an 'im' or 'raster' object for plotting with diverging color palette
+#' Prepare an 'im' or 'SpatRaster' object for plotting with diverging color palette
 #' 
-#' Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}}, \code{\link{plot_predict}}, and \code{\link{plot_perturb}} functions. 
+#' Internal function to convert 'im' object or 'SpatRaster' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}}, \code{\link{plot_predict}}, and \code{\link{plot_perturb}} functions. 
 #' 
-#' @param input An object of class 'im' or 'RasterLayer' from the \code{\link{lrren}} function.
+#' @param input An object of class 'im' or 'SpatRaster' from the \code{\link{lrren}} function.
 #' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
 #' @param midpoint Numeric. The value to center the diverging color palette. 
 #' @param thresh_up Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.
@@ -20,7 +20,7 @@
 #' }
 #' 
 #' @importFrom grDevices colorRampPalette
-#' @importFrom raster raster
+#' @importFrom terra rast
 #'
 #' @keywords internal
 
@@ -33,15 +33,15 @@ div_plot <- function(input,
 
   # Inputs
   if (inherits(input, "im")) {
-    out <- raster::raster(input)
+    out <- terra::rast(input)
   } else { out <- input }
 
   if (length(cols) != 3) {
     stop("The 'cols' argument must be a vector of length 3")
   }
   
-  min_raw_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of raster
-  max_raw_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
+  min_raw_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of SpatRaster
+  max_raw_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of SpatRaster
   
   # Restrict spurious log relative risk values
   if (!is.null(thresh_low)) {
@@ -60,8 +60,8 @@ div_plot <- function(input,
   # Identify ramp above and below midpoint
   lowerhalf <- length(out[out < midpoint & !is.na(out)]) # values below 0
   upperhalf <- length(out[out > midpoint & !is.na(out)]) # values above 0
-  min_absolute_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of raster
-  max_absolute_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of raster
+  min_absolute_value <- min(out[is.finite(out)], na.rm = TRUE) # minimum absolute value of SpatRaster
+  max_absolute_value <- max(out[is.finite(out)], na.rm = TRUE) # maximum absolute value of SpatRaster
 
   # Color ramp parameters
   ## Colors

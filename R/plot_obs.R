@@ -14,8 +14,8 @@
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics par
-#' @importFrom raster cut raster values
 #' @importFrom spatstat.geom plot.ppp setmarks superimpose
+#' @importFrom terra rast values
 #' @export
 #'
 #' @examples
@@ -29,8 +29,8 @@
 #'   grad <- spatstat.data::bei.extra[[2]]
 #'   elev$v <- scale(elev)
 #'   grad$v <- scale(grad)
-#'   elev_raster <- raster::raster(elev)
-#'   grad_raster <- raster::raster(grad)
+#'   elev_raster <- terra::rast(elev)
+#'   grad_raster <- terra::rast(grad)
 #' 
 #' # Presence data
 #'   presence <- spatstat.data::bei
@@ -54,15 +54,9 @@
 #'   obs_locs$id <- seq(1, nrow(obs_locs), 1)
 #'   obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 #'   
-#' # Prediction Data
-#'   predict_locs <- data.frame(raster::rasterToPoints(elev_raster))
-#'   predict_locs$layer2 <- raster::extract(grad_raster, predict_locs[, 1:2])
-#' 
 #' # Run lrren
 #'   test_lrren <- lrren(obs_locs = obs_locs,
-#'                       predict_locs = predict_locs,
-#'                       predict = TRUE,
-#'                       cv = TRUE)
+#'                       cv = FALSE)
 #'                       
 #' # Run plot_obs   
 #'   plot_obs(input = test_lrren)
@@ -136,12 +130,12 @@ plot_obs <- function(input,
                                       cex.axis = 0.67))
 
   # Plot 3: Significant p-values
-  pvalp <- raster::raster(input$out$obs$P)  # create raster
-  pvalp <- raster::cut(pvalp,
-                     breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
-                     right = FALSE)
+  pvalp <- terra::rast(input$out$obs$P)  # create raster
+  terra::values(pvalp) <- cut(terra::values(pvalp),
+                              breaks = c(-Inf, alpha / 2, 1 - alpha / 2, Inf),
+                              right = FALSE)
   
-  if (all(raster::values(pvalp)[!is.na(raster::values(pvalp))] == 2)) {
+  if (all(terra::values(pvalp)[!is.na(terra::values(pvalp))] == 2)) {
     pcols <- plot_cols[2]
     brp <- c(1, 3)
     atp <- 2

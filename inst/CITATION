@@ -5,7 +5,7 @@ citEntry(entry = "manual",
   author        = personList(as.person("Ian D. Buller")),
   publisher     = "The Comprehensive R Archive Network",
   year          = "2022",
-  number        = "0.1.15",
+  number        = "0.1.16.9000",
   doi           = "10.5281/zenodo.5347826",
   url           = "https://cran.r-project.org/package=envi",
   
@@ -13,7 +13,7 @@ citEntry(entry = "manual",
   paste("Ian D. Buller (2022).",
         "envi: Environmental Interpolation using Spatial Kernel Density Estimation.",
         "The Comprehensive R Archive Network.",
-        "v0.1.15.",
+        "v0.1.16.9000.",
         "DOI:10.5281/zenodo.5347826",
         "Accessed by: https://cran.r-project.org/package=envi")
 )

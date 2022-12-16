@@ -1,5 +1,14 @@
 # envi (development version)
 
+# envi v0.1.16.9000
+* Migrated R-spatial dependencies
+* Replaced `raster`, `rgeos`, and `sp` packages in Imports with `terra` and `sf` because of imminent package retirements
+* Removed `maptools` from Suggests (replaced with new internal function `as.im.SpatRaster()`)
+* Thank you, [Roger Bivand](https://github.com/rsbivand), for the notice. Relates to [ndi Issue #3](https://github.com/lance-waller-lab/envi/issues/3)
+* Note: `raster` is a dependency of `RStoolbox` (at present) which is used in the vignette
+* Updated test, examples, vignette, and documentation throughout
+* Added GitHub R-CMD-check
+
 # envi v0.1.15
 * Uwe Ligges suggested (2022-08-26) that some parallel cluster is not cleanly closed in the tests
 * Added `future::plan(future::multisession)` in tests to remove the files in temp directory

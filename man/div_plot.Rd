@@ -2,7 +2,7 @@
 % Please edit documentation in R/div_plot.R
 \name{div_plot}
 \alias{div_plot}
-\title{Prepare an 'im' or 'raster' object for plotting with diverging color palette}
+\title{Prepare an 'im' or 'SpatRaster' object for plotting with diverging color palette}
 \usage{
 div_plot(
   input,
@@ -14,7 +14,7 @@ div_plot(
 )
 }
 \arguments{
-\item{input}{An object of class 'im' or 'RasterLayer' from the \code{\link{lrren}} function.}
+\item{input}{An object of class 'im' or 'SpatRaster' from the \code{\link{lrren}} function.}
 
 \item{midpoint}{Numeric. The value to center the diverging color palette.}
 
@@ -38,6 +38,6 @@ An object of class 'list'. This is a named list with the following components:
 }
 }
 \description{
-Internal function to convert 'im' object or 'RasterLayer' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}}, \code{\link{plot_predict}}, and \code{\link{plot_perturb}} functions.
+Internal function to convert 'im' object or 'SpatRaster' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_obs}}, \code{\link{plot_predict}}, and \code{\link{plot_perturb}} functions.
 }
 \keyword{internal}
