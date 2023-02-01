@@ -1,19 +1,19 @@
-citHeader("To cite envi in publications, please use the following and include the version number and DOI:")
-
-citEntry(entry = "manual",
-  title         = "envi: Environmental Interpolation using Spatial Kernel Density Estimation",
-  author        = personList(as.person("Ian D. Buller")),
-  publisher     = "The Comprehensive R Archive Network",
-  year          = "2022",
-  number        = "0.1.16.9000",
-  doi           = "10.5281/zenodo.5347826",
-  url           = "https://cran.r-project.org/package=envi",
+bibentry(bibtype = "manual",
+  title          = "envi: Environmental Interpolation using Spatial Kernel Density Estimation",
+  author         = as.person("Ian D. Buller"),
+  publisher      = "The Comprehensive R Archive Network",
+  year           = "2023",
+  number         = "0.1.16",
+  doi            = "10.5281/zenodo.5347826",
+  url            = "https://cran.r-proj.ect.org/package=envi",
   
-  textVersion = 
-  paste("Ian D. Buller (2022).",
+  textVersion    = 
+  paste("Ian D. Buller (2023).",
         "envi: Environmental Interpolation using Spatial Kernel Density Estimation.",
         "The Comprehensive R Archive Network.",
-        "v0.1.16.9000.",
+        "v0.1.16.",
         "DOI:10.5281/zenodo.5347826",
-        "Accessed by: https://cran.r-project.org/package=envi")
+        "Accessed by: https://cran.r-project.org/package=envi"),
+        
+  header         = "To cite envi in publications, please use the following and include the version number and DOI:"
 )

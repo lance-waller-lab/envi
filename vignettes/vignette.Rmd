@@ -119,11 +119,11 @@ Run the `lrren` function within the `envi` package. We use the default settings,
 
 ```{r lrren}
 start_time <- Sys.time() # record start time
-test_lrren <- lrren(obs_locs = obs_locs,
-                    predict_locs = predict_locs,
-                    predict = TRUE,
-                    cv = TRUE,
-                    balance = TRUE)
+test_lrren <- envi::lrren(obs_locs = obs_locs,
+                          predict_locs = predict_locs,
+                          predict = TRUE,
+                          cv = TRUE,
+                          balance = TRUE)
 end_time <- Sys.time() # record end time
 lrren_time <- end_time - start_time # calculate duration of lrren() example
 ```
@@ -133,9 +133,9 @@ A single run of the `lrren` function took approximately `r round(lrren_time, dig
 We display the estimated ecological niche within a space of Covariate 1 by Covariate 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. As expected, extreme values of the log relative risk surface are located near the edges of the surface; however, these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1).
 
 ```{r plot_obs_limited}
-plot_obs(test_lrren,
-         lower_lrr = -1,
-         upper_lrr = 1)
+envi::plot_obs(test_lrren,
+               lower_lrr = -1,
+               upper_lrr = 1)
 ```
 
 We observe two areas of positive log relative risk, and the center of these areas are statistically significant, suggesting two ecological niches of gorilla nesting sites compared to pseudo-absence points drawn randomly from within the park (based on only two covariates, slope gradient and distance from water). One niche is a combination of flat to moderate (about 10 - 30 degrees) slope gradient and moderate to far (about 200 - 400 meters) distance from water, which may correspond to the top of ridges. The second niche is a combination of moderate (30 - 40 degrees) slope gradient and moderate (about 100 - 200 meters) distance from water, which may correspond to within valleys. 
@@ -143,9 +143,11 @@ We observe two areas of positive log relative risk, and the center of these area
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r plot_predict}
-plot_predict(test_lrren, cref0 = "EPSG:32632", cref1 = "EPSG:4326",
-             lower_lrr = -1,
-             upper_lrr = 1)
+envi::plot_predict(test_lrren, 
+                   cref0 = "EPSG:32632",
+                   cref1 = "EPSG:4326",
+                   lower_lrr = -1,
+                   upper_lrr = 1)
 ```
 
 The two estimated ecological niches are located in many small regions throughout the park, reflected by the large spatial heterogeneity in the two covariates. For example, the tops of ridges are the farthest distance from water and are located in many areas throughout the park. Importantly, gorilla nesting sites were not observed in many of these areas, but this prediction represents areas with combinations of covariates that match (or are similar) to the combinations occurring at observed locations.
@@ -155,7 +157,7 @@ This is an example of a scale mismatch. The scale of the gorilla nesting site pr
 We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`) and our prevalence is fairly balanced at `r presence$n/(presence$n + absence$n)`.
 
 ```{r plot_cv}
-plot_cv(test_lrren)
+envi::plot_cv(test_lrren)
 ```
 
 ```{r cleanup3, echo = FALSE}
@@ -290,11 +292,11 @@ With the two principal components, we re-run the `lrren` function.
 
 ```{r pca_lrren}
 start_time <- Sys.time() # record start time
-pca_lrren <- lrren(obs_locs = obs_locs,
-                    predict_locs = predict_locs,
-                    predict = TRUE,
-                    cv = TRUE,
-                    balance = TRUE)
+pca_lrren <- envi::lrren(obs_locs = obs_locs,
+                         predict_locs = predict_locs,
+                         predict = TRUE,
+                         cv = TRUE,
+                         balance = TRUE)
 end_time <- Sys.time() # record end time
 pca_time <- end_time - start_time # calculate duration of lrren() example
 ```
@@ -304,25 +306,25 @@ A single run of the `lrren` function took approximately `r round(pca_time, digit
 We display the estimated ecological niche within a space of Principal Component 1 by Principal Component 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk surface to (-1, 1). 
 
 ```{r pca_plot_obs}
-plot_obs(pca_lrren,
-         lower_lrr = -1,
-         upper_lrr = 1)
+envi::plot_obs(pca_lrren,
+               lower_lrr = -1,
+               upper_lrr = 1)
 ```
 
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`), and we limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r pca_plot_predict}
-plot_predict(pca_lrren, 
-             cref0 = "EPSG:32632", 
-             cref1 = "EPSG:4326",
-             lower_lrr = -1,
-             upper_lrr = 1)
+envi::plot_predict(pca_lrren, 
+                   cref0 = "EPSG:32632", 
+                   cref1 = "EPSG:4326",
+                   lower_lrr = -1,
+                   upper_lrr = 1)
 ```
 
 We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`).
 
 ```{r pca_plot_cv}
-plot_cv(pca_lrren)
+envi::plot_cv(pca_lrren)
 ```
 
 ```{r cleanup7, echo = FALSE}
@@ -383,10 +385,10 @@ Run the `perlrren` function within the `envi` package. We use the default settin
 ```{r perlrren}
 n_sim <- 100
 start_time <- Sys.time() # record start time
-test_perlrren <- perlrren(obs_ppp = obs_locs,
-                          covariates = ims,
-                          radii = c(100, 50, 0.1),
-                          n_sim = n_sim)
+test_perlrren <- envi::perlrren(obs_ppp = obs_locs,
+                                covariates = ims,
+                                radii = c(100, 50, 0.1),
+                                n_sim = n_sim)
 end_time <- Sys.time() # record end time
 perlrren_time <- end_time - start_time # calculate duration of perlrren() example
 ```
@@ -400,12 +402,12 @@ A single (non-parallel) run of the `perlrren` function with `r n_sim` iterations
 We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the default settings, except we limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). We only display the plots pertaining to the proportion of iterations with a significant p-value, both in covariate space and predicted into geographic space (i.e., the park).
 
 ```{r plot_perturb, fig.keep = c(4,8)}
-plot_perturb(test_perlrren,
-             cov_labs = c("Component 1", "Component 2"),
-             cref0 = "EPSG:32632",
-             cref1 = "EPSG:4326",
-             lower_lrr = -1,
-             upper_lrr = 1)
+envi::plot_perturb(test_perlrren,
+                   cov_labs = c("Component 1", "Component 2"),
+                   cref0 = "EPSG:32632",
+                   cref1 = "EPSG:4326",
+                   lower_lrr = -1,
+                   upper_lrr = 1)
 ```
 
 ```{r cleanup11, echo = FALSE}
