@@ -38,7 +38,7 @@ Key content of the 'envi' package include:\cr
 }
 
 \author{
-Ian D. Buller\cr \emph{Environmental Health Sciences, Emory University, Atlanta, Georgia, USA.}\cr
+Ian D. Buller\cr \emph{Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (former); Environmental Health Sciences, James T. Laney School of Graduate Studies, Emory University, Atlanta, Georgia, USA. (original)}\cr
 
 Maintainer: I.D.B. \email{ian.buller@alumni.emory.edu}
 }
