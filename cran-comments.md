@@ -1,11 +1,7 @@
-## This is the sixteenth resubmission
+## This is the seventeenth resubmission
 
 * Updates since previous submission:
-  * Migrated R-spatial dependencies
-  * Replaced `raster`, `rgeos`, and `sp` packages in Imports with `terra` and `sf` because of imminent package retirements
-  * Removed `maptools` from Suggests (replaced with new internal function `as.im.SpatRaster()`)
-  * Updated test, examples, vignette, and documentation throughout
-  * Updated citation style for CITATION file
+  * Fixed broken link in CITATION based on v0.1.16 auto-check
   
 * Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>

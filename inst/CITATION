@@ -5,7 +5,7 @@ bibentry(bibtype = "manual",
   year           = "2023",
   number         = "0.1.16",
   doi            = "10.5281/zenodo.5347826",
-  url            = "https://cran.r-proj.ect.org/package=envi",
+  url            = "https://cran.r-project.org/package=envi",
   
   textVersion    = 
   paste("Ian D. Buller (2023).",

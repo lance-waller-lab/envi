@@ -1,5 +1,8 @@
 # envi (development version)
 
+## envi v0.1.17
+* Fixed broken link in CITATION
+
 ## envi v0.1.16
 * Migrated R-spatial dependencies
 * Replaced `raster`, `rgeos`, and `sp` packages in Imports with `terra` and `sf` because of imminent package retirements
