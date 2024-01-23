@@ -7,12 +7,12 @@ envi: Environmental Interpolation using Spatial Kernel Density Estimation <img s
 [![CRAN version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
 [![CRAN RStudio mirror downloads total](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
 [![CRAN RStudio mirror downloads monthly ](http://cranlogs.r-pkg.org/badges/envi)](https://www.r-pkg.org:443/pkg/envi)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0/)
 ![GitHub last commit](https://img.shields.io/github/last-commit/lance-waller-lab/envi)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347826.svg)](https://doi.org/10.5281/zenodo.5347826)
 <!-- badges: end -->
 
-**Date repository last updated**: January 22, 2024
+**Date repository last updated**: January 23, 2024
 
 <h2 id="overview">
 
@@ -298,7 +298,7 @@ envi::plot_perturb(test3,
 
 ### Funding
 
-This package was developed while the author was originally a doctoral student in the [Environmental Health Sciences doctoral program](https://www.sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu/home/index.html) and later as a postdoctoral fellow supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author was an employee of Social & Scientific Systems, Inc., a division of [DLH Corporation](https://www.dlhcorp.com).
+This package was developed while the author was originally a doctoral student in the [Environmental Health Sciences doctoral program](https://sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu/home/index.html) and later as a postdoctoral fellow supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author was an employee of Social & Scientific Systems, Inc., a division of [DLH Corporation](https://www.dlhcorp.com).
 
 ### Acknowledgments
 

@@ -1,9 +1,7 @@
-## This is the eighteenth resubmission
+## This is the nineteenth resubmission
 
 * Updates since previous submission:
-  * Fixed bug in calculation of False Discovery Rate in internal `pval_correct()` function
-  * Fixed test for `plot_perturb()` function that was presenting a warning by specifying `cref0`
-  * Argument `plot_cols` correctly renamed `cols` in `div_plot()` and `seq_plot()` functions
+  * Fixed 'Moved Permanently' content by replacing the old URL with the new URL
   
 * CRAN Package Check Results 2024-01-22 for 'envi' v0.1.17 in r-patched-linux-x86_64, r-release-macos-arm64, r-release-macos-x86_64:
   * NOTE: Package suggested but not available for checking: 'RStoolbox'
