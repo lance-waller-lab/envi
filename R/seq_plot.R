@@ -3,7 +3,7 @@
 #' Internal function to convert 'im' object or 'SpatRaster' object to values readable by \code{\link[fields]{image.plot}} function within the \code{\link{plot_perturb}} function. 
 #' 
 #' @param input An object of class 'im' or 'SpatRaster' from the \code{\link{perlrren}} function.
-#' @param plot_cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
+#' @param cols Character string of length three (3) specifying the colors for plotting: 1) presence, 2) neither, and 3) absence from the \code{\link{plot_obs}} function. 
 #' @param thresh_up Numeric. The upper value to concatenate the color key. The default (NULL) uses the maximum value from \code{input}.
 #' @param digits Integer. The number of significant digits for the labels using the \code{\link[base]{round}} function (default is 1).
 #'

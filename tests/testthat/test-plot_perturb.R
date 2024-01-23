@@ -81,7 +81,8 @@ test_that("plot_perturb throws error with invalid arguments", {
 test_that("plot_obs works", {
   skip_on_cran()
   expect_silent(
-    plot_perturb(input = test_perlrren)
+    plot_perturb(input = test_perlrren,
+                 cref0 = "EPSG:5472")
   )
   
   # cref0 = NULL

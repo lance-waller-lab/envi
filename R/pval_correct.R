@@ -24,27 +24,15 @@ pval_correct <- function(input,
                          type = c("FDR", "Sidak", "Bonferroni"),
                          alpha = 0.05,
                          nbc = NULL) {
-
-# False Discovery Rate
+  
+  # False Discovery Rate (Benjamini & Hochberg)
   if (type == "FDR") {
-  sort_pvals <- sort(input, decreasing = TRUE)
-  
-  fdr <- function(pvals, alpha) {
-    m <- length(pvals)
-    for (i in 1:length(pvals)) {
-      if (pvals[i] <= (i/m) * alpha) { 
-        pcrit <- pvals[i]
-        return(pcrit)
-      }
-    }
-    max(pcrit, min(pvals, na.rm = TRUE))
+    sort_pvals <- sort(input)
+    out_alpha <- fdr(sort_pvals, alpha)
+    return(out_alpha)
   }
   
-  out_alpha <- fdr(sort_pvals, alpha)
-  return(out_alpha)
-  }
-  
-  # Bonferroni correction
+  # Sidak correction
   if (type == "Sidak") {
     out_alpha <- 1 - (1 - alpha) ^ (1 / length(input) )
     return(out_alpha)

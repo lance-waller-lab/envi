@@ -1,7 +1,13 @@
-## This is the seventeenth resubmission
+## This is the eighteenth resubmission
 
 * Updates since previous submission:
-  * Fixed broken link in CITATION based on v0.1.16 auto-check
+  * Fixed bug in calculation of False Discovery Rate in internal `pval_correct()` function
+  * Fixed test for `plot_perturb()` function that was presenting a warning by specifying `cref0`
+  * Argument `plot_cols` correctly renamed `cols` in `div_plot()` and `seq_plot()` functions
+  
+* CRAN Package Check Results 2024-01-22 for 'envi' v0.1.17 in r-patched-linux-x86_64, r-release-macos-arm64, r-release-macos-x86_64:
+  * NOTE: Package suggested but not available for checking: 'RStoolbox'
+  * SOLUTION: 'RStoolbox' recently updated 2024-01-17 so will remain as SUGGESTS for 'envi' v0.1.18
   
 * Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>

@@ -81,3 +81,15 @@ as.im.SpatRaster <- function (from, factor.col.name = NULL) {
   im <- spatstat.geom::im(val, xcol = xx, yrow = yy)
   return(im)
 }
+
+# False Discovery Rate (Benjamini & Hochberg)
+fdr <- function(pvals, alpha) {
+  pcrit <- NULL
+  m <- length(pvals)
+  for (i in 1:m) {
+    if (pvals[i] <= (i/m) * alpha) { 
+      pcrit <- pvals[i]
+    }
+  }
+  return(max(pcrit, pvals[1]))
+}
