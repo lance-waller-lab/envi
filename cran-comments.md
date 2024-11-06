@@ -1,11 +1,11 @@
-## This is the nineteenth resubmission
+## This is the twentieth resubmission
 
 * Updates since previous submission:
-  * Fixed 'Moved Permanently' content by replacing the old URL with the new URL
-  
-* CRAN Package Check Results 2024-01-22 for 'envi' v0.1.17 in r-patched-linux-x86_64, r-release-macos-arm64, r-release-macos-x86_64:
-  * NOTE: Package suggested but not available for checking: 'RStoolbox'
-  * SOLUTION: 'RStoolbox' recently updated 2024-01-17 so will remain as SUGGESTS for 'envi' v0.1.18
+  * Fixed bug in `lrren()` to properly extract predicted RR values for cross validation when using `terra::extract()`
+  * Fixed NOTE in CRAN checks to provide package anchors for Rd \link{} targets not in the package itself and the base packages  within 'envi-package.Rd', 'lrren.Rd', and 'perlrren.Rd'
+  * Fixed NOTE in Windows check to remove detritus files after testing
+  * Renamed 'package.R' to 'envi-package.R' after Roxygen (7.3.0) update
+  * Updated CITATION with [peer-review publication](https://doi.org/10.1016/j.sste.2024.100696)
   
 * Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>
@@ -15,7 +15,7 @@
   * <https://doi.org/10.1111/j.1475-4991.2008.00309.x>
 
 ## Test environments
-* local Windows install, R 4.2.1
+* local Windows install, R 4.4.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

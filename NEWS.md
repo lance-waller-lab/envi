@@ -1,5 +1,12 @@
 # envi (development version)
 
+## envi v1.0.0
+* Fixed bug in `lrren()` to properly extract predicted RR values for cross validation after update using `terra::extract()`
+* Fixed NOTE in CRAN checks to provide package anchors for Rd \link{} targets not in the package itself and the base packages  within 'envi-package.Rd', 'lrren.Rd', and 'perlrren.Rd'
+* Fixed NOTE in Windows check to remove detritus files after testing
+* Renamed 'package.R' to 'envi-package.R' after Roxygen (>=7.3.0) update
+* Updated CITATION with [peer-review publication](https://doi.org/10.1016/j.sste.2024.100696)
+
 ## envi v0.1.19
 * Fixed 'Moved Permanently' content by replacing the old URL with the new URL
 

@@ -70,7 +70,6 @@ test_lrren <- envi::lrren(obs_locs = obs_locs,
                           obs_window = NULL,
                           verbose = FALSE)
 
-
 test_that("plot_obs throws error with invalid arguments", {
   
   # plot_obs without lrren output
@@ -96,6 +95,7 @@ test_that("plot_obs throws error with invalid arguments", {
 }
 ) 
 
+dev.off() # reset graphics
 test_that("plot_obs works", {
   skip_on_cran()
   expect_silent(

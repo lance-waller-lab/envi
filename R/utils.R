@@ -35,7 +35,7 @@ progBar <- function(kk, N, per = 1) {
 
 # Temporary stopgap for converting 'SpatRaster' to 'im'
 ## Modification of `as.im.RasterLayer` from `maptools` because `maptools` is retiring in 2023
-as.im.SpatRaster <- function (from, factor.col.name = NULL) {
+as.im.SpatRaster <- function(from, factor.col.name = NULL) {
   if (!requireNamespace("spatstat.geom", quietly = TRUE)) {
     stop(paste("package spatstat.geom required; please install it (or the full spatstat package) first"))
   }

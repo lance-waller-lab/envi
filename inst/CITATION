@@ -1,19 +1,42 @@
-bibentry(bibtype = "manual",
-  title          = "envi: Environmental Interpolation using Spatial Kernel Density Estimation",
-  author         = as.person("Ian D. Buller"),
-  publisher      = "The Comprehensive R Archive Network",
-  year           = "2024",
-  number         = "0.1.19",
-  doi            = "10.5281/zenodo.5347826",
-  url            = "https://cran.r-project.org/package=envi",
+bibentry(bibtype = 'article',
+  title          = 'Multiple "spaces": using wildlife surveillance, climatic variables, and spatial statistics to identify and map a climatic niche for endemic plague in California, U.S.A.',
+  author         = c(as.person('Ian D. Buller'),
+                   as.person('Gregory M. Hacker'),
+                   as.person('Mark G. Novak'),
+                   as.person('James R. Tucker'),
+                   as.person('A. Townsend Peterson'),
+                   as.person('Lance A. Waller')),
+  journal        = 'Spatial and Spatio-temporal Epidemiology',
+  year           = '2024',
+  volume         = '51',
+  pages          = '100696',
+  doi            = '10.1016/j.sste.2024.100696',
   
   textVersion    = 
-  paste("Ian D. Buller (2024).",
-        "envi: Environmental Interpolation using Spatial Kernel Density Estimation.",
-        "The Comprehensive R Archive Network.",
-        "v0.1.19.",
-        "DOI:10.5281/zenodo.5347826",
-        "Accessed by: https://cran.r-project.org/package=envi"),
+  paste('Ian D. Buller, Gregory M. Hacker, Mark G. Novak, James R. Tucker, A. Townsend Peterson, Lance A. Waller (2024).',
+        'Multiple "spaces": using wildlife surveillance, climatic variables, and spatial statistics to identify and map a climatic niche for endemic plague in California, U.S.A.',
+        'Spatial and Spatio-temporal Epidemiology, 51, 100696.',
+        'DOI:10.1016/j.sste.2024.100696'),
         
-  header         = "To cite envi in publications, please use the following and include the version number and DOI:"
+  header         = 'To cite envi in publications, please cite the following: (1)'
+)
+
+bibentry(bibtype = 'manual',
+  title          = 'envi: Environmental Interpolation using Spatial Kernel Density Estimation',
+  author         = as.person('Ian D. Buller'),
+  publisher      = 'The Comprehensive R Archive Network',
+  year           = '2024',
+  number         = '1.0.0',
+  doi            = '10.32614/CRAN.package.envi',
+  url            = 'https://cran.r-project.org/package=envi',
+  
+  textVersion    = 
+  paste('Ian D. Buller (2024).',
+        'envi: Environmental Interpolation using Spatial Kernel Density Estimation.',
+        'The Comprehensive R Archive Network.',
+        'v1.0.0.',
+        'DOI:10.32614/CRAN.package.envi',
+        'Accessed by: https://cran.r-project.org/package=envi'),
+        
+  header         = 'and (2)'
 )

@@ -7,4 +7,3 @@ library(envi)
 options(parallelly.makeNodePSOCK.setup_strategy = "sequential")
 
 test_check("envi")
-future::plan(future::sequential)

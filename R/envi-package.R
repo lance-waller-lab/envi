@@ -2,7 +2,7 @@
 #'
 #' Estimates an ecological niche model using occurrence data, covariates, and kernel density-based estimation methods.
 #'
-#' @details For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function estimated using the \code{\link{sparr}} package. Details about the \code{\link{sparr}} package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}. More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
+#' @details For a single species with presence and absence data, the 'envi' package uses the spatial relative risk function estimated using the \code{\link[sparr]{sparr}} package. Details about the \code{\link[sparr]{sparr}} package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}. Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}. More information about relative risk functions using kernel density estimation (KDE) can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
 #' 
 #' This package provides a function to estimate the ecological niche for a single species with presence and absence data. The 'envi' package also provides some sensitivity and visualization tools for the estimated ecological niche, its predicted spatial distribution, and prediction diagnostics. Various options for the correction of multiple testing are available. 
 #' 
@@ -28,16 +28,15 @@
 #' 
 #' @name envi-package
 #' @aliases envi-package envi 
-#' @docType package
 #' 
-#' @section Dependencies: The 'envi' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.geom}}, \code{\link{sf}}, and \code{\link{terra}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'envi' package relies heavily upon \code{\link[sparr]{sparr}}, \code{\link[spatstat.geom]{spatstat.geom}}, \code{\link[sf]{sf}}, and \code{\link[terra]{terra}}. For a single species (presence/absence data), the spatial relative risk function uses the \code{\link[sparr]{risk}} function. Cross-validation is can be performed in parallel using the \code{\link[future]{future}}, \code{\link[doFuture]{doFuture}}, \code{\link[doRNG]{doRNG}}, and \code{\link[foreach]{foreach}} packages. Spatial perturbation is performed using the \code{\link[spatstat.geom]{rjitter}} function. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
-#' @author Ian D. Buller\cr \emph{Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (former); Environmental Health Sciences, James T. Laney School of Graduate Studies, Emory University, Atlanta, Georgia, USA (original)}\cr
+#' @author Ian D. Buller\cr \emph{DLH, LLC (formerly known as Social & Scientific Systems, Inc.) Bethesda, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (former); Environmental Health Sciences, James T. Laney School of Graduate Studies, Emory University, Atlanta, Georgia, USA (original)}\cr
 #' 
 #' Maintainer: I.D.B. \email{ian.buller@@alumni.emory.edu}
 #'
 #' @keywords package
-NULL
+"_PACKAGE"
 
 #' @importFrom concaveman concaveman
 #' @importFrom cvAUC ci.cvAUC cvAUC

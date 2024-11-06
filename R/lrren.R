@@ -24,7 +24,7 @@
 #' 
 #' If \code{predict = TRUE}, this function will predict ecological niche at every location specified with \code{predict_locs} with best performance if \code{predict_locs} are gridded locations in the same study area as the observations in \code{obs_locs} - a version of environmental interpolation. The predicted spatial distribution of the estimated ecological niche can be visualized using the \code{\link{plot_predict}} function.
 #' 
-#' If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be the frequency of presence locations divided by the number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be the frequency of all observed locations divided by the number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link{future}}, \code{\link{doFuture}}, \code{\link{doRNG}}, and \code{\link{foreach}} packages. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
+#' If \code{cv = TRUE}, this function will prepare k-fold cross-validation data sets for prediction diagnostics. The sample size of each fold depends on the number of folds set with \code{kfold}. If \code{balance = TRUE}, the sample size of each fold will be the frequency of presence locations divided by the number of folds times two. If \code{balance = FALSE}, the sample size of each fold will be the frequency of all observed locations divided by the number of folds. The cross-validation can be performed in parallel if \code{parallel = TRUE} using the \code{\link[future]{future}}, \code{\link[doFuture]{doFuture}}, \code{\link[doRNG]{doRNG}}, and \code{\link[foreach]{foreach}} packages. Two diagnostics (area under the receiver operating characteristic curve and precision-recall curve) can be visualized using the \code{plot_cv} function.
 #' 
 #' The \code{obs_window} argument may be useful to specify a 'known' window for the ecological niche (e.g., a convex hull around observed locations).
 #' 
@@ -324,8 +324,7 @@ lrren <- function(obs_locs,
       rand_lrr <- sparr::risk(f = ppp_presence_training,
                               g = ppp_absence_training,
                               tolerate = TRUE,
-                              verbose = FALSE, 
-                              ...)
+                              verbose = FALSE)
 
       ##### Convert to semi-continuous SpatRaster
       rr_raster <- terra::rast(rand_lrr$rr)
@@ -336,11 +335,11 @@ lrren <- function(obs_locs,
 
       ##### Output for each k-fold
       ###### Record category (semi-continuous) of testing data
-      cv_predictions_rr <- terra::extract(rr_raster, extract_testing)[ , 2]
+      cv_predictions_rr <- terra::extract(rr_raster, as.matrix(extract_testing))[, 1]
       cv_labels <- testing[ , 4] # Record labels (marks) of testing data
 
       par_results <- list("cv_predictions_rr" = cv_predictions_rr,
-                          "cv_labels"= cv_labels)
+                          "cv_labels" = cv_labels)
       return(par_results)
     }
 

@@ -104,6 +104,7 @@ test_that("perlrren throws error with invalid arguments", {
   
 }
 )
+future::plan(future::sequential)
 
 test_that("perlrren produces progress messages", {
   expect_message(
@@ -115,6 +116,7 @@ test_that("perlrren produces progress messages", {
   )
 }
 )
+future::plan(future::sequential)
 
 test_that("perlrren works", {
   
@@ -155,6 +157,7 @@ test_that("perlrren works", {
   )
 }
 )
+future::plan(future::sequential)
 
 test_that("parallel processing with future package functions properly", {
   expect_named(
@@ -167,3 +170,4 @@ test_that("parallel processing with future package functions properly", {
   )
 }
 )
+future::plan(future::sequential)
