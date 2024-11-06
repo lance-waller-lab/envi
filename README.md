@@ -1,12 +1,12 @@
-envi: Environmental Interpolation using Spatial Kernel Density Estimation 
+# envi: Environmental Interpolation using Spatial Kernel Density Estimation 
 <img src='man/figures/envi.png' width='120' align='right' />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/lance-waller-lab/envi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lance-waller-lab/envi/actions/workflows/R-CMD-check.yaml)
-[![CRAN status](http://www.r-pkg.org/badges/version/envi)](https://cran.r-project.org/package=envi)
+[![CRAN status](https://www.r-pkg.org/badges/version/envi)](https://cran.r-project.org/package=envi)
 [![CRAN version](https://www.r-pkg.org/badges/version-ago/envi)](https://cran.r-project.org/package=envi)
 [![CRAN RStudio mirror downloads total](https://cranlogs.r-pkg.org/badges/grand-total/envi?color=blue)](https://r-pkg.org/pkg/envi)
-[![CRAN RStudio mirror downloads monthly ](http://cranlogs.r-pkg.org/badges/envi)](https://www.r-pkg.org:443/pkg/envi)
+[![CRAN RStudio mirror downloads monthly ](https://cranlogs.r-pkg.org/badges/envi)](https://www.r-pkg.org:443/pkg/envi)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0)
 ![GitHub last commit](https://img.shields.io/github/last-commit/lance-waller-lab/envi)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347826.svg)](https://doi.org/10.5281/zenodo.5347826)
