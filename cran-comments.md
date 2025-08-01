@@ -1,11 +1,7 @@
-## This is the twentieth resubmission
+## This is the twenty-first resubmission
 
 * Updates since previous submission:
-  * Fixed bug in `lrren()` to properly extract predicted RR values for cross validation when using `terra::extract()`
-  * Fixed NOTE in CRAN checks to provide package anchors for Rd \link{} targets not in the package itself and the base packages  within 'envi-package.Rd', 'lrren.Rd', and 'perlrren.Rd'
-  * Fixed NOTE in Windows check to remove detritus files after testing
-  * Renamed 'package.R' to 'envi-package.R' after Roxygen (7.3.0) update
-  * Updated CITATION with [peer-review publication](https://doi.org/10.1016/j.sste.2024.100696)
+  * Fixed Rd `\link{}` targets missing package in 'envi-package.Rd' and 'lrren.Rd'
   
 * Documentation for "envi-package.Rd", "pval_correct.Rd", DESCRIPTION, and vignette references the following DOIs, which throws a NOTE but are valid URLs:
   * <https://doi.org/10.1002/sim.4780090616>
@@ -15,7 +11,7 @@
   * <https://doi.org/10.1111/j.1475-4991.2008.00309.x>
 
 ## Test environments
-* local Windows install, R 4.4.1
+* local Windows install, R 4.5.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran
