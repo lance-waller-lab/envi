@@ -9,10 +9,10 @@
 [![CRAN RStudio mirror downloads monthly ](https://cranlogs.r-pkg.org/badges/envi)](https://www.r-pkg.org:443/pkg/envi)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0)
 ![GitHub last commit](https://img.shields.io/github/last-commit/lance-waller-lab/envi)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347826.svg)](https://doi.org/10.5281/zenodo.5347826)
+[![](https://img.shields.io/badge/DOI-10.32614/CRAN.package.envi-1f57b6?style=flat&link=https://doi.org/10.32614/CRAN.package.envi)](https://doi.org/10.32614/CRAN.package.envi)
 <!-- badges: end -->
 
-**Date repository last updated**: August 01, 2025
+**Date repository last updated**: August 02, 2025
 
 <h2 id='overview'>
 
@@ -314,7 +314,7 @@ plot_perturb(
 
 ### Funding
 
-This package was developed while the author was originally a doctoral student in the [Environmental Health Sciences doctoral program](https://sph.emory.edu/departments/eh/degree-programs/phd/index.html) at [Emory University](https://www.emory.edu/home/index.html) and later as a postdoctoral fellow supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author was an employee of [DLH, LLC](https://www.dlhcorp.com) (formerly Social & Scientific Systems, Inc.).
+This package was developed while the author was originally a doctoral student in the [Environmental Health Sciences doctoral program](https://sph.emory.edu/degrees-programs/phd/environmental-health-sciences) at [Emory University](https://www.emory.edu/home/index.html) and later as a postdoctoral fellow supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author was an employee of [DLH, LLC](https://www.dlhcorp.com) (formerly Social & Scientific Systems, Inc.).
 
 ### Acknowledgments
 
