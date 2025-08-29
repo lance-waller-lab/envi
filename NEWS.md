@@ -2,6 +2,8 @@
 
 ## envi v1.0.1
 * Fixed Rd `\link{}` targets missing package in 'envi-package.Rd' and 'lrren.Rd'
+* Updated vignette with updated package version and dependencies
+* `as.im.SpatRaster()` no longer in 'utils.R'; placed within vignette
 
 ## envi v1.0.0
 * Fixed bug in `lrren()` to properly extract predicted RR values for cross validation after update using `terra::extract()`

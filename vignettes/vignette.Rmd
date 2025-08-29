@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FAL
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("envi", "RStoolbox", "sf", "spatstat.data", "spatstat.geom", "spatstat.random", "terra")
+loadedPackages <- c("envi", "RStoolbox", "sf", "spatstat", "terra")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -32,8 +32,8 @@ We start by importing the two covariate data of class `im`:
 2. Distance from water (meters)
 
 ```{r covariate}
-slopeangle <- spatstat.data::gorillas.extra$slopeangle
-waterdist <- spatstat.data::gorillas.extra$waterdist
+slopeangle <- gorillas.extra$slopeangle
+waterdist <- gorillas.extra$waterdist
 ```
 
 Center and scale the covariate data.
@@ -46,30 +46,34 @@ waterdist$v <- scale(waterdist)
 Convert the covariate data to class `SpatRaster`.
 
 ```{r rasterize}
-slopeangle_raster <- terra::rast(slopeangle)
-waterdist_raster <- terra::rast(waterdist)
+slopeangle_raster <- rast(slopeangle)
+waterdist_raster <- rast(waterdist)
 ```
 
 Add appropriate marks to the `gorillas` data from `spatstat.data` package. These points are considered our "presence" locations. 
 
 ```{r presence}
-presence <- spatstat.geom::unmark(spatstat.data::gorillas)
-spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                             "lon" = presence$x,
-                                             "lat" = presence$y)
-spatstat.geom::marks(presence)$slopeangle <- slopeangle[presence]
-spatstat.geom::marks(presence)$waterdist <- waterdist[presence]
+presence <- unmark(gorillas)
+marks(presence) <- data.frame(
+  "presence" = rep(1, presence$n),
+  "lon" = presence$x,
+  "lat" = presence$y
+)
+marks(presence)$slopeangle <- slopeangle[presence]
+marks(presence)$waterdist <- waterdist[presence]
 ```
 
 Randomly draw points from the study area and add the appropriate marks. These points are considered our "(pseudo-)absence" locations. 
 
 ```{r absence}
-absence <- spatstat.random::rpoispp(0.00004, win = slopeangle)
-spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-                                            "lon" = absence$x,
-                                            "lat" = absence$y)
-spatstat.geom::marks(absence)$slopeangle <- slopeangle[absence]
-spatstat.geom::marks(absence)$waterdist <- waterdist[absence]
+absence <- rpoispp(0.00004, win = slopeangle)
+marks(absence) <- data.frame(
+  "presence" = rep(0, absence$n),
+  "lon" = absence$x,
+  "lat" = absence$y
+)
+marks(absence)$slopeangle <- slopeangle[absence]
+marks(absence)$waterdist <- waterdist[absence]
 ```
 
 ```{r cleanup1, echo = FALSE}
@@ -86,16 +90,18 @@ Combine the presence (n = `r presence$n`) and absence (`r absence$n`) locations 
 6. Covariate 2
 
 ```{r obs_locs}
-obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
-spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
-spatstat.geom::plot.ppp(obs_locs,
-                        which.marks = "presence",
-                        main = "Gorilla nesting sites (red-colored)\nPseudo-absence locations (blue-colored)",
-                        cols = c("#0000CD","#8B3A3A"),
-                        pch = 1,
-                        axes = TRUE,
-                        ann = TRUE)
-obs_locs <- spatstat.geom::marks(obs_locs)
+obs_locs <- superimpose(absence, presence, check = FALSE)
+marks(obs_locs)$presence <- as.factor(marks(obs_locs)$presence)
+plot.ppp(
+  obs_locs,
+  which.marks = "presence",
+  main = "Gorilla nesting sites (red-colored)\nPseudo-absence locations (blue-colored)",
+  cols = c("#0000CD","#8B3A3A"),
+  pch = 1,
+  axes = TRUE,
+  ann = TRUE
+)
+obs_locs <- marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 ```
@@ -103,10 +109,10 @@ obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 Extract the prediction locations within the study area from one of the covariates.
 
 ```{r predict_locs}
-predict_xy <- terra::crds(slopeangle_raster)
+predict_xy <- crds(slopeangle_raster)
 predict_locs <- as.data.frame(predict_xy)
-predict_locs$slopeangle <- terra::extract(slopeangle_raster, predict_xy)[ , 1]
-predict_locs$waterdist <- terra::extract(waterdist_raster, predict_xy)[ , 1]
+predict_locs$slopeangle <- extract(slopeangle_raster, predict_xy)[ , 1]
+predict_locs$waterdist <- extract(waterdist_raster, predict_xy)[ , 1]
 ```
 
 ```{r cleanup2, echo = FALSE}
@@ -119,11 +125,13 @@ Run the `lrren` function within the `envi` package. We use the default settings,
 
 ```{r lrren}
 start_time <- Sys.time() # record start time
-test_lrren <- envi::lrren(obs_locs = obs_locs,
-                          predict_locs = predict_locs,
-                          predict = TRUE,
-                          cv = TRUE,
-                          balance = TRUE)
+test_lrren <- lrren(
+  obs_locs = obs_locs,
+  predict_locs = predict_locs,
+  predict = TRUE,
+  cv = TRUE,
+  balance = TRUE
+)
 end_time <- Sys.time() # record end time
 lrren_time <- end_time - start_time # calculate duration of lrren() example
 ```
@@ -133,9 +141,11 @@ A single run of the `lrren` function took approximately `r round(lrren_time, dig
 We display the estimated ecological niche within a space of Covariate 1 by Covariate 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. As expected, extreme values of the log relative risk surface are located near the edges of the surface; however, these areas are highly variable and are not statistically significant based on an asymptotic normal assumption. The default color key for the log relative risk surface hides the heterogeneity closer to the null value (zero). Therefore, we limit the color key for the log relative risk surface to (-1, 1).
 
 ```{r plot_obs_limited}
-envi::plot_obs(test_lrren,
-               lower_lrr = -1,
-               upper_lrr = 1)
+plot_obs(
+  test_lrren,
+  lower_lrr = -1,
+  upper_lrr = 1
+)
 ```
 
 We observe two areas of positive log relative risk, and the center of these areas are statistically significant, suggesting two ecological niches of gorilla nesting sites compared to pseudo-absence points drawn randomly from within the park (based on only two covariates, slope gradient and distance from water). One niche is a combination of flat to moderate (about 10 - 30 degrees) slope gradient and moderate to far (about 200 - 400 meters) distance from water, which may correspond to the top of ridges. The second niche is a combination of moderate (30 - 40 degrees) slope gradient and moderate (about 100 - 200 meters) distance from water, which may correspond to within valleys. 
@@ -143,11 +153,13 @@ We observe two areas of positive log relative risk, and the center of these area
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r plot_predict}
-envi::plot_predict(test_lrren, 
-                   cref0 = "EPSG:32632",
-                   cref1 = "EPSG:4326",
-                   lower_lrr = -1,
-                   upper_lrr = 1)
+plot_predict(
+  test_lrren, 
+  cref0 = "EPSG:32632",
+  cref1 = "EPSG:4326",
+  lower_lrr = -1,
+  upper_lrr = 1
+)
 ```
 
 The two estimated ecological niches are located in many small regions throughout the park, reflected by the large spatial heterogeneity in the two covariates. For example, the tops of ridges are the farthest distance from water and are located in many areas throughout the park. Importantly, gorilla nesting sites were not observed in many of these areas, but this prediction represents areas with combinations of covariates that match (or are similar) to the combinations occurring at observed locations.
@@ -157,7 +169,7 @@ This is an example of a scale mismatch. The scale of the gorilla nesting site pr
 We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`) and our prevalence is fairly balanced at `r presence$n/(presence$n + absence$n)`.
 
 ```{r plot_cv}
-envi::plot_cv(test_lrren)
+plot_cv(test_lrren)
 ```
 
 ```{r cleanup3, echo = FALSE}
@@ -181,13 +193,13 @@ The choice in covariates is critical for ecological niche models and especially 
 We can use the `rasterPCA` function within the `RStoolbox` package to conduct a PCA of multiple spatial data layers. We start by centering and scaling the numeric-valued layers. We also center the factor-valued layer 'aspect' at "North" and we group flatter slope types together in the factor-valued layer 'slope type.' NOTE: Using categorical (discrete) variables in PCA is requires more consideration than demonstrated in this vignette (see: [Kolenikov & Angeles (2009)](https://doi.org/10.1111/j.1475-4991.2008.00309.x) for more details).
 
 ```{r pca}
-aspect <- spatstat.data::gorillas.extra$aspect # class factor
-elevation <- spatstat.data::gorillas.extra$elevation # class integer
-heat <- spatstat.data::gorillas.extra$heat # class factor
-slopeangle <- spatstat.data::gorillas.extra$slopeangle # class numeric
-slopetype <- spatstat.data::gorillas.extra$slopetype # class factor
-vegetation <- spatstat.data::gorillas.extra$vegetation # class factor
-waterdist <- spatstat.data::gorillas.extra$waterdist # class numeric
+aspect <- gorillas.extra$aspect # class factor
+elevation <- gorillas.extra$elevation # class integer
+heat <- gorillas.extra$heat # class factor
+slopeangle <- gorillas.extra$slopeangle # class numeric
+slopetype <- gorillas.extra$slopetype # class factor
+vegetation <- gorillas.extra$vegetation # class factor
+waterdist <- gorillas.extra$waterdist # class numeric
 
 # Center and scale numeric
 elevation$v <- scale(elevation$v)
@@ -195,27 +207,42 @@ slopeangle$v <- scale(slopeangle$v)
 waterdist$v <- scale(waterdist$v)
 
 # Create rasters
-aspect <- terra::rast(aspect)
-elevation <- terra::rast(elevation)
-heat <- terra::rast(heat)
-slopeangle <- terra::rast(slopeangle)
-slopetype <- terra::rast(slopetype)
-vegetation <- terra::rast(vegetation)
-waterdist <- terra::rast(waterdist)
+aspect <- rast(aspect)
+names(aspect) <- 'aspect'
+elevation <- rast(elevation)
+names(elevation) <- 'elevation'
+heat <- rast(heat)
+names(heat) <- 'heat'
+slopeangle <- rast(slopeangle)
+names(slopeangle) <- 'slopeangle'
+slopetype <- rast(slopetype)
+names(slopetype) <- 'slopetype'
+vegetation <- rast(vegetation)
+names(vegetation) <- 'vegetation'
+waterdist <- rast(waterdist)
+names(waterdist) <- 'waterdist'
 
 # Reorder aspect to center by "N" instead of "S"
-terra::values(aspect) <- factor(terra::values(aspect),
-                                levels = c("5", "6", "7", "8", "1", "2", "3", "4"))
+values(aspect) <- factor(
+  values(aspect),
+  levels = c("5", "6", "7", "8", "1", "2", "3", "4")
+) %>% as.numeric()
 
 # Reorder slope types to order flatter types next to each other
-terra::values(slopetype) <- factor(terra::values(slopetype),
-                                   levels = c("1", "6", "3", "2", "4", "5"))
+values(slopetype) <- factor(
+  values(slopetype),
+  levels = c("1", "6", "3", "2", "4", "5")
+) %>% as.numeric()
+
+# Convert factors to numeric
+values(heat) <- as.numeric(values(heat))
+values(vegetation) <- as.numeric(values(vegetation))
 
 # Stack of SpatRasters
 park <- c(aspect, elevation, heat, slopeangle, slopetype, vegetation, waterdist)
 
 # Principal Component Analysis
-pca_park <- RStoolbox::rasterPCA(park)
+pca_park <- rasterPCA(park)
 summary(pca_park$model) # PCA components
 ```
 
@@ -232,20 +259,55 @@ pca_park$model$loadings # PCA loadings
 The loadings of the first component is almost entirely the centered 'aspect' variable. The loadings of the second component is a combination of centered 'elevation,' 'vegetation type,' centered 'distance from water,' and centered 'slope type.'
 
 ```{r bands}
+# Temporary stopgap for converting 'SpatRaster' to 'im'
+## Modification of `as.im.RasterLayer` from `maptools` because `maptools` is retiring in 2023
+as.im.SpatRaster <- function(from, factor.col.name = NULL) {
+  rs <- terra::res(from)
+  orig <- sf::st_bbox(from)[1:2] + 0.5 * rs
+  dm <- dim(from)[2:1]
+  xx <- unname(orig[1] + cumsum(c(0, rep(rs[1], dm[1] - 1))))
+  yy <- unname(orig[2] + cumsum(c(0, rep(rs[2], dm[2] - 1))))
+  val <- terra::values(from)
+  if (is.factor(from)) {
+    lev <- levels(from)[[1]]
+    if (!is.null(factor.col.name)) {
+      if (factor.col.name %in% colnames(lev)) {
+        factor.col <- which(colnames(lev) == factor.col.name)
+      }
+      else {
+        stop("'factor.col.name' is not a column name of the SpatRaster 'from'")
+      }
+    }
+    else {
+      factor.col <- length(lev)
+    }
+    val <- factor(val, levels = lev$ID, labels = lev[[factor.col]])
+  }
+  dim(val) <- dm
+  val <- spatstat.geom::transmat(val, from = list(x = "-i", 
+                                                  y = "j"), to = "spatstat")
+  im <- spatstat.geom::im(val, xcol = xx, yrow = yy)
+  return(im)
+}
+
 # Extract Bands from PCA
 pca_bands <- pca_park$map
 pc1 <- pca_bands[[1]] # PC1
 pc2 <- pca_bands[[2]] # PC2
-pc1 <- envi:::as.im.SpatRaster(terra::rast(pc1)) # convert to class 'im'
-pc2 <- envi:::as.im.SpatRaster(terra::rast(pc2)) # convert to class 'im'
-spatstat.geom::plot.im(pc1,
-                       main = 'Principal Component 1\nprimarily aspect (centered at "North")',
-                       ann = TRUE,
-                       axes = TRUE)
-spatstat.geom::plot.im(pc2,
-                       main = 'Principal Component 2\ncombination of elevation, vegetation type,\ndistance from water, and slope type',
-                       ann = TRUE,
-                       axes = TRUE)
+pc1 <- as.im.SpatRaster(pc1) # convert to class 'im'
+pc2 <- as.im.SpatRaster(pc2) # convert to class 'im'
+plot.im(
+  pc1,
+  main = 'Principal Component 1\nprimarily aspect (centered at "North")',
+  ann = TRUE,
+  axes = TRUE
+)
+plot.im(
+  pc2,
+  main = 'Principal Component 2\ncombination of elevation, vegetation type,\ndistance from water, and slope type',
+  ann = TRUE,
+  axes = TRUE
+)
 ```
 
 ```{r cleanup5, echo = FALSE}
@@ -258,30 +320,34 @@ We prepare inputs for a new `lrren` run similar to the first example above. For 
 
 ```{r pca_data}
 set.seed(1234) # for similar locations as above example
-presence <- spatstat.geom::unmark(spatstat.data::gorillas)
-spatstat.geom::marks(presence) <- data.frame("presence" = rep(1, presence$n),
-                                             "lon" = presence$x,
-                                             "lat" = presence$y)
-spatstat.geom::marks(presence)$pc1 <- pc1[presence]
-spatstat.geom::marks(presence)$pc2 <- pc2[presence]
+presence <- unmark(gorillas)
+marks(presence) <- data.frame(
+  "presence" = rep(1, presence$n),
+  "lon" = presence$x,
+  "lat" = presence$y
+)
+marks(presence)$pc1 <- pc1[presence]
+marks(presence)$pc2 <- pc2[presence]
 
-absence <- spatstat.random::rpoispp(0.00004, win = spatstat.data::gorillas.extra$aspect)
-spatstat.geom::marks(absence) <- data.frame("presence" = rep(0, absence$n),
-                                            "lon" = absence$x,
-                                            "lat" = absence$y)
-spatstat.geom::marks(absence)$pc1 <- pc1[absence]
-spatstat.geom::marks(absence)$pc2 <- pc2[absence]
+absence <- rpoispp(0.00004, win = gorillas.extra$aspect)
+marks(absence) <- data.frame(
+  "presence" = rep(0, absence$n),
+  "lon" = absence$x,
+  "lat" = absence$y
+)
+marks(absence)$pc1 <- pc1[absence]
+marks(absence)$pc2 <- pc2[absence]
 
-obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
-spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
-obs_locs <- spatstat.geom::marks(obs_locs)
+obs_locs <- superimpose(absence, presence, check = FALSE)
+marks(obs_locs)$presence <- as.factor(marks(obs_locs)$presence)
+obs_locs <- marks(obs_locs)
 obs_locs$id <- seq(1, nrow(obs_locs), 1)
 obs_locs <- obs_locs[ , c(6, 2, 3, 1, 4, 5)]
 
-predict_xy <- terra::crds(terra::rast(pca_bands[[1]]))
+predict_xy <- crds(pca_bands[[1]])
 predict_locs <- as.data.frame(predict_xy)
-predict_locs$pc1 <- terra::extract(terra::rast(pca_bands[[1]]), predict_xy)[ , 1]
-predict_locs$pc2 <- terra::extract(terra::rast(pca_bands[[2]]), predict_xy)[ , 1]
+predict_locs$pc1 <- extract(pca_bands[[1]], predict_xy)[ , 1]
+predict_locs$pc2 <- extract(pca_bands[[2]], predict_xy)[ , 1]
 ```
 
 ```{r cleanup6, echo = FALSE}
@@ -292,11 +358,13 @@ With the two principal components, we re-run the `lrren` function.
 
 ```{r pca_lrren}
 start_time <- Sys.time() # record start time
-pca_lrren <- envi::lrren(obs_locs = obs_locs,
-                         predict_locs = predict_locs,
-                         predict = TRUE,
-                         cv = TRUE,
-                         balance = TRUE)
+pca_lrren <- lrren(
+  obs_locs = obs_locs,
+  predict_locs = predict_locs,
+  predict = TRUE,
+  cv = TRUE,
+  balance = TRUE
+)
 end_time <- Sys.time() # record end time
 pca_time <- end_time - start_time # calculate duration of lrren() example
 ```
@@ -306,25 +374,29 @@ A single run of the `lrren` function took approximately `r round(pca_time, digit
 We display the estimated ecological niche within a space of Principal Component 1 by Principal Component 2 using the `plot_obs` function. We use the default two-tailed alpha level (`alpha = 0.05`) and the default colors where the yellow color denotes areas with covariate data combinations where we have sparse observations. We limit the color key for the log relative risk surface to (-1, 1). 
 
 ```{r pca_plot_obs}
-envi::plot_obs(pca_lrren,
-               lower_lrr = -1,
-               upper_lrr = 1)
+plot_obs(
+  pca_lrren,
+  lower_lrr = -1,
+  upper_lrr = 1
+)
 ```
 
 We display the estimated ecological niche predicted to the study area within geographic space using the `plot_predict` function. We use the default two-tailed alpha level (`alpha = 0.05`), and we limit the color key for the log relative risk prediction to (-1, 1). 
 
 ```{r pca_plot_predict}
-envi::plot_predict(pca_lrren, 
-                   cref0 = "EPSG:32632", 
-                   cref1 = "EPSG:4326",
-                   lower_lrr = -1,
-                   upper_lrr = 1)
+plot_predict(
+  pca_lrren, 
+  cref0 = "EPSG:32632", 
+  cref1 = "EPSG:4326",
+  lower_lrr = -1,
+  upper_lrr = 1
+)
 ```
 
 We display the internal 10-fold cross-validation diagnostics using the `plot_cv` function. We use the default two-tailed alpha level (`alpha = 0.05`).
 
 ```{r pca_plot_cv}
-envi::plot_cv(pca_lrren)
+plot_cv(pca_lrren)
 ```
 
 ```{r cleanup7, echo = FALSE}
@@ -346,23 +418,23 @@ We start by preparing the observation data. Here, the data must be a marked plan
 ```{r sensitivity_data}
 # Preserve 'group' feature from 'gorillas' data within {spatstat.data}
 ## Assign as a new mark named 'level'
-spatstat.geom::marks(presence)$levels <- spatstat.geom::marks(spatstat.data::gorillas)$group
+marks(presence)$levels <- marks(gorillas)$group
 
 # Assign a third 'level' for the pseudo-absences
-spatstat.geom::marks(absence)$levels <- "none"
+marks(absence)$levels <- "none"
 
 # Combine
-obs_locs <- spatstat.geom::superimpose(absence, presence, check = FALSE)
+obs_locs <- superimpose(absence, presence, check = FALSE)
 
 # Set variables as class 'factor'
-spatstat.geom::marks(obs_locs)$presence <- as.factor(spatstat.geom::marks(obs_locs)$presence)
-spatstat.geom::marks(obs_locs)$levels <- as.factor(spatstat.geom::marks(obs_locs)$levels)
+marks(obs_locs)$presence <- as.factor(marks(obs_locs)$presence)
+marks(obs_locs)$levels <- as.factor(marks(obs_locs)$levels)
 
 # Create 'id' feature
-spatstat.geom::marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
+marks(obs_locs)$id <- seq(1, obs_locs$n, 1)
 
 # Reorder and drop the two covariate features
-spatstat.geom::marks(obs_locs) <- spatstat.geom::marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
+marks(obs_locs) <- marks(obs_locs)[ , c(7, 2, 3, 1, 6)]
 ```
 
 ```{r cleanup8, echo = FALSE}
@@ -372,7 +444,7 @@ rm(absence, presence) # conserve memory
 The two covariate values will be assigned to all points in every iteration and are drawn from a list of objects of class 'im'. Here, we use the same variables as above (slope gradient and distance from water), centered and scaled.
 
 ```{r ims}
-ims <- spatstat.geom::solist(pc1,pc2)
+ims <- solist(pc1,pc2)
 names(ims) <- c("Component_1", "Component_2")
 ```
 
@@ -385,10 +457,12 @@ Run the `perlrren` function within the `envi` package. We use the default settin
 ```{r perlrren}
 n_sim <- 100
 start_time <- Sys.time() # record start time
-test_perlrren <- envi::perlrren(obs_ppp = obs_locs,
-                                covariates = ims,
-                                radii = c(100, 50, 0.1),
-                                n_sim = n_sim)
+test_perlrren <- perlrren(
+  obs_ppp = obs_locs,
+  covariates = ims,
+  radii = c(100, 50, 0.1),
+  n_sim = n_sim
+)
 end_time <- Sys.time() # record end time
 perlrren_time <- end_time - start_time # calculate duration of perlrren() example
 ```
@@ -402,12 +476,14 @@ A single (non-parallel) run of the `perlrren` function with `r n_sim` iterations
 We display the summary statistics from the sensitivity analysis with the `plot_perturb` function. Here, we use the default settings, except we limit the color key for the log relative risk surface and log relative risk prediction to (-1, 1). We only display the plots pertaining to the proportion of iterations with a significant p-value, both in covariate space and predicted into geographic space (i.e., the park).
 
 ```{r plot_perturb, fig.keep = c(4,8)}
-envi::plot_perturb(test_perlrren,
-                   cov_labs = c("Component 1", "Component 2"),
-                   cref0 = "EPSG:32632",
-                   cref1 = "EPSG:4326",
-                   lower_lrr = -1,
-                   upper_lrr = 1)
+plot_perturb(
+  test_perlrren,
+  cov_labs = c("Component 1", "Component 2"),
+  cref0 = "EPSG:32632",
+  cref1 = "EPSG:4326",
+  lower_lrr = -1,
+  upper_lrr = 1
+)
 ```
 
 ```{r cleanup11, echo = FALSE}

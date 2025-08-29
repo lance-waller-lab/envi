@@ -2,7 +2,7 @@ Package: envi
 Type: Package
 Title: Environmental Interpolation using Spatial Kernel Density Estimation
 Version: 1.0.1
-Date: 2025-08-02
+Date: 2025-08-29
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",

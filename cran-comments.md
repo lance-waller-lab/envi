@@ -2,6 +2,8 @@
 
 * Updates since previous submission:
   * Fixed Rd `\link{}` targets missing package in 'envi-package.Rd' and 'lrren.Rd'
+  * Updated vignette with updated package version and dependencies
+  * `as.im.SpatRaster()` no longer in 'utils.R'; placed within vignette
 
 ## Notes
 * Two links in NEWS.md throw a NOTE but are valid URLs:
